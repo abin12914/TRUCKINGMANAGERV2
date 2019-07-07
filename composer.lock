@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a51221775d5309bfa40d8cecf1982aa3",
+    "content-hash": "9d267805da5833c439eec13d234bb55d",
     "packages": [
         {
             "name": "arrilot/laravel-widgets",
@@ -4060,6 +4060,68 @@
             "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
             "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
             "time": "2017-11-27T11:13:29+00:00"
+        },
+        {
+            "name": "torzer/awesome-landlord",
+            "version": "v3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/torzer/awesome-landlord.git",
+                "reference": "4b2fb3a14941b90d788ae75c1414f6a9f0a68e92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/torzer/awesome-landlord/zipball/4b2fb3a14941b90d788ae75c1414f6a9f0a68e92",
+                "reference": "4b2fb3a14941b90d788ae75c1414f6a9f0a68e92",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "laravel/framework": "5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*",
+                "mockery/mockery": "~0.9|~1.0",
+                "phpunit/phpunit": "5.5.*|6.0.*|7.0.*|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Torzer\\Awesome\\Landlord\\LandlordServiceProvider"
+                    ],
+                    "aliases": {
+                        "Landlord": "Torzer\\Awesome\\Landlord\\Facades\\Landlord"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Torzer\\Awesome\\Landlord\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Fidecaro",
+                    "email": "calebfidecaro@gmail.com"
+                },
+                {
+                    "name": "Ademir Mazer Jr",
+                    "email": "ademir.mazer.jr@torzer.com"
+                }
+            ],
+            "description": "A simple, single database multi-tenancy solution for Laravel 5.2+",
+            "keywords": [
+                "multitenancy",
+                "multitenant",
+                "tenancy",
+                "tenant"
+            ],
+            "time": "2019-06-08T20:23:08+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
