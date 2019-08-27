@@ -5,10 +5,14 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Torzer\Awesome\Landlord\BelongsToTenants;
 
 class User extends \TCG\Voyager\Models\User
 {
     use Notifiable;
+
+    //landlord
+    use BelongsToTenants;
 
     /**
      * The attributes that are mass assignable.
