@@ -2,9 +2,6 @@
 
 namespace App\Repositories;
 
-use Exception;
-use App\Exceptions\AppCustomException;
-
 class Repository
 {
     public $loopKey = 0;

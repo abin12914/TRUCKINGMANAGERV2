@@ -60,6 +60,13 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        //custom middlewares
+        //Auth check
+        'auth.check' => \App\Http\Middleware\AuthCheck::class,
+        //check whether the request is from ajax or not
+        'is.ajax' => \App\Http\Middleware\IsAjax::class,
+        //adding tenent id to request
+        'landlord.tenancy' => \App\Http\Middleware\LandlordTenancy::class,
     ];
 
     /**

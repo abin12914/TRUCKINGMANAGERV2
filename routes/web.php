@@ -13,28 +13,20 @@
 
 Route::redirect('/', '/login');
 
+//voyager
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
+//laravel auth
 Auth::routes(['register' => false]);
 
-Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 
-Route::group(['middleware' => 'auth.check'], function () {
-    //common routes
-    /*Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');*/
-    Route::get('/user/profile', 'HomeController@profileView')->name('user.profile');
-    Route::post('/user/profile', 'HomeController@profileUpdate')->name('user.profile.action');
+//auth check == true
+Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
+	Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 
-    Route::group(['middleware' => ['user.role:0']], function () {
-        //company
-        Route::resource('company', 'companyController');
-    });
-    //user routes
-    Route::group(['middleware' => ['user.role:0,1,2']], function () {
-
-        //account
-        Route::resource('account', 'AccountController');
-	});
+	Route::resources([
+	    'accounts' => 'AccountController'
+	]);
 });
