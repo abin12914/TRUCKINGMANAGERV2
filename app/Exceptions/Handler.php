@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\TMException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +48,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof ModelNotFoundException) {
+            //return custom error page when record not found in db
+            return response()->view('errors.record-not-found', compact('exception'));
+        } else if($exception instanceof TMException) {
+            //return custom error page when custom exception is thrown
+            return response()->view('errors.app-custom-exception', compact('exception'));
+        }
+
         return parent::render($request, $exception);
     }
 }
