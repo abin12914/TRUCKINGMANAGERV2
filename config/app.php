@@ -175,6 +175,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //custom/new entries
+        //view composer service provider
+        App\Providers\ComposerServiceProvider::class,
         //awesome landlord
         Torzer\Awesome\Landlord\LandlordServiceProvider::class,
 

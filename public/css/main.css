@@ -1,0 +1,45 @@
+/*select2 element fixing*/
+.select2-selection--single {
+    height:34px !important;
+}
+.select2-container--default .select2-selection--single {
+    border-radius:0px !important;
+}
+/*for removing left border from print*/
+.content-wrapper {
+border-left: none ! important;
+}
+.box {
+    border-top: none ! important;
+}
+/*middle aligning table contents*/
+.table > tbody > tr > td {
+     vertical-align: middle;
+}
+/*break long words to multiple lines*/
+.multi-line {
+    overflow-wrap:break-word;
+}
+/*sweet alert size fix from https://github.com/sweetalert2/sweetalert2/issues/834#issuecomment-359237178*/
+.swal2-popup {
+  font-size: 1.6rem !important;
+}
+
+ @media print {
+    .borderless-table > tbody > tr > td {
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+        border-top: none !important;
+    }
+
+    .border-top-only-table > tbody > tr > td {
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+    }
+
+    .table-bordered td,.table-bordered th{
+        border:2px solid #333!important
+    }
+}

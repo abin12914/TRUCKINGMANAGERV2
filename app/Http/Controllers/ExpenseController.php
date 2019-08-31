@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\AccountRepository;
-use App\Repositories\TransactionRepository;
-use App\Http\Requests\AccountRegistrationRequest;
-use App\Http\Requests\AccountFilterRequest;
+use App\Repositories\EmployeeRepository;
+use App\Http\Requests\EmployeeRegistrationRequest;
+use App\Http\Requests\EmployeeFilterRequest;
 use \Carbon\Carbon;
 use Auth;
 use DB;
@@ -14,15 +13,15 @@ use Exception;
 use App\Exceptions\TMException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class AccountController extends Controller
+class ExpenseController extends Controller
 {
-    protected $accountRepo;
+    protected $employeeRepo;
     public $errorHead = null;
 
-    public function __construct(AccountRepository $accountRepo)
+    public function __construct(EmployeeRepository $employeeRepo)
     {
-        $this->accountRepo = $accountRepo;
-        $this->errorHead   = config('settings.controllerCode.AccountController');
+        $this->employeeRepo = $employeeRepo;
+        $this->errorHead   = config('settings.controllerCode.EmployeeController');
     }
 
     /**
@@ -30,7 +29,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(AccountFilterRequest $request)
+    public function index(EmployeeFilterRequest $request)
     {
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
@@ -40,10 +39,10 @@ class AccountController extends Controller
                 'paramOperator' => '=',
                 'paramValue'    => $request->get('relation_type'),
             ],
-            'account_id' => [
+            'employee_id' => [
                 'paramName'     => 'id',
                 'paramOperator' => '=',
-                'paramValue'    => $request->get('account_id'),
+                'paramValue'    => $request->get('employee_id'),
             ],
             'type' => [
                 'paramName'     => 'type',
@@ -53,8 +52,8 @@ class AccountController extends Controller
         ];
 
         $orWhereParams = [
-            'account_name' => [
-                'paramName'     => 'account_name',
+            'employee_name' => [
+                'paramName'     => 'employee_name',
                 'paramOperator' => 'LIKE',
                 'paramValue'    => ("%". $request->get('name'). "%"),
             ],
@@ -65,9 +64,10 @@ class AccountController extends Controller
             ]
         ];
 
-        //getAccounts($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
-        return view('accounts.list', [
-            'accounts'      => $this->accountRepo->getAccounts($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+        //getEmployees($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
+        return view('employees.list', [
+            'employees'      => $this->employeeRepo->getEmployees($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+            'relationTypes' => config('constants.employeeRelationTypes'),
             'params'        => array_merge($whereParams,$orWhereParams),
             'noOfRecords'   => $noOfRecordsPerPage,
         ]);
@@ -80,7 +80,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        return view('accounts.register');
+        return view('employees.register');
     }
 
     /**
@@ -90,15 +90,15 @@ class AccountController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(
-        AccountRegistrationRequest $request,
+        EmployeeRegistrationRequest $request,
         TransactionRepository $transactionRepo,
         $id=null
     ) {
         $errorCode            = 0;
-        $account              = null;
+        $employee              = null;
         $openingTransactionId = null;
 
-        $openingBalanceAccountId = config('constants.accountConstants.AccountOpeningBalance.id');
+        $openingBalanceEmployeeId = config('constants.employeeConstants.EmployeeOpeningBalance.id');
 
         $financialStatus    = $request->get('financial_status');
         $openingBalance     = $request->get('opening_balance');
@@ -109,21 +109,21 @@ class AccountController extends Controller
         try {
             $user = Auth::user();
             //confirming opening balance existency.
-            //getAccount($id, $withParams=[], $activeFlag=true)
-            $openingBalanceAccount = $this->accountRepo->getAccount($openingBalanceAccountId, [], false);
+            //getEmployee($id, $withParams=[], $activeFlag=true)
+            $openingBalanceEmployee = $this->employeeRepo->getEmployee($openingBalanceEmployeeId, [], false);
 
             if(!empty($id)) {
-                $account = $this->accountRepo->getAccount($id, [], false);
+                $employee = $this->employeeRepo->getEmployee($id, [], false);
 
-                if($account->financial_status == 2){
+                if($employee->financial_status == 2){
                     $searchTransaction = [
-                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
-                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
+                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
+                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
                     ];
                 } else {
                     $searchTransaction = [
-                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
-                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
+                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
+                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
                     ];
                 }
 
@@ -131,11 +131,11 @@ class AccountController extends Controller
                 $openingTransactionId = $transactionRepo->getTransactions($searchTransaction, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], null, false)->id;
             }
 
-            //save to account table
-            $accountResponse   = $this->accountRepo->saveAccount([
-                'account_name'      => $request->get('account_name'),
+            //save to employee table
+            $employeeResponse   = $this->employeeRepo->saveEmployee([
+                'employee_name'      => $request->get('employee_name'),
                 'description'       => $request->get('description'),
-                'type'              => array_search('Personal', (config('constants.accountTypes'))),
+                'type'              => array_search('Personal', (config('constants.employeeTypes'))),
                 'relation'          => $request->get('relation_type'),
                 'financial_status'  => $financialStatus,
                 'opening_balance'   => $openingBalance,
@@ -147,30 +147,30 @@ class AccountController extends Controller
                 'company_id'        => $user->company_id,
             ], $id);
 
-            if(!$accountResponse['flag']) {
-                throw new AppCustomException("CustomError", $accountResponse['errorCode']);
+            if(!$employeeResponse['flag']) {
+                throw new AppCustomException("CustomError", $employeeResponse['errorCode']);
             }
 
             //opening balance transaction details
-            if($financialStatus == 1) { //incoming [account holder gives cash to company] [Creditor]
-                $debitAccountId     = $openingBalanceAccountId; //cash flow into the opening balance account
-                $creditAccountId    = $accountResponse['account']->id; //newly created account id [flow out from new account]
+            if($financialStatus == 1) { //incoming [employee holder gives cash to company] [Creditor]
+                $debitEmployeeId     = $openingBalanceEmployeeId; //cash flow into the opening balance employee
+                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id [flow out from new employee]
                 $particulars        = "Opening balance of ". $name . " - Debit [Creditor]";
-            } else if($financialStatus == 2){ //outgoing [company gives cash to account holder] [Debitor]
-                $debitAccountId     = $accountResponse['account']->id; //newly created account id [flow into new account]
-                $creditAccountId    = $openingBalanceAccountId; //flow out from the opening balance account
+            } else if($financialStatus == 2){ //outgoing [company gives cash to employee holder] [Debitor]
+                $debitEmployeeId     = $employeeResponse['employee']->id; //newly created employee id [flow into new employee]
+                $creditEmployeeId    = $openingBalanceEmployeeId; //flow out from the opening balance employee
                 $particulars        = "Opening balance of ". $name . " - Credit [Debitor]";
             } else {
-                $debitAccountId     = $openingBalanceAccountId;
-                $creditAccountId    = $accountResponse['account']->id; //newly created account id
+                $debitEmployeeId     = $openingBalanceEmployeeId;
+                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id
                 $particulars        = "Opening balance of ". $name . " - None";
                 $openingBalance     = 0;
             }
 
             //save to transaction table
             $transactionResponse   = $transactionRepo->saveTransaction([
-                'debit_account_id'  => $debitAccountId,
-                'credit_account_id' => $creditAccountId,
+                'debit_employee_id'  => $debitEmployeeId,
+                'credit_employee_id' => $creditEmployeeId,
                 'amount'            => $openingBalance,
                 'transaction_date'  => Carbon::now()->format('Y-m-d'),
                 'particulars'       => $particulars,
@@ -187,10 +187,10 @@ class AccountController extends Controller
             if(!empty($id)) {
                 return [
                     'flag'    => true,
-                    'account' => $accountResponse['account'],
+                    'employee' => $employeeResponse['employee'],
                 ];
             }
-            return redirect(route('account.show', $accountResponse['account']->id))->with("message","Account details saved successfully. Reference Number : ". $accountResponse['account']->id)->with("alert-class", "success");
+            return redirect(route('employee.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. Reference Number : ". $employeeResponse['employee']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -204,62 +204,62 @@ class AccountController extends Controller
             ];
         }
         
-        return redirect()->back()->with("message","Failed to save the account details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the employee details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Account  $account
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         $errorCode  = 0;
-        $account    = [];
+        $employee    = [];
 
         try {
-            $account = $this->accountRepo->getAccount($id, [], false);
+            $employee = $this->employeeRepo->getEmployee($id, [], false);
         } catch (Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
             //throwing model not found exception when no model is fetched
-            throw new ModelNotFoundException("Account", $errorCode);
+            throw new ModelNotFoundException("Employee", $errorCode);
         }
 
-        return view('accounts.details', [
-            'account'       => $account,
-            'relationTypes' => config('constants.accountRelationTypes'),
-            'accountTypes'  => config('constants.$accountTypes'),
+        return view('employees.details', [
+            'employee'       => $employee,
+            'relationTypes' => config('constants.employeeRelationTypes'),
+            'employeeTypes'  => config('constants.$employeeTypes'),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Account  $account
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
         $errorCode  = 0;
-        $account    = [];
+        $employee    = [];
 
-        $relationTypes        = config('constants.accountRelationTypes');
-        $employeeRelationType = array_search('Employees', config('constants.accountRelationTypes')); //employee -> [index = 1]
-        //excluding the relationtype 'employee'[index = 1] for account update
+        $relationTypes        = config('constants.employeeRelationTypes');
+        $employeeRelationType = array_search('Employees', config('constants.employeeRelationTypes')); //employee -> [index = 1]
+        //excluding the relationtype 'employee'[index = 1] for employee update
         unset($relationTypes[$employeeRelationType]);
 
         try {
-            $account = $this->accountRepo->getAccount($id, [], false);
+            $employee = $this->employeeRepo->getEmployee($id, [], false);
         } catch (Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
             //throwing methodnotfound exception when no model is fetched
-            throw new ModelNotFoundException("Account", $errorCode);
+            throw new ModelNotFoundException("Employee", $errorCode);
         }
 
-        return view('accounts.edit', [
-            'account'       => $account,
+        return view('employees.edit', [
+            'employee'       => $employee,
             'relationTypes' => $relationTypes,
         ]);
     }
@@ -268,27 +268,27 @@ class AccountController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Account  $account
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(
-        AccountRegistrationRequest $request,
+        EmployeeRegistrationRequest $request,
         TransactionRepository $transactionRepo,
         $id
     ) {
         $updateResponse = $this->store($request, $transactionRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('account.show', $updateResponse['account']->id))->with("message","Account details updated successfully. Updated Record Number : ". $updateResponse['account']->id)->with("alert-class", "success");
+            return redirect(route('employee.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. Updated Record Number : ". $updateResponse['employee']->id)->with("alert-class", "success");
         }
         
-        return redirect()->back()->with("message","Failed to update the account details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the employee details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Account  $account
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
