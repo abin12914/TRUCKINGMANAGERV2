@@ -29,7 +29,8 @@ class ComposerServiceProvider extends ServiceProvider
         //accounts to views
         //View::composer('components.selects.accounts', "App\Http\View\Composers\AccountComponentComposer");
         //account types to views
-        View::composer('components.selects.account-relation-type', "App\Http\View\Composers\AccountTypeComponentComposer");
+        View::composer('components.selects.account-relation', "App\Http\View\Composers\AccountRelationComponentComposer");
+        View::composer('components.selects.account-relation-reg', "App\Http\View\Composers\AccountRelationRegComponentComposer");
         //employees to views
         //View::composer('components.selects.employees', "App\Http\View\Composers\EmployeeComponentComposer");
         //sites to views

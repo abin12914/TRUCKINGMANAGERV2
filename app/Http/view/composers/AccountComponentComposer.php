@@ -23,22 +23,17 @@ class AccountComponentComposer
      */
     public function __construct(AccountRepository $accountRepo)
     {
-        $orWhereParams = [
+        $whereParams = [
             [
                 'paramName'     => 'type',
-                'paramOperator' => '=',
-                'paramValue'    => 1,
-            ],
-            [
-                'paramName'     => 'type',
-                'paramOperator' => '=',
-                'paramValue'    => 3,
+                'paramOperator' => '!=',
+                'paramValue'    => 2,
             ]
         ];
         
         try {
             //getAccounts($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
-            $this->accounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], [], true);
+            $this->accounts = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], [], true);
             
         } catch (Exception $e) {
         }

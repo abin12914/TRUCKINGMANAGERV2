@@ -62,7 +62,7 @@ class AccountRegistrationRequest extends FormRequest
                                         ],
             'relation_type'         =>  [
                                             'required',
-                                            Rule::in(array_keys(config('constants.accountRelationTypes'))),
+                                            Rule::in(array_keys(config('constants.accountRelations'))),
                                         ],
         ];
     }

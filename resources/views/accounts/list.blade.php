@@ -28,30 +28,31 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <label for="search_by_name" class="control-label">Name/Account Name : </label>
+                                        <input type="text" class="form-control" name="search_by_name" id="search_by_name" value="{{ !empty(old('search_by_name')) ? old('search_by_name') : $params['search_by_name']['paramValue'] }}" tabindex="1">
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'from_date'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-md-3">
                                         <label for="relation_type" class="control-label">Relation : </label>
-                                        <select class="form-control select2" name="relation_type" id="relation_type" style="width: 100%" tabindex="1">
-                                            <option value="">Select relation type</option>
-                                            @if(!empty($relationTypes) && (count($relationTypes) > 0))
-                                                @foreach($relationTypes as $key => $relationType)
-                                                    <option value="{{ $key }}" {{ (old('relation_type') == $key || $params['relation_type']['paramValue'] == $key) ? 'selected' : '' }}>{{ $relationType }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
+                                        @component('components.selects.account-relation', ['selectedRelation' => $params['relation_type']['paramValue'], 'selectName' => 'relation_type', 'tabindex' => 2])
+                                        @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'relation_type'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label for="account_id" class="control-label">Account : </label>
                                         {{-- adding account select component --}}
-                                        @component('components.selects.accounts', ['selectedAccountId' => $params['account_id']['paramValue'], 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 2])
+                                        @component('components.selects.accounts', ['selectedAccountId' => $params['account_id']['paramValue'], 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 3])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'account_id'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label for="no_of_records" class="control-label">No Of Records Per Page : </label>
                                         {{-- adding no of records text component --}}
                                         @component('components.texts.no-of-records-text', ['noOfRecords' => $noOfRecords, 'tabindex' => 4])
@@ -124,7 +125,7 @@
                                                 <td>{{ $account->financial_status == 1 ? $account->opening_balance : "-" }}</td>
                                                 <td>{{ $account->financial_status == 2 ? $account->opening_balance : "-" }}</td>
                                                 <td class="no-print">
-                                                    <a href="{{ route('account.show', $account->id) }}">
+                                                    <a href="{{ route('accounts.show', $account->id) }}">
                                                         <button type="button" class="btn btn-info">Details</button>
                                                     </a>
                                                 </td>

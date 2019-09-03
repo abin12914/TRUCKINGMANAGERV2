@@ -53,22 +53,26 @@ class AccountController extends Controller
         ];
 
         $orWhereParams = [
-            'account_name' => [
+            'search_by_a_name' => [
                 'paramName'     => 'account_name',
                 'paramOperator' => 'LIKE',
-                'paramValue'    => ("%". $request->get('name'). "%"),
+                'paramValue'    => ("%". $request->get('search_by_name'). "%"),
             ],
-            'name' => [
+            'search_by_name' => [
                 'paramName'     => 'name',
                 'paramOperator' => 'LIKE',
-                'paramValue'    => ("%". $request->get('name'). "%"),
+                'paramValue'    => ("%". $request->get('search_by_name'). "%"),
             ]
         ];
+
+        //remove %% from sending back to result
+        $orWhereParam = $orWhereParams;
+        $orWhereParam['search_by_name']['paramValue'] = $request->get('search_by_name');
 
         //getAccounts($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
         return view('accounts.list', [
             'accounts'      => $this->accountRepo->getAccounts($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
-            'params'        => array_merge($whereParams,$orWhereParams),
+            'params'        => array_merge($whereParams,$orWhereParam),
             'noOfRecords'   => $noOfRecordsPerPage,
         ]);
     }
@@ -98,8 +102,6 @@ class AccountController extends Controller
         $account              = null;
         $openingTransactionId = null;
 
-        $openingBalanceAccountId = config('constants.accountConstants.AccountOpeningBalance.id');
-
         $financialStatus    = $request->get('financial_status');
         $openingBalance     = $request->get('opening_balance');
         $name               = $request->get('name');
@@ -108,9 +110,15 @@ class AccountController extends Controller
         DB::beginTransaction();
         try {
             $user = Auth::user();
+            $whereParams = [
+                'account_name' => [
+                    'paramName'     => 'account_name',
+                    'paramOperator' => '=',
+                    'paramValue'    => "Account-Opening-Balance",
+                ]
+            ];
             //confirming opening balance existency.
-            //getAccount($id, $withParams=[], $activeFlag=true)
-            $openingBalanceAccount = $this->accountRepo->getAccount($openingBalanceAccountId, [], false);
+            $openingBalanceAccountId = $this->accountRepo->getAccounts($whereParams,$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)->id;
 
             if(!empty($id)) {
                 $account = $this->accountRepo->getAccount($id, [], false);
@@ -118,11 +126,11 @@ class AccountController extends Controller
                 if($account->financial_status == 2){
                     $searchTransaction = [
                         ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
-                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
+                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccount->id],
                     ];
                 } else {
                     $searchTransaction = [
-                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
+                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccount->id],
                         ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
                     ];
                 }
@@ -142,13 +150,11 @@ class AccountController extends Controller
                 'name'              => $name,
                 'phone'             => $request->get('phone'),
                 'address'           => $request->get('address'),
-                'status'            => 1,
-                'created_by'        => $user->id,
-                'company_id'        => $user->company_id,
+                'status'            => 1
             ], $id);
 
             if(!$accountResponse['flag']) {
-                throw new AppCustomException("CustomError", $accountResponse['errorCode']);
+                throw new TMException("CustomError", $accountResponse['errorCode']);
             }
 
             //opening balance transaction details
@@ -169,17 +175,17 @@ class AccountController extends Controller
 
             //save to transaction table
             $transactionResponse   = $transactionRepo->saveTransaction([
+                'transaction_date'  => Carbon::now()->format('Y-m-d'),
                 'debit_account_id'  => $debitAccountId,
                 'credit_account_id' => $creditAccountId,
                 'amount'            => $openingBalance,
-                'transaction_date'  => Carbon::now()->format('Y-m-d'),
                 'particulars'       => $particulars,
                 'status'            => 1,
-                'company_id'        => $user->company_id,
+                'created_by'        => Auth::id(),
             ], $openingTransactionId);
 
             if(!$transactionResponse['flag']) {
-                throw new AppCustomException("CustomError", $transactionResponse['errorCode']);
+                throw new TMException("CustomError", $transactionResponse['errorCode']);
             }
 
             DB::commit();
@@ -191,7 +197,7 @@ class AccountController extends Controller
                 ];
             }
             return redirect(route('account.show', $accountResponse['account']->id))->with("message","Account details saved successfully. Reference Number : ". $accountResponse['account']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (Exception $e) {dd($e);
             //roll back in case of exceptions
             DB::rollback();
 

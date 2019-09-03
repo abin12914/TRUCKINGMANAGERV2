@@ -15,8 +15,14 @@ $(function () {
         showConfirmButton : false,
     });*/
 
-    //hide flash messages
-    dismissAlert();
+    if(alertType && alertMessage) {
+        if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
+            //'reach here using the browser "Back" or "Forward" button
+            $('#show_last_message').hide();
+            return false;
+        }
+        showAlert();
+    }
 
     //Initialize Select2 Element for select box
     initializeSelect2();
@@ -171,17 +177,27 @@ $(function () {
     });
 });
 
-//method for automatic disappearing of message boxes
-function dismissAlert() {
-    $("#alert-message").fadeTo(8000, 500).slideUp(1000, function(){
-        $("#alert-message").slideUp(500);
-    });
-}
-
 //method for initializing select2
 function initializeSelect2() {
     $(".select2").select2({
         minimumResultsForSearch: 5,
         placeholder: 'Select option'
+    });
+}
+
+//display sweet alert
+function showAlert() {
+    if(alertType == 'error') {
+        messageTitle = "Failed";
+    } else {
+        messageTitle =  alertType;
+    }
+
+    swal({
+        title: messageTitle,
+        type: alertType,
+        text: alertMessage,
+        timer: 5000,
+        showConfirmButton : false,
     });
 }

@@ -5,14 +5,14 @@ namespace App\Http\View\Composers;
 use Illuminate\View\View;
 use Exception;
 
-class AccountTypeComponentComposer
+class AccountRelationRegComponentComposer
 {
     /**
      * The user repository implementation.
      *
      * @var UserRepository
      */
-    protected $accountRelationTypes = [];
+    protected $accountRelations = [];
 
     /**
      * Create a new profile composer.
@@ -23,7 +23,12 @@ class AccountTypeComponentComposer
     public function __construct()
     {
         try {
-            $this->accountRelationTypes = config('constants.accountRelationTypes');
+            $relations          = config('constants.accountRelations');
+            $employeeRelation   = array_search('Employees', $relations); //employee -> [index = 1]
+            //excluding the relationtype 'employee'[index = 1] for account register/update
+            unset($relations[$employeeRelation]);
+
+            $this->accountRelations = $relations;
         } catch (Exception $e) {
         }
     }
@@ -36,6 +41,6 @@ class AccountTypeComponentComposer
      */
     public function compose(View $view)
     {
-        $view->with('accountRelationTypes', $this->accountRelationTypes);
+        $view->with('accountRelations', $this->accountRelations);
     }
 }

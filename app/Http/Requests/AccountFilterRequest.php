@@ -30,7 +30,7 @@ class AccountFilterRequest extends FormRequest
                                 ],
             'relation_type' =>  [
                                     'nullable',
-                                    Rule::in(array_keys(config('constants.accountRelationTypes'))),
+                                    Rule::in(array_keys(config('constants.accountRelations'))),
                                 ],
             'account_id'    =>  [
                                     'nullable',

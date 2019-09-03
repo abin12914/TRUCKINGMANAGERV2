@@ -12,6 +12,13 @@ class Account extends Model
     use BelongsToTenants;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
