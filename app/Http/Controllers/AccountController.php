@@ -126,11 +126,11 @@ class AccountController extends Controller
                 if($account->financial_status == 2){
                     $searchTransaction = [
                         ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
-                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccount->id],
+                        ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
                     ];
                 } else {
                     $searchTransaction = [
-                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccount->id],
+                        ['paramName' => 'debit_account_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceAccountId],
                         ['paramName' => 'credit_account_id', 'paramOperator' => '=', 'paramValue' => $account->id],
                     ];
                 }
@@ -197,7 +197,7 @@ class AccountController extends Controller
                 ];
             }
             return redirect(route('account.show', $accountResponse['account']->id))->with("message","Account details saved successfully. Reference Number : ". $accountResponse['account']->id)->with("alert-class", "success");
-        } catch (Exception $e) {dd($e);
+        } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -234,9 +234,7 @@ class AccountController extends Controller
         }
 
         return view('accounts.details', [
-            'account'       => $account,
-            'relationTypes' => config('constants.accountRelationTypes'),
-            'accountTypes'  => config('constants.$accountTypes'),
+            'account' => $account
         ]);
     }
 
@@ -251,11 +249,6 @@ class AccountController extends Controller
         $errorCode  = 0;
         $account    = [];
 
-        $relationTypes        = config('constants.accountRelationTypes');
-        $employeeRelationType = array_search('Employees', config('constants.accountRelationTypes')); //employee -> [index = 1]
-        //excluding the relationtype 'employee'[index = 1] for account update
-        unset($relationTypes[$employeeRelationType]);
-
         try {
             $account = $this->accountRepo->getAccount($id, [], false);
         } catch (Exception $e) {
@@ -265,8 +258,7 @@ class AccountController extends Controller
         }
 
         return view('accounts.edit', [
-            'account'       => $account,
-            'relationTypes' => $relationTypes,
+            'account' => $account
         ]);
     }
 
@@ -285,7 +277,7 @@ class AccountController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('account.show', $updateResponse['account']->id))->with("message","Account details updated successfully. Updated Record Number : ". $updateResponse['account']->id)->with("alert-class", "success");
+            return redirect(route('accounts.show', $updateResponse['account']->id))->with("message","Account details updated successfully. Updated Record Number : ". $updateResponse['account']->id)->with("alert-class", "success");
         }
         
         return redirect()->back()->with("message","Failed to update the account details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");

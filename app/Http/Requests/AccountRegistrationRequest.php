@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Auth;
 
 class AccountRegistrationRequest extends FormRequest
 {
@@ -29,7 +30,10 @@ class AccountRegistrationRequest extends FormRequest
                                             'required',
                                             'max:100',
                                             'min:3',
-                                            Rule::unique('accounts')->ignore($this->account),
+                                            Rule::unique('accounts')->ignore($this->account)
+                                                ->where(function ($query) {
+                                                    $query->where('company_id', Auth::User()->company_id);
+                                                }),
                                         ],
             'description'           =>  [
                                             'nullable',

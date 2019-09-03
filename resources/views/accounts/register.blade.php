@@ -90,7 +90,7 @@
                                     <div class="form-group">
                                         <label for="relation_type" class="col-md-3 control-label"><b style="color: red;">* </b> Primary Relation : </label>
                                         <div class="col-md-9">
-                                            {{-- adding employee select component --}}
+                                            {{-- adding account select component --}}
                                             @component('components.selects.account-relation-reg', ['selectedRelation' => old('relation_type'), 'selectName' => 'relation_type', 'tabindex' => 6])
                                             @endcomponent
                                             {{-- adding error_message p tag component --}}

@@ -144,14 +144,13 @@ $(function () {
     // for confirming delete
     $('body').on("click", ".update_button", function () {
         swal({
-              title: 'Are you sure to update the record?',
-              type: 'warning',
-              showCancelButton: true,
-              focusCancel : true,
-              confirmButtonColor: '#d33',
-              confirmButtonText: 'Yes, update it!'
+              title: 'Update?',
+              text: 'Are you sure to update the record?',
+              icon: 'warning',
+              buttons: true,
+              dangerMode: true
             }).then((result) => {
-              if (result.value) {
+              if (result) {
                 //submit delete form on confirmation
                 $(this).parents('form:first').submit();
               }
@@ -161,15 +160,14 @@ $(function () {
     // for confirming delete
     $('body').on("click", ".delete_button", function () {
         swal({
-              title: 'Are you sure to delete?',
-              text: "You won't be able to revert this!",
-              type: 'warning',
-              showCancelButton: true,
-              focusCancel : true,
-              confirmButtonColor: '#d33',
-              confirmButtonText: 'Yes, delete it!'
+              title: 'Delete?',
+              text: "Are you sure to delete? You won't be able to revert this!",
+              icon: 'warning',
+              buttons: true,
+              dangerMode : true,
+              button: "Yes, Delete"
             }).then((result) => {
-              if (result.value) {
+              if (result) {
                 //submit delete form on confirmation
                 $(this).parents('form:first').submit();
               }
@@ -195,9 +193,9 @@ function showAlert() {
 
     swal({
         title: messageTitle,
-        type: alertType,
+        icon: alertType,
         text: alertMessage,
         timer: 5000,
-        showConfirmButton : false,
+        buttons : false,
     });
 }

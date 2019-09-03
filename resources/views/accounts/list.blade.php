@@ -97,13 +97,13 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 5%;">#</th>
-                                        <th style="width: 20%;">Account Name</th>
-                                        <th style="width: 15%;">Relation</th>
-                                        <th style="width: 20%;">Name</th>
+                                        <th style="width: 15%;">Account Name</th>
+                                        <th style="width: 10%;">Relation</th>
+                                        <th style="width: 15%;">Name</th>
                                         <th style="width: 15%;">Phone</th>
-                                        <th style="width: 10%;">Opening Credit</th>
-                                        <th style="width: 10%;">Opening Debit</th>
-                                        <th style="width: 5%;" class="no-print">Details</th>
+                                        <th style="width: 15%;">Opening Credit</th>
+                                        <th style="width: 15%;">Opening Debit</th>
+                                        <th style="width: 10%;" class="no-print">Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -118,7 +118,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{ (!empty($relationTypes) && !empty($relationTypes[$account->relation])) ? $relationTypes[$account->relation] : "Error!" }}
+                                                    {{ (!empty($accountRelations) && !empty($accountRelations[$account->relation])) ? $accountRelations[$account->relation] : "Error!" }}
                                                 </td>
                                                 <td>{{ $account->name }}</td>
                                                 <td>{{ $account->phone }}</td>
