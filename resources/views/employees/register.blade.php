@@ -12,6 +12,9 @@
         <li class="active"> Registration</li>
     </ol>
 </section>
+@foreach($errors->all() as $err)
+    {{ $err }}
+@endforeach
 <!-- Main content -->
 <section class="content">
     <!-- Main row -->
@@ -66,11 +69,9 @@
                                 <div class="form-group">
                                     <label class="col-md-3 control-label"><b style="color: red;">* </b> Employee Type : </label>
                                     <div class="col-md-9">
-                                        <select class="form-control select2" name="employee_type" id="employee_type" tabindex="4">
-                                            <option value="" {{ empty(old('employee_type')) ? 'selected' : '' }}>Select wage type</option>
-                                            <option value="1" {{ !empty(old('employee_type')) && old('employee_type') == 1 ? 'selected' : '' }}>Office Staff</option>
-                                            <option value="2" {{ !empty(old('employee_type')) && old('employee_type') == 2 ? 'selected' : '' }}>Machine Operator</option>
-                                        </select>
+                                        {{-- adding account employee type component --}}
+                                        @component('components.selects.employee-type', ['selectedType' => old('employee_type'), 'selectName' => 'employee_type', 'tabindex' => 4])
+                                        @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'employee_type'])
                                         @endcomponent
@@ -81,20 +82,15 @@
                                     <div class="col-md-9">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="text" name="wage" class="form-control decimal_number_only" id="wage" placeholder="Salary/wage" value="{{ old('wage') }}" tabindex="5">
+                                                <input type="text" name="wage_value" class="form-control decimal_number_only" id="wage_value" placeholder="Salary/wage" value="{{ old('wage_value') }}" tabindex="5">
                                                 {{-- adding error_message p tag component --}}
-                                                @component('components.paragraph.error_message', ['fieldName' => 'wage'])
+                                                @component('components.paragraph.error_message', ['fieldName' => 'wage_value'])
                                                 @endcomponent
                                             </div>
                                             <div class="col-md-6">
-                                                <select class="form-control select2" name="wage_type" id="wage_type" tabindex="6">
-                                                    <option value="" {{ empty(old('wage_type')) ? 'selected' : '' }}>Select wage type</option>
-                                                    @if(!empty($wageTypes))
-                                                        @foreach($wageTypes as $key => $wageType)
-                                                            <option value="{{ $key }}" {{ old('wage_type') == $key ? 'selected' : '' }}>{{ $wageType }}</option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
+                                                {{-- adding wage type select component --}}
+                                                @component('components.selects.wage-type', ['selectedType' => old('wage_type'), 'selectName' => 'wage_type', 'tabindex' => 6])
+                                                @endcomponent
                                                 {{-- adding error_message p tag component --}}
                                                 @component('components.paragraph.error_message', ['fieldName' => 'wage_type'])
                                                 @endcomponent

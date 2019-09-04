@@ -44,7 +44,7 @@ class EmployeeRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($employees, $aggregates) : parent::getFilter($employees, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

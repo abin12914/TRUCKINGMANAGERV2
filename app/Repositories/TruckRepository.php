@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Truck;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class TruckRepository extends Repository
 {
@@ -44,7 +44,7 @@ class TruckRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $trucks;
@@ -76,7 +76,7 @@ class TruckRepository extends Repository
                 $this->errorCode = $this->repositoryCode + 3;
             }
             
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $truck;
@@ -105,8 +105,8 @@ class TruckRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-
-            throw new AppCustomException("CustomError", $this->errorCode);
+dd($e);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
@@ -130,7 +130,7 @@ class TruckRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
             
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'          => false,

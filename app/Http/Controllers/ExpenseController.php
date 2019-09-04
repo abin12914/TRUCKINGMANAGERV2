@@ -3,25 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\EmployeeRepository;
-use App\Http\Requests\EmployeeRegistrationRequest;
-use App\Http\Requests\EmployeeFilterRequest;
-use \Carbon\Carbon;
+use App\Repositories\ExpenseRepository;
+use App\Repositories\TransactionRepository;
+use App\Repositories\AccountRepository;
+use App\Http\Requests\ExpenseRegistrationRequest;
+use App\Http\Requests\ExpenseFilterRequest;
+use Carbon\Carbon;
 use Auth;
 use DB;
 use Exception;
-use App\Exceptions\TMException;
+use App\Exceptions\AppCustomException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ExpenseController extends Controller
 {
-    protected $employeeRepo;
+    protected $expenseRepo;
     public $errorHead = null;
 
-    public function __construct(EmployeeRepository $employeeRepo)
+    public function __construct(ExpenseRepository $expenseRepo)
     {
-        $this->employeeRepo = $employeeRepo;
-        $this->errorHead   = config('settings.controllerCode.EmployeeController');
+        $this->expenseRepo = $expenseRepo;
+        $this->errorHead   = config('settings.controller_code.ExpenseController');
     }
 
     /**
@@ -29,47 +31,66 @@ class ExpenseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(EmployeeFilterRequest $request)
+    public function index(ExpenseFilterRequest $request)
     {
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
+        //date format conversion
+        $fromDate    = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
+        $toDate      = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
 
         $whereParams = [
-            'relation_type' => [
-                'paramName'     => 'relation',
+            'service_id' => [
+                'paramName'     => 'service_id',
                 'paramOperator' => '=',
-                'paramValue'    => $request->get('relation_type'),
+                'paramValue'    => $request->get('service_id'),
             ],
-            'employee_id' => [
-                'paramName'     => 'id',
+            'truck_id' => [
+                'paramName'     => 'truck_id',
                 'paramOperator' => '=',
-                'paramValue'    => $request->get('employee_id'),
-            ],
-            'type' => [
-                'paramName'     => 'type',
-                'paramOperator' => '=',
-                'paramValue'    => 3,
+                'paramValue'    => $request->get('truck_id'),
             ],
         ];
 
-        $orWhereParams = [
-            'employee_name' => [
-                'paramName'     => 'employee_name',
-                'paramOperator' => 'LIKE',
-                'paramValue'    => ("%". $request->get('name'). "%"),
-            ],
-            'name' => [
-                'paramName'     => 'name',
-                'paramOperator' => 'LIKE',
-                'paramValue'    => ("%". $request->get('name'). "%"),
+        $relationalOrParams = [
+            'from_date'    =>  [
+                'relation' => 'transaction',
+                'params'   => [
+                    'transaction_date' => [
+                        'paramName'     => 'transaction_date',
+                        'paramOperator' => '>=',
+                        'paramValue'    => $fromDate,
+                    ],
+                    'transaction_date' => [
+                        'paramName'     => 'transaction_date',
+                        'paramOperator' => '<=',
+                        'paramValue'    => $toDate,
+                    ],
+                ]
             ]
         ];
 
-        //getEmployees($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
-        return view('employees.list', [
-            'employees'      => $this->employeeRepo->getEmployees($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
-            'relationTypes' => config('constants.employeeRelationTypes'),
-            'params'        => array_merge($whereParams,$orWhereParams),
-            'noOfRecords'   => $noOfRecordsPerPage,
+        $relationalParams = [
+            'account_id' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'credit_account_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('account_id'),
+            ]
+        ];
+
+        $expenses = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
+        $totalExpense = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, $relationalOrParams, [], ['key' => 'sum', 'value' => 'amount'], [], true);
+
+        //params passing for auto selection
+        $whereParams['from_date']['paramValue'] = $request->get('from_date');
+        $whereParams['to_date']['paramValue']   = $request->get('to_date');
+        
+        //getExpenses($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
+        return view('expenses.list', [
+            'expenses'     => $expenses,
+            'totalExpense' => $totalExpense,
+            'params'       => array_merge($whereParams, $relationalParams),
+            'noOfRecords'  => $noOfRecordsPerPage,
         ]);
     }
 
@@ -80,7 +101,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('employees.register');
+        return view('expenses.register');
     }
 
     /**
@@ -90,107 +111,71 @@ class ExpenseController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(
-        EmployeeRegistrationRequest $request,
+        ExpenseRegistrationRequest $request,
         TransactionRepository $transactionRepo,
+        AccountRepository $accountRepo,
         $id=null
     ) {
-        $errorCode            = 0;
-        $employee              = null;
-        $openingTransactionId = null;
+        $errorCode = 0;
+        $expense   = null;
 
-        $openingBalanceEmployeeId = config('constants.employeeConstants.EmployeeOpeningBalance.id');
-
-        $financialStatus    = $request->get('financial_status');
-        $openingBalance     = $request->get('opening_balance');
-        $name               = $request->get('name');
+        $expenseAccountId   = config('constants.accountConstants.ServiceAndExpense.id');
+        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $totalBill          = $request->get('bill_amount');
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
             $user = Auth::user();
-            //confirming opening balance existency.
-            //getEmployee($id, $withParams=[], $activeFlag=true)
-            $openingBalanceEmployee = $this->employeeRepo->getEmployee($openingBalanceEmployeeId, [], false);
 
+            //confirming expense account exist-ency.
+            $expenseAccount = $accountRepo->getAccount($expenseAccountId, [], false);
             if(!empty($id)) {
-                $employee = $this->employeeRepo->getEmployee($id, [], false);
-
-                if($employee->financial_status == 2){
-                    $searchTransaction = [
-                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
-                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
-                    ];
-                } else {
-                    $searchTransaction = [
-                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
-                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
-                    ];
-                }
-
-                //getTransactions($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$relation,$activeFlag=true)
-                $openingTransactionId = $transactionRepo->getTransactions($searchTransaction, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], null, false)->id;
+                $expense = $this->expenseRepo->getExpense($id, [], false);
             }
 
-            //save to employee table
-            $employeeResponse   = $this->employeeRepo->saveEmployee([
-                'employee_name'      => $request->get('employee_name'),
-                'description'       => $request->get('description'),
-                'type'              => array_search('Personal', (config('constants.employeeTypes'))),
-                'relation'          => $request->get('relation_type'),
-                'financial_status'  => $financialStatus,
-                'opening_balance'   => $openingBalance,
-                'name'              => $name,
-                'phone'             => $request->get('phone'),
-                'address'           => $request->get('address'),
-                'status'            => 1,
-                'created_by'        => $user->id,
-                'company_id'        => $user->company_id,
-            ], $id);
-
-            if(!$employeeResponse['flag']) {
-                throw new AppCustomException("CustomError", $employeeResponse['errorCode']);
-            }
-
-            //opening balance transaction details
-            if($financialStatus == 1) { //incoming [employee holder gives cash to company] [Creditor]
-                $debitEmployeeId     = $openingBalanceEmployeeId; //cash flow into the opening balance employee
-                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id [flow out from new employee]
-                $particulars        = "Opening balance of ". $name . " - Debit [Creditor]";
-            } else if($financialStatus == 2){ //outgoing [company gives cash to employee holder] [Debitor]
-                $debitEmployeeId     = $employeeResponse['employee']->id; //newly created employee id [flow into new employee]
-                $creditEmployeeId    = $openingBalanceEmployeeId; //flow out from the opening balance employee
-                $particulars        = "Opening balance of ". $name . " - Credit [Debitor]";
-            } else {
-                $debitEmployeeId     = $openingBalanceEmployeeId;
-                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id
-                $particulars        = "Opening balance of ". $name . " - None";
-                $openingBalance     = 0;
-            }
-
-            //save to transaction table
+            //save expense transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([
-                'debit_employee_id'  => $debitEmployeeId,
-                'credit_employee_id' => $creditEmployeeId,
-                'amount'            => $openingBalance,
-                'transaction_date'  => Carbon::now()->format('Y-m-d'),
-                'particulars'       => $particulars,
+                'debit_account_id'  => $expenseAccountId, // debit the expense account
+                'credit_account_id' => $request->get('account_id'), // credit the supplier
+                'amount'            => $totalBill,
+                'transaction_date'  => $transactionDate,
+                'particulars'       => $request->get('description')."[Purchase & Expense]",
                 'status'            => 1,
                 'company_id'        => $user->company_id,
-            ], $openingTransactionId);
+            ], (!empty($expense) ? $expense->transaction_id : null));
 
             if(!$transactionResponse['flag']) {
                 throw new AppCustomException("CustomError", $transactionResponse['errorCode']);
             }
 
+            //save to expense table
+            $expenseResponse = $this->expenseRepo->saveExpense([
+                'transaction_id' => $transactionResponse['transaction']->id,
+                'expense_date'   => $transactionDate,
+                'truck_id'   => $request->get('truck_id'),
+                'service_id'     => $request->get('service_id'),
+                'description'    => $request->get('description'),
+                'bill_amount'    => $totalBill,
+                'status'         => 1,
+                'created_by'     => $user->id,
+                'company_id'     => $user->company_id,
+            ], $id);
+
+            if(!$expenseResponse['flag']) {
+                throw new AppCustomException("CustomError", $expenseResponse['errorCode']);
+            }
+
             DB::commit();
-            
+
             if(!empty($id)) {
                 return [
                     'flag'    => true,
-                    'employee' => $employeeResponse['employee'],
+                    'expense' => $expenseResponse['expense']
                 ];
             }
-            return redirect(route('employee.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. Reference Number : ". $employeeResponse['employee']->id)->with("alert-class", "success");
+
+            return redirect(route('expense.index'))->with("message","Expense details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -199,12 +184,11 @@ class ExpenseController extends Controller
         }
         if(!empty($id)) {
             return [
-                'flag'      => false,
-                'errorCode' => $errorCode
+                'flag'          => false,
+                'errorCode'    => $errorCode
             ];
         }
-        
-        return redirect()->back()->with("message","Failed to save the employee details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -215,22 +199,19 @@ class ExpenseController extends Controller
      */
     public function show($id)
     {
-        $errorCode  = 0;
-        $employee    = [];
+        $expense    = [];
 
         try {
-            $employee = $this->employeeRepo->getEmployee($id, [], false);
-        } catch (Exception $e) {
+            $expense = $this->expenseRepo->getExpense($id, [], false);
+        } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-
-            //throwing model not found exception when no model is fetched
-            throw new ModelNotFoundException("Employee", $errorCode);
+            
+            //throwing methodnotfound exception when no model is fetched
+            throw new ModelNotFoundException("Expense", $errorCode);
         }
 
-        return view('employees.details', [
-            'employee'       => $employee,
-            'relationTypes' => config('constants.employeeRelationTypes'),
-            'employeeTypes'  => config('constants.$employeeTypes'),
+        return view('expenses.details', [
+            'expense' => $expense,
         ]);
     }
 
@@ -242,25 +223,18 @@ class ExpenseController extends Controller
      */
     public function edit($id)
     {
-        $errorCode  = 0;
-        $employee    = [];
-
-        $relationTypes        = config('constants.employeeRelationTypes');
-        $employeeRelationType = array_search('Employees', config('constants.employeeRelationTypes')); //employee -> [index = 1]
-        //excluding the relationtype 'employee'[index = 1] for employee update
-        unset($relationTypes[$employeeRelationType]);
+        $expense    = [];
 
         try {
-            $employee = $this->employeeRepo->getEmployee($id, [], false);
-        } catch (Exception $e) {
+            $expense = $this->expenseRepo->getExpense($id, [], false);
+        } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
             //throwing methodnotfound exception when no model is fetched
-            throw new ModelNotFoundException("Employee", $errorCode);
+            throw new ModelNotFoundException("Expense", $errorCode);
         }
 
-        return view('employees.edit', [
-            'employee'       => $employee,
-            'relationTypes' => $relationTypes,
+        return view('expenses.edit', [
+            'expense' => $expense,
         ]);
     }
 
@@ -272,17 +246,18 @@ class ExpenseController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(
-        EmployeeRegistrationRequest $request,
+        ExpenseRegistrationRequest $request,
         TransactionRepository $transactionRepo,
+        AccountRepository $accountRepo,
         $id
     ) {
-        $updateResponse = $this->store($request, $transactionRepo, $id);
+        $updateResponse = $this->store($request, $transactionRepo, $accountRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('employee.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. Updated Record Number : ". $updateResponse['employee']->id)->with("alert-class", "success");
+            return redirect(route('expense.index'))->with("message","Expenses details updated successfully. Updated Record Number : ". $updateResponse['expense']->id)->with("alert-class", "success");
         }
         
-        return redirect()->back()->with("message","Failed to update the employee details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the expenses details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -293,6 +268,26 @@ class ExpenseController extends Controller
      */
     public function destroy($id)
     {
-        return redirect()->back()->with("message", "Deletion restricted.")->with("alert-class", "error");
+        $errorCode  = 0;
+
+        //wrapping db transactions
+        DB::beginTransaction();
+        try {
+            $deleteResponse = $this->expenseRepo->deleteExpense($id, false);
+            
+            if(!$deleteResponse['flag']) {
+                throw new AppCustomException("CustomError", $deleteResponse['errorCode']);
+            }
+            
+            DB::commit();
+            return redirect(route('expense.index'))->with("message","Expense details deleted successfully.")->with("alert-class", "success");
+        } catch (Exception $e) {
+            //roll back in case of exceptions
+            DB::rollback();
+
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+        }
+        
+        return redirect()->back()->with("message","Failed to delete the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

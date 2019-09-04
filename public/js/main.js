@@ -179,7 +179,6 @@ $(function () {
 function initializeSelect2() {
     $(".select2").select2({
         minimumResultsForSearch: 5,
-        placeholder: 'Select option'
     });
 }
 

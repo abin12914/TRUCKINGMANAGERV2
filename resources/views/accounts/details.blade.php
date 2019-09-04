@@ -24,6 +24,7 @@
                         <div class="widget-user-image">
                             <img class="img-circle" src="/images/default_account.png" alt="User Avatar">
                         </div>
+                        <!-- /.widget-user-image -->
                         <h3 class="widget-user-username">{{ $account->account_name }} {{ $account->status != 1 ? '(Suspended Account)' : '' }}</h3>
                         <h6 class="widget-user-desc">
                             {{ (!empty($accountRelations) && !empty($accountRelations[$account->relation])) ? $accountRelations[$account->relation] : "Error" }}

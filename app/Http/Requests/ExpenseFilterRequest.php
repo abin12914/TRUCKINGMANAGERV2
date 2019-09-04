@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class EmployeeFilterRequest extends FormRequest
+class ExpenseFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,25 +24,35 @@ class EmployeeFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'          =>  [
-                                    'nullable'
-                                ],
-            'employee_type' =>  [
+            'from_date'     =>  [
                                     'nullable',
-                                    Rule::in(array_keys(config('constants.employeeTypes'))),
+                                    'date_format:d-m-Y',
                                 ],
-            'employee_id'   =>  [
+            'to_date'       =>  [
                                     'nullable',
-                                    'exists:employees,id',
+                                    'date_format:d-m-Y',
+                                    'after_or_equal:from_date'
                                 ],
-            'page'          =>  [
+            'service_id'    =>  [
                                     'nullable',
-                                    'integer',
+                                    'exists:services,id',
+                                ],
+            'account_id'    =>  [
+                                    'nullable',
+                                    'exists:accounts,id',
+                                ],
+            'excavator_id'  =>  [
+                                    'nullable',
+                                    'exists:accounts,id',
                                 ],
             'no_of_records' =>  [
                                     'nullable',
                                     'min:2',
                                     'max:100',
+                                    'integer',
+                                ],
+            'page'          =>  [
+                                    'nullable',
                                     'integer',
                                 ],
         ];

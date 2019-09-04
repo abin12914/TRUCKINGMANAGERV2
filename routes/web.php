@@ -28,6 +28,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 
 	Route::resources([
 	    'accounts' 	=> 'AccountController',
-	    'employees'	=> 'EmployeeController'
+	    'employees'	=> 'EmployeeController',
+	    'trucks'	=> 'TruckController',
+	    'expenses'	=> 'ExpenseController'
 	]);
 });

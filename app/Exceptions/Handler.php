@@ -48,10 +48,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if($exception instanceof ModelNotFoundException) {
+        if($exception instanceof ModelNotFoundException) {dd($exception);
             //return custom error page when record not found in db
             return response()->view('errors.record-not-found', compact('exception'));
-        } else if($exception instanceof TMException) {
+        } else if($exception instanceof TMException) {dd($exception);
             //return custom error page when custom exception is thrown
             return response()->view('errors.app-custom-exception', compact('exception'));
         }

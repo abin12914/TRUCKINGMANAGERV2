@@ -2,124 +2,124 @@
 
 namespace App\Repositories;
 
-use App\Models\Expense;
+use App\Models\TruckType;
 use Exception;
 use App\Exceptions\TMException;
 
-class ExpenseRepository extends Repository
+class TruckTypeRepository extends Repository
 {
     public $repositoryCode, $errorCode = 0;
 
     public function __construct()
     {
-        $this->repositoryCode = config('settings.repository_code.ExpenseRepository');
+        $this->repositoryCode = config('settings.repository_code.TruckTypeRepository');
     }
 
     /**
-     * Return expenses.
+     * Return services.
      */
-    public function getExpenses(
+    public function getTruckTypes(
         $whereParams=[],
         $orWhereParams=[],
         $relationalParams=[],
-        $relationalOrParams=[],
         $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],
         $aggregates=['key' => null, 'value' => null],
         $withParams=[],
         $activeFlag=true
     ){
-        $expenses = [];
+        $services = [];
 
         try {
-            $expenses = empty($withParams) ? Expense::query() : Expense::with($withParams);
+            $services = empty($withParams) ? TruckType::query() : TruckType::with($withParams);
 
-            $expenses = $activeFlag ? $expenses->active() : $expenses;
+            $services = $activeFlag ? $services->active() : $services;
 
-            $expenses = parent::whereFilter($expenses, $whereParams);
+            $services = parent::whereFilter($services, $whereParams);
 
-            $expenses = parent::orWhereFilter($expenses, $orWhereParams);
+            $services = parent::orWhereFilter($services, $orWhereParams);
 
-            $expenses = parent::relationalFilter($expenses, $relationalParams);
+            $services = parent::relationalFilter($services, $relationalParams);
 
-            $expenses = parent::relationalOrFilter($expenses, $relationalOrParams);
-
-            return (!empty($aggregates['key']) ? parent::aggregatesSwitch($expenses, $aggregates) : parent::getFilter($expenses, $orderBy));
-        } catch (Exception $e) {dd($e);
+            return (!empty($aggregates['key']) ? parent::aggregatesSwitch($services, $aggregates): parent::getFilter($services, $orderBy));
+        } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
         }
 
-        return $expenses;
+        return $services;
     }
 
     /**
-     * return expense.
+     * return service.
      */
-    public function getExpense($id, $withParams=[], $activeFlag=true)
+    public function getTruckType($id, $withParams=[], $activeFlag=true)
     {
-        $expense = [];
+        $service = [];
 
         try {
             if(empty($withParams)) {
-                $expense = Expense::query();
+                $service = TruckType::query();
             } else {
-                $expense = Expense::with($withParams);
+                $service = TruckType::with($withParams);
             }
             
             if($activeFlag) {
-                $expense = $expense->active();
+                $service = $service->active();
             }
 
-            $expense = $expense->findOrFail($id);
+            $service = $service->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
-
+            
             throw new TMException("CustomError", $this->errorCode);
         }
 
-        return $expense;
+        return $service;
     }
 
     /**
-     * Action for expense save.
+     * Action for saving services.
      */
-    public function saveExpense($inputArray=[], $id=null)
+    public function saveTruckType($inputArray=[], $id=null)
     {
+        $saveFlag   = false;
+
         try {
             //find record with id or create new if none exist
-            $expense = Expense::findOrNew($id);
+            $service = TruckType::findOrNew($id);
 
             foreach ($inputArray as $key => $value) {
-                $expense->$key = $value;
+                $service->$key = $value;
             }
-            //expense save
-            $expense->save();
+            //service save
+            $service->save();
 
             return [
                 'flag'    => true,
-                'expense' => $expense,
+                'service' => $service,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-
+            
             throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
-            'errorCode' => $this->repositoryCode + 3,
+            'errorCode' => $this->repositoryCode + 4,
         ];
     }
 
-    public function deleteExpense($id, $forceFlag=false)
+    public function deleteTruckType($id, $forceFlag=false)
     {
+        $deleteFlag = false;
+
         try {
-            //get expense
-            $expense = $this->getExpense($id, [], false);
+            $service = $this->getTruckType($id, [], false);
 
             //force delete or soft delete
-            //related models will be deleted by deleting event handlers
-            $forceFlag ? $expense->forceDelete() : $expense->delete();
+            //related records will be deleted by deleting event handlers
+            $forceFlag ? $service->forceDelete() : $service->delete();
             
             return [
                 'flag'  => true,
@@ -130,9 +130,10 @@ class ExpenseRepository extends Repository
             
             throw new TMException("CustomError", $this->errorCode);
         }
+
         return [
-            'flag'          => false,
-            'errorCode'    => $this->repositoryCode + 6,
+            'flag'      => false,
+            'errorCode' => $this->repositoryCode + 6,
         ];
     }
 }

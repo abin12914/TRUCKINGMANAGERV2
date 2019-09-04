@@ -2,12 +2,6 @@
 //use extra caution while edit cause it may affect multiple parts of the project
 //never think of changing values in production, ever!!
 return [
-    'userRoles' => [
-        'superadmin' => 0,
-        'admin'      => 1,
-        'user'       => 2,
-    ],
-
     'accountRelations' => [
         1 => 'Employees',
         2 => 'Supplier',
@@ -22,10 +16,22 @@ return [
         3 => 'Personal',
     ],
 
-    'employeeWageTypes' => [
-        1 => 'Per Month',
-        2 => 'Per Day',
-        3 => 'Trip Bata'
+    'employeeTypes' => [
+        1 => 'Driver',
+        2 => 'Office Staff'
+    ],
+
+    'wageTypes' => [
+        1 => 'Trip Bata (%)',
+        2 => 'Per Month',
+        3 => 'Per Day'
+    ],
+
+    'truckBodyTypes' => [
+        1   => 'Level Body',
+        2   => 'Extendend Body',
+        3   => 'Extra Extendend Body',
+        4   => 'Cut-Down Body'
     ],
 
     'siteTypes' => [
@@ -33,6 +39,10 @@ return [
         2 => 'Earth Movement Area',
         3 => 'Residential Area',
         4 => 'Construction Area'
+    ],
+
+    'stateCodes' => [
+        1 => 'KL'
     ],
 
     'transactionRelations' => [
