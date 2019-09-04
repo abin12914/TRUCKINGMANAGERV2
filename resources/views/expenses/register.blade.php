@@ -26,7 +26,7 @@
                 <!-- form start -->
                 <form action="{{route('expenses.store')}}" method="post" class="form-horizontal" autocomplete="off">
                     <div class="box-body">
-                        <input type="hidden" name="_token" value="{{csrf_token()}}">
+                        @csrf
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
@@ -53,9 +53,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label for="truck_id" class="control-label"><b style="color: red;">* </b> Excavator : </label>
+                                            <label for="truck_id" class="control-label"><b style="color: red;">* </b> Truck : </label>
                                             {{-- adding trucks select component --}}
-                                            @component('components.selects.trucks', ['selectedTruckId' => old('etruck_id'), 'selectName' => 'truck_id', 'tabindex' => 3])
+                                            @component('components.selects.trucks', ['selectedTruckId' => old('truck_id'), 'selectName' => 'truck_id', 'tabindex' => 3])
                                             @endcomponent
                                             {{-- adding error_message p tag component --}}
                                             @component('components.paragraph.error_message', ['fieldName' => 'truck_id'])
@@ -86,10 +86,10 @@
                                             @endcomponent
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="bill_amount" class="control-label"><b style="color: red;">* </b> Bill Amount: </label>
-                                            <input type="text" class="form-control decimal_number_only" name="bill_amount" id="bill_amount" placeholder="Bill amount" value="{{ old('bill_amount') }}" maxlength="8" tabindex="6">
+                                            <label for="amount" class="control-label"><b style="color: red;">* </b> Bill Amount: </label>
+                                            <input type="text" class="form-control decimal_number_only" name="amount" id="amount" placeholder="Bill amount" value="{{ old('amount') }}" maxlength="8" tabindex="6">
                                             {{-- adding error_message p tag component --}}
-                                            @component('components.paragraph.error_message', ['fieldName' => 'bill_amount'])
+                                            @component('components.paragraph.error_message', ['fieldName' => 'amount'])
                                             @endcomponent
                                         </div>
                                     </div>

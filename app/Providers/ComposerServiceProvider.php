@@ -28,6 +28,8 @@ class ComposerServiceProvider extends ServiceProvider
         View::composer('*', "App\Http\ViewComposers\AllViewComposer");
         //accounts to views
         View::composer('components.selects.accounts', "App\Http\View\Composers\AccountComponentComposer");
+        //trucks to views
+        View::composer('components.selects.trucks', "App\Http\View\Composers\TruckComponentComposer");
         //account types to views
         View::composer([
             'components.selects.account-relation',
@@ -58,6 +60,6 @@ class ComposerServiceProvider extends ServiceProvider
         //sites to views
         //View::composer('components.selects.sites', "App\Http\View\Composers\SiteComponentComposer");
         //services to views
-        //View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
+        View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
     }
 }

@@ -109,7 +109,6 @@ class AccountController extends Controller
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $user = Auth::user();
             $whereParams = [
                 'account_name' => [
                     'paramName'     => 'account_name',

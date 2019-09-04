@@ -10,6 +10,8 @@ class Expense extends Model
 {
 	//landlord
     use BelongsToTenants;
+    //soft delete
+    use SoftDeletes;
 
     /**
      * The attributes that should be mutated to dates.

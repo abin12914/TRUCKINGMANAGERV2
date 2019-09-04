@@ -8,7 +8,8 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Expense List</li>
+        <li><a href="{{ route('expenses.index') }}"> Expense</a></li>
+        <li class="active"> List</li>
     </ol>
 </section>
 <!-- Main content -->
@@ -138,12 +139,12 @@
                                         @foreach($expenses as $index => $expense)
                                             <tr>
                                                 <td>{{ $index + $expenses->firstItem() }}</td>
-                                                <td>{{ $expense->expense_date->format('d-m-Y') }}</td>
+                                                <td>{{ $expense->transaction->transaction_date->format('d-m-Y') }}</td>
                                                 <td>{{ $expense->service->name }}</td>
                                                 <td>{{ $expense->transaction->creditAccount->account_name }}</td>
-                                                <td>{{ $expense->truck->name }}</td>
+                                                <td>{{ $expense->truck->reg_number }}</td>
                                                 <td>{{ $expense->description }}</td>
-                                                <td>{{ $expense->bill_amount }}</td>
+                                                <td>{{ $expense->amount }}</td>
                                                 <td class="no-print">
                                                     <a href="{{ route('expenses.edit', $expense->id) }}" style="float: left;">
                                                         <button type="button" class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>

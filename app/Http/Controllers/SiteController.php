@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\EmployeeRepository;
-use App\Http\Requests\EmployeeRegistrationRequest;
-use App\Http\Requests\EmployeeFilterRequest;
+use App\Repositories\SiteRepository;
+use App\Http\Requests\SiteRegistrationRequest;
+use App\Http\Requests\SiteFilterRequest;
 use \Carbon\Carbon;
 use Auth;
 use DB;
@@ -15,13 +15,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SiteController extends Controller
 {
-    protected $employeeRepo;
+    protected $siteRepo;
     public $errorHead = null;
 
-    public function __construct(EmployeeRepository $employeeRepo)
+    public function __construct(SiteRepository $siteRepo)
     {
-        $this->employeeRepo = $employeeRepo;
-        $this->errorHead   = config('settings.controllerCode.EmployeeController');
+        $this->siteRepo = $siteRepo;
+        $this->errorHead   = config('settings.controllerCode.SiteController');
     }
 
     /**
@@ -29,7 +29,7 @@ class SiteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(EmployeeFilterRequest $request)
+    public function index(SiteFilterRequest $request)
     {
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
@@ -39,10 +39,10 @@ class SiteController extends Controller
                 'paramOperator' => '=',
                 'paramValue'    => $request->get('relation_type'),
             ],
-            'employee_id' => [
+            'site_id' => [
                 'paramName'     => 'id',
                 'paramOperator' => '=',
-                'paramValue'    => $request->get('employee_id'),
+                'paramValue'    => $request->get('site_id'),
             ],
             'type' => [
                 'paramName'     => 'type',
@@ -52,8 +52,8 @@ class SiteController extends Controller
         ];
 
         $orWhereParams = [
-            'employee_name' => [
-                'paramName'     => 'employee_name',
+            'site_name' => [
+                'paramName'     => 'site_name',
                 'paramOperator' => 'LIKE',
                 'paramValue'    => ("%". $request->get('name'). "%"),
             ],
@@ -64,10 +64,10 @@ class SiteController extends Controller
             ]
         ];
 
-        //getEmployees($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
-        return view('employees.list', [
-            'employees'      => $this->employeeRepo->getEmployees($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
-            'relationTypes' => config('constants.employeeRelationTypes'),
+        //getSites($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
+        return view('sites.list', [
+            'sites'      => $this->siteRepo->getSites($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+            'relationTypes' => config('constants.siteRelationTypes'),
             'params'        => array_merge($whereParams,$orWhereParams),
             'noOfRecords'   => $noOfRecordsPerPage,
         ]);
@@ -80,7 +80,7 @@ class SiteController extends Controller
      */
     public function create()
     {
-        return view('employees.register');
+        return view('sites.register');
     }
 
     /**
@@ -90,15 +90,15 @@ class SiteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(
-        EmployeeRegistrationRequest $request,
+        SiteRegistrationRequest $request,
         TransactionRepository $transactionRepo,
         $id=null
     ) {
         $errorCode            = 0;
-        $employee              = null;
+        $site              = null;
         $openingTransactionId = null;
 
-        $openingBalanceEmployeeId = config('constants.employeeConstants.EmployeeOpeningBalance.id');
+        $openingBalanceSiteId = config('constants.siteConstants.SiteOpeningBalance.id');
 
         $financialStatus    = $request->get('financial_status');
         $openingBalance     = $request->get('opening_balance');
@@ -109,21 +109,21 @@ class SiteController extends Controller
         try {
             $user = Auth::user();
             //confirming opening balance existency.
-            //getEmployee($id, $withParams=[], $activeFlag=true)
-            $openingBalanceEmployee = $this->employeeRepo->getEmployee($openingBalanceEmployeeId, [], false);
+            //getSite($id, $withParams=[], $activeFlag=true)
+            $openingBalanceSite = $this->siteRepo->getSite($openingBalanceSiteId, [], false);
 
             if(!empty($id)) {
-                $employee = $this->employeeRepo->getEmployee($id, [], false);
+                $site = $this->siteRepo->getSite($id, [], false);
 
-                if($employee->financial_status == 2){
+                if($site->financial_status == 2){
                     $searchTransaction = [
-                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
-                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
+                        ['paramName' => 'debit_site_id', 'paramOperator' => '=', 'paramValue' => $site->id],
+                        ['paramName' => 'credit_site_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceSiteId],
                     ];
                 } else {
                     $searchTransaction = [
-                        ['paramName' => 'debit_employee_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceEmployeeId],
-                        ['paramName' => 'credit_employee_id', 'paramOperator' => '=', 'paramValue' => $employee->id],
+                        ['paramName' => 'debit_site_id', 'paramOperator' => '=', 'paramValue' => $openingBalanceSiteId],
+                        ['paramName' => 'credit_site_id', 'paramOperator' => '=', 'paramValue' => $site->id],
                     ];
                 }
 
@@ -131,11 +131,11 @@ class SiteController extends Controller
                 $openingTransactionId = $transactionRepo->getTransactions($searchTransaction, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], null, false)->id;
             }
 
-            //save to employee table
-            $employeeResponse   = $this->employeeRepo->saveEmployee([
-                'employee_name'      => $request->get('employee_name'),
+            //save to site table
+            $siteResponse   = $this->siteRepo->saveSite([
+                'site_name'      => $request->get('site_name'),
                 'description'       => $request->get('description'),
-                'type'              => array_search('Personal', (config('constants.employeeTypes'))),
+                'type'              => array_search('Personal', (config('constants.siteTypes'))),
                 'relation'          => $request->get('relation_type'),
                 'financial_status'  => $financialStatus,
                 'opening_balance'   => $openingBalance,
@@ -147,30 +147,30 @@ class SiteController extends Controller
                 'company_id'        => $user->company_id,
             ], $id);
 
-            if(!$employeeResponse['flag']) {
-                throw new AppCustomException("CustomError", $employeeResponse['errorCode']);
+            if(!$siteResponse['flag']) {
+                throw new AppCustomException("CustomError", $siteResponse['errorCode']);
             }
 
             //opening balance transaction details
-            if($financialStatus == 1) { //incoming [employee holder gives cash to company] [Creditor]
-                $debitEmployeeId     = $openingBalanceEmployeeId; //cash flow into the opening balance employee
-                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id [flow out from new employee]
+            if($financialStatus == 1) { //incoming [site holder gives cash to company] [Creditor]
+                $debitSiteId     = $openingBalanceSiteId; //cash flow into the opening balance site
+                $creditSiteId    = $siteResponse['site']->id; //newly created site id [flow out from new site]
                 $particulars        = "Opening balance of ". $name . " - Debit [Creditor]";
-            } else if($financialStatus == 2){ //outgoing [company gives cash to employee holder] [Debitor]
-                $debitEmployeeId     = $employeeResponse['employee']->id; //newly created employee id [flow into new employee]
-                $creditEmployeeId    = $openingBalanceEmployeeId; //flow out from the opening balance employee
+            } else if($financialStatus == 2){ //outgoing [company gives cash to site holder] [Debitor]
+                $debitSiteId     = $siteResponse['site']->id; //newly created site id [flow into new site]
+                $creditSiteId    = $openingBalanceSiteId; //flow out from the opening balance site
                 $particulars        = "Opening balance of ". $name . " - Credit [Debitor]";
             } else {
-                $debitEmployeeId     = $openingBalanceEmployeeId;
-                $creditEmployeeId    = $employeeResponse['employee']->id; //newly created employee id
+                $debitSiteId     = $openingBalanceSiteId;
+                $creditSiteId    = $siteResponse['site']->id; //newly created site id
                 $particulars        = "Opening balance of ". $name . " - None";
                 $openingBalance     = 0;
             }
 
             //save to transaction table
             $transactionResponse   = $transactionRepo->saveTransaction([
-                'debit_employee_id'  => $debitEmployeeId,
-                'credit_employee_id' => $creditEmployeeId,
+                'debit_site_id'  => $debitSiteId,
+                'credit_site_id' => $creditSiteId,
                 'amount'            => $openingBalance,
                 'transaction_date'  => Carbon::now()->format('Y-m-d'),
                 'particulars'       => $particulars,
@@ -187,10 +187,10 @@ class SiteController extends Controller
             if(!empty($id)) {
                 return [
                     'flag'    => true,
-                    'employee' => $employeeResponse['employee'],
+                    'site' => $siteResponse['site'],
                 ];
             }
-            return redirect(route('employee.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. Reference Number : ". $employeeResponse['employee']->id)->with("alert-class", "success");
+            return redirect(route('sites.show', $siteResponse['site']->id))->with("message","Site details saved successfully. Reference Number : ". $siteResponse['site']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -204,7 +204,7 @@ class SiteController extends Controller
             ];
         }
         
-        return redirect()->back()->with("message","Failed to save the employee details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the site details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -216,21 +216,21 @@ class SiteController extends Controller
     public function show($id)
     {
         $errorCode  = 0;
-        $employee    = [];
+        $site    = [];
 
         try {
-            $employee = $this->employeeRepo->getEmployee($id, [], false);
+            $site = $this->siteRepo->getSite($id, [], false);
         } catch (Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
             //throwing model not found exception when no model is fetched
-            throw new ModelNotFoundException("Employee", $errorCode);
+            throw new ModelNotFoundException("Site", $errorCode);
         }
 
-        return view('employees.details', [
-            'employee'       => $employee,
-            'relationTypes' => config('constants.employeeRelationTypes'),
-            'employeeTypes'  => config('constants.$employeeTypes'),
+        return view('sites.details', [
+            'site'       => $site,
+            'relationTypes' => config('constants.siteRelationTypes'),
+            'siteTypes'  => config('constants.$siteTypes'),
         ]);
     }
 
@@ -243,23 +243,23 @@ class SiteController extends Controller
     public function edit($id)
     {
         $errorCode  = 0;
-        $employee    = [];
+        $site    = [];
 
-        $relationTypes        = config('constants.employeeRelationTypes');
-        $employeeRelationType = array_search('Employees', config('constants.employeeRelationTypes')); //employee -> [index = 1]
-        //excluding the relationtype 'employee'[index = 1] for employee update
-        unset($relationTypes[$employeeRelationType]);
+        $relationTypes        = config('constants.siteRelationTypes');
+        $siteRelationType = array_search('Sites', config('constants.siteRelationTypes')); //site -> [index = 1]
+        //excluding the relationtype 'site'[index = 1] for site update
+        unset($relationTypes[$siteRelationType]);
 
         try {
-            $employee = $this->employeeRepo->getEmployee($id, [], false);
+            $site = $this->siteRepo->getSite($id, [], false);
         } catch (Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
             //throwing methodnotfound exception when no model is fetched
-            throw new ModelNotFoundException("Employee", $errorCode);
+            throw new ModelNotFoundException("Site", $errorCode);
         }
 
-        return view('employees.edit', [
-            'employee'       => $employee,
+        return view('sites.edit', [
+            'site'       => $site,
             'relationTypes' => $relationTypes,
         ]);
     }
@@ -272,17 +272,17 @@ class SiteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(
-        EmployeeRegistrationRequest $request,
+        SiteRegistrationRequest $request,
         TransactionRepository $transactionRepo,
         $id
     ) {
         $updateResponse = $this->store($request, $transactionRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('employee.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. Updated Record Number : ". $updateResponse['employee']->id)->with("alert-class", "success");
+            return redirect(route('site.show', $updateResponse['site']->id))->with("message","Site details updated successfully. Updated Record Number : ". $updateResponse['site']->id)->with("alert-class", "success");
         }
         
-        return redirect()->back()->with("message","Failed to update the employee details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the site details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**

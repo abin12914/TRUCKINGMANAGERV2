@@ -165,7 +165,6 @@ $(function () {
               icon: 'warning',
               buttons: true,
               dangerMode : true,
-              button: "Yes, Delete"
             }).then((result) => {
               if (result) {
                 //submit delete form on confirmation

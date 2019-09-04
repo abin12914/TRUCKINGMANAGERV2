@@ -22,7 +22,6 @@ class ExpenseRepository extends Repository
         $whereParams=[],
         $orWhereParams=[],
         $relationalParams=[],
-        $relationalOrParams=[],
         $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],
         $aggregates=['key' => null, 'value' => null],
         $withParams=[],
@@ -40,8 +39,6 @@ class ExpenseRepository extends Repository
             $expenses = parent::orWhereFilter($expenses, $orWhereParams);
 
             $expenses = parent::relationalFilter($expenses, $relationalParams);
-
-            $expenses = parent::relationalOrFilter($expenses, $relationalOrParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($expenses, $aggregates) : parent::getFilter($expenses, $orderBy));
         } catch (Exception $e) {dd($e);

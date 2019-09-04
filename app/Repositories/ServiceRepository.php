@@ -2,23 +2,23 @@
 
 namespace App\Repositories;
 
-use App\Models\TruckType;
+use App\Models\Service;
 use Exception;
 use App\Exceptions\TMException;
 
-class TruckTypeRepository extends Repository
+class ServiceRepository extends Repository
 {
     public $repositoryCode, $errorCode = 0;
 
     public function __construct()
     {
-        $this->repositoryCode = config('settings.repository_code.TruckTypeRepository');
+        $this->repositoryCode = config('settings.repository_code.ServiceRepository');
     }
 
     /**
-     * Return truckTypes.
+     * Return services.
      */
-    public function getTruckTypes(
+    public function getServices(
         $whereParams=[],
         $orWhereParams=[],
         $relationalParams=[],
@@ -27,77 +27,77 @@ class TruckTypeRepository extends Repository
         $withParams=[],
         $activeFlag=true
     ){
-        $truckTypes = [];
+        $services = [];
 
         try {
-            $truckTypes = empty($withParams) ? TruckType::query() : TruckType::with($withParams);
+            $services = empty($withParams) ? Service::query() : Service::with($withParams);
 
-            $truckTypes = $activeFlag ? $truckTypes->active() : $truckTypes;
+            $services = $activeFlag ? $services->active() : $services;
 
-            $truckTypes = parent::whereFilter($truckTypes, $whereParams);
+            $services = parent::whereFilter($services, $whereParams);
 
-            $truckTypes = parent::orWhereFilter($truckTypes, $orWhereParams);
+            $services = parent::orWhereFilter($services, $orWhereParams);
 
-            $truckTypes = parent::relationalFilter($truckTypes, $relationalParams);
+            $services = parent::relationalFilter($services, $relationalParams);
 
-            return (!empty($aggregates['key']) ? parent::aggregatesSwitch($truckTypes, $aggregates): parent::getFilter($truckTypes, $orderBy));
+            return (!empty($aggregates['key']) ? parent::aggregatesSwitch($services, $aggregates): parent::getFilter($services, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
         }
 
-        return $truckTypes;
+        return $services;
     }
 
     /**
-     * return truckType.
+     * return service.
      */
-    public function getTruckType($id, $withParams=[], $activeFlag=true)
+    public function getService($id, $withParams=[], $activeFlag=true)
     {
-        $truckType = [];
+        $service = [];
 
         try {
             if(empty($withParams)) {
-                $truckType = TruckType::query();
+                $service = Service::query();
             } else {
-                $truckType = TruckType::with($withParams);
+                $service = Service::with($withParams);
             }
             
             if($activeFlag) {
-                $truckType = $truckType->active();
+                $service = $service->active();
             }
 
-            $truckType = $truckType->findOrFail($id);
+            $service = $service->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
             
             throw new TMException("CustomError", $this->errorCode);
         }
 
-        return $truckType;
+        return $service;
     }
 
     /**
-     * Action for saving truckTypes.
+     * Action for saving services.
      */
-    public function saveTruckType($inputArray=[], $id=null)
+    public function saveService($inputArray=[], $id=null)
     {
         $saveFlag   = false;
 
         try {
             //find record with id or create new if none exist
-            $truckType = TruckType::findOrNew($id);
+            $service = Service::findOrNew($id);
 
             foreach ($inputArray as $key => $value) {
-                $truckType->$key = $value;
+                $service->$key = $value;
             }
-            //truckType save
-            $truckType->save();
+            //service save
+            $service->save();
 
             return [
                 'flag'    => true,
-                'truckType' => $truckType,
+                'service' => $service,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
@@ -110,16 +110,16 @@ class TruckTypeRepository extends Repository
         ];
     }
 
-    public function deleteTruckType($id, $forceFlag=false)
+    public function deleteService($id, $forceFlag=false)
     {
         $deleteFlag = false;
 
         try {
-            $truckType = $this->getTruckType($id, [], false);
+            $service = $this->getService($id, [], false);
 
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
-            $forceFlag ? $truckType->forceDelete() : $truckType->delete();
+            $forceFlag ? $service->forceDelete() : $service->delete();
             
             return [
                 'flag'  => true,

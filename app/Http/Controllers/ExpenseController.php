@@ -51,39 +51,33 @@ class ExpenseController extends Controller
             ],
         ];
 
-        $relationalOrParams = [
-            'from_date'    =>  [
-                'relation' => 'transaction',
-                'params'   => [
-                    'transaction_date' => [
-                        'paramName'     => 'transaction_date',
-                        'paramOperator' => '>=',
-                        'paramValue'    => $fromDate,
-                    ],
-                    'transaction_date' => [
-                        'paramName'     => 'transaction_date',
-                        'paramOperator' => '<=',
-                        'paramValue'    => $toDate,
-                    ],
-                ]
-            ]
-        ];
-
         $relationalParams = [
             'account_id' => [
                 'relation'      => 'transaction',
                 'paramName'     => 'credit_account_id',
                 'paramOperator' => '=',
                 'paramValue'    => $request->get('account_id'),
-            ]
+            ],
+            'from_date' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'transaction_date',
+                'paramOperator' => '>=',
+                'paramValue'    => $fromDate,
+            ],
+            'to_date' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'transaction_date',
+                'paramOperator' => '<=',
+                'paramValue'    => $toDate,
+            ],
         ];
 
-        $expenses = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
-        $totalExpense = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, $relationalOrParams, [], ['key' => 'sum', 'value' => 'amount'], [], true);
+        $expenses = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
+        $totalExpense = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, [], ['key' => 'sum', 'value' => 'amount'], [], true);
 
         //params passing for auto selection
-        $whereParams['from_date']['paramValue'] = $request->get('from_date');
-        $whereParams['to_date']['paramValue']   = $request->get('to_date');
+        $relationalParams['from_date']['paramValue'] = $request->get('from_date');
+        $relationalParams['to_date']['paramValue']   = $request->get('to_date');
         
         //getExpenses($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('expenses.list', [
@@ -119,30 +113,34 @@ class ExpenseController extends Controller
         $errorCode = 0;
         $expense   = null;
 
-        $expenseAccountId   = config('constants.accountConstants.ServiceAndExpense.id');
         $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
-        $totalBill          = $request->get('bill_amount');
+        $totalBill          = $request->get('amount');
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $user = Auth::user();
-
+            $whereParams = [
+                'account_name' => [
+                    'paramName'     => 'account_name',
+                    'paramOperator' => '=',
+                    'paramValue'    => "Service-And-Expenses",
+                ]
+            ];
             //confirming expense account exist-ency.
-            $expenseAccount = $accountRepo->getAccount($expenseAccountId, [], false);
+            $expenseAccountId = $accountRepo->getAccounts($whereParams,$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)->id;
             if(!empty($id)) {
                 $expense = $this->expenseRepo->getExpense($id, [], false);
             }
 
             //save expense transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([
+                'transaction_date'  => $transactionDate,
                 'debit_account_id'  => $expenseAccountId, // debit the expense account
                 'credit_account_id' => $request->get('account_id'), // credit the supplier
                 'amount'            => $totalBill,
-                'transaction_date'  => $transactionDate,
                 'particulars'       => $request->get('description')."[Purchase & Expense]",
                 'status'            => 1,
-                'company_id'        => $user->company_id,
+                'created_by'        => Auth::id(),
             ], (!empty($expense) ? $expense->transaction_id : null));
 
             if(!$transactionResponse['flag']) {
@@ -151,15 +149,12 @@ class ExpenseController extends Controller
 
             //save to expense table
             $expenseResponse = $this->expenseRepo->saveExpense([
-                'transaction_id' => $transactionResponse['transaction']->id,
-                'expense_date'   => $transactionDate,
-                'truck_id'   => $request->get('truck_id'),
-                'service_id'     => $request->get('service_id'),
-                'description'    => $request->get('description'),
-                'bill_amount'    => $totalBill,
-                'status'         => 1,
-                'created_by'     => $user->id,
-                'company_id'     => $user->company_id,
+                'transaction_id'    => $transactionResponse['transaction']->id,
+                'truck_id'          => $request->get('truck_id'),
+                'service_id'        => $request->get('service_id'),
+                'description'       => $request->get('description'),
+                'amount'            => $totalBill,
+                'status'            => 1,
             ], $id);
 
             if(!$expenseResponse['flag']) {
@@ -175,7 +170,7 @@ class ExpenseController extends Controller
                 ];
             }
 
-            return redirect(route('expense.index'))->with("message","Expense details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('expenses.index'))->with("message","Expense details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -254,7 +249,7 @@ class ExpenseController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $accountRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('expense.index'))->with("message","Expenses details updated successfully. Updated Record Number : ". $updateResponse['expense']->id)->with("alert-class", "success");
+            return redirect(route('expenses.index'))->with("message","Expenses details updated successfully. Updated Record Number : ". $updateResponse['expense']->id)->with("alert-class", "success");
         }
         
         return redirect()->back()->with("message","Failed to update the expenses details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
@@ -280,7 +275,7 @@ class ExpenseController extends Controller
             }
             
             DB::commit();
-            return redirect(route('expense.index'))->with("message","Expense details deleted successfully.")->with("alert-class", "success");
+            return redirect(route('expenses.index'))->with("message","Expense details deleted successfully.")->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
