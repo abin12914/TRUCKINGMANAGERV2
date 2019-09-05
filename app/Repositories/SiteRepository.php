@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Site;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class SiteRepository extends Repository
 {
@@ -43,8 +43,8 @@ class SiteRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($sites, $aggregates) : parent::getFilter($sites, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-
-            throw new AppCustomException("CustomError", $this->errorCode);
+dd($e);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $sites;
@@ -76,7 +76,7 @@ class SiteRepository extends Repository
                 $this->errorCode = $this->repositoryCode + 3;
             }
             
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $site;
@@ -106,7 +106,7 @@ class SiteRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
@@ -130,7 +130,7 @@ class SiteRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
             
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'          => false,

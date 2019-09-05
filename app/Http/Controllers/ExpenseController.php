@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Auth;
 use DB;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ExpenseController extends Controller
@@ -144,7 +144,7 @@ class ExpenseController extends Controller
             ], (!empty($expense) ? $expense->transaction_id : null));
 
             if(!$transactionResponse['flag']) {
-                throw new AppCustomException("CustomError", $transactionResponse['errorCode']);
+                throw new TMException("CustomError", $transactionResponse['errorCode']);
             }
 
             //save to expense table
@@ -158,7 +158,7 @@ class ExpenseController extends Controller
             ], $id);
 
             if(!$expenseResponse['flag']) {
-                throw new AppCustomException("CustomError", $expenseResponse['errorCode']);
+                throw new TMException("CustomError", $expenseResponse['errorCode']);
             }
 
             DB::commit();
@@ -271,7 +271,7 @@ class ExpenseController extends Controller
             $deleteResponse = $this->expenseRepo->deleteExpense($id, false);
             
             if(!$deleteResponse['flag']) {
-                throw new AppCustomException("CustomError", $deleteResponse['errorCode']);
+                throw new TMException("CustomError", $deleteResponse['errorCode']);
             }
             
             DB::commit();

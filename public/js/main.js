@@ -177,7 +177,7 @@ $(function () {
 //method for initializing select2
 function initializeSelect2() {
     $(".select2").select2({
-        minimumResultsForSearch: 5,
+        minimumResultsForSearch: 6,
     });
 }
 

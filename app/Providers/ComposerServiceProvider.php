@@ -58,7 +58,13 @@ class ComposerServiceProvider extends ServiceProvider
         //indian vehicle registation codes to views
         View::composer('trucks.register', "App\Http\View\Composers\TruckRegStateCodeComposer");
         //sites to views
-        //View::composer('components.selects.sites', "App\Http\View\Composers\SiteComponentComposer");
+        View::composer('components.selects.sites', "App\Http\View\Composers\SiteComponentComposer");
+        //site type to views
+        View::composer([
+            'components.selects.sites',
+            'sites.list',
+            'sites.register'
+        ], "App\Http\View\Composers\SiteTypeComponentComposer");
         //services to views
         View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
     }

@@ -27,9 +27,11 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 	Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 
 	Route::resources([
-	    'accounts' 	=> 'AccountController',
-	    'employees'	=> 'EmployeeController',
-	    'trucks'	=> 'TruckController',
-	    'expenses'	=> 'ExpenseController'
+	    'accounts' 			=> 'AccountController',
+	    'employees'			=> 'EmployeeController',
+	    'trucks'			=> 'TruckController',
+	    'expenses'			=> 'ExpenseController',
+	    'sites'				=> 'SiteController',
+	    'transportations'	=> 'TransportationController'
 	]);
 });

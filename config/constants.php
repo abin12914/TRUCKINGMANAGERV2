@@ -108,14 +108,14 @@ return [
             'company_id'        => 0,
         ],
 
-        'TripRent' => [
-            'account_name'      => 'Trip-Rent',
-            'description'       => 'Trip rent account',
+        'TransportationRent' => [
+            'account_name'      => 'Transportation-Rent',
+            'description'       => 'Transportation rent account',
             'type'              => 2, //nominal account
             'relation'          => 0, //nominal
             'financial_status'  => 0, //none
             'opening_balance'   => 0,
-            'name'              => 'Trip rent  account',
+            'name'              => 'Transportation rent account',
             'phone'             => '0000000000',
             'status'            => 1,
             'company_id'        => 0,
