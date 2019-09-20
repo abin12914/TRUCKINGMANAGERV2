@@ -24,7 +24,8 @@ return [
     'wageTypes' => [
         1 => 'Trip Bata (%)',
         2 => 'Per Month',
-        3 => 'Per Day'
+        3 => 'Per Day',
+        4 => 'Assistant Driver Trip Bata (%)'
     ],
 
     'truckBodyTypes' => [
@@ -43,6 +44,12 @@ return [
 
     'stateCodes' => [
         1 => 'KL'
+    ],
+
+    'rentTypes' => [
+        1   => 'KM Based Rent',
+        2   => 'Tare Weight Based Rent',
+        3   => 'Fixed Rent',
     ],
 
     'transactionRelations' => [

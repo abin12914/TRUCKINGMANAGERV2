@@ -1,16 +1,9 @@
 <div class="form-group">
     <div class="col-md-6">
         <label for="truck_id" class="control-label"><b style="color: red;">* </b> Truck : </label>
-        <select class="form-control select2" name="truck_id" id="truck_id" tabindex="1" style="width: 100%;">
-            <option value="" {{ empty(old('truck_id')) ? 'selected' : '' }}>Select truck</option>
-            @if(!empty($trucks))
-                @foreach($trucks as $truck)
-                    <option value="{{ $truck->id }}" {{ (old('truck_id') == $truck->id) ? 'selected' : '' }}>
-                        {{ $truck->reg_number. " - ". $truck->truckType->name }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
+        {{-- adding trucks select component --}}
+        @component('components.selects.trucks', ['selectedTruckId' => old('truck_id'), 'selectName' => 'truck_id', 'tabindex' => 1])
+        @endcomponent
         @if(!empty($errors->first('truck_id')))
             <p style="color: red;" >{{$errors->first('truck_id')}}</p>
         @endif
@@ -26,32 +19,18 @@
 <div class="form-group">
     <div class="col-md-6">
         <label for="source_id" class="control-label"><b style="color: red;">* </b> Source : </label>
-        <select class="form-control select2" name="source_id" id="source_id" tabindex="3" style="width: 100%;">
-            <option value="" {{ empty(old('source_id')) ? 'selected' : '' }}>Select source site</option>
-            @if(!empty($sites))
-                @foreach($sites as $site)
-                    <option value="{{ $site->id }}" {{ (old('source_id') == $site->id) ? 'selected' : '' }}>
-                        {{ $site->name. ", ". $site->place }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
+        {{-- adding trucks select component --}}
+        @component('components.selects.sites', ['selectedSiteId' => old('source_id'), 'selectName' => 'source_id', 'tabindex' => 3])
+        @endcomponent
         @if(!empty($errors->first('source_id')))
             <p style="color: red;" >{{$errors->first('source_id')}}</p>
         @endif
     </div>
     <div class="col-md-6">
         <label for="destination_id" class="control-label"><b style="color: red;">* </b> Destination : </label>
-        <select class="form-control select2" name="destination_id" id="destination_id" tabindex="4" style="width: 100%;">
-            <option value="" {{ empty(old('destination_id')) ? 'selected' : '' }}>Select destination site</option>
-            @if(!empty($sites))
-                @foreach($sites as $site)
-                    <option value="{{ $site->id }}" {{ (old('destination_id') == $site->id) ? 'selected' : '' }}>
-                        {{ $site->name. ", ". $site->place }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
+        {{-- adding trucks select component --}}
+        @component('components.selects.sites', ['selectedSiteId' => old('destination_id'), 'selectName' => 'destination_id', 'tabindex' => 3])
+        @endcomponent
         @if(!empty($errors->first('destination_id')))
             <p style="color: red;" >{{$errors->first('destination_id')}}</p>
         @endif
@@ -60,16 +39,9 @@
 <div class="form-group">
     <div class="col-md-6">
         <label for="contractor_account_id" class="control-label"><b style="color: red;">* </b> Contractor : </label>
-        <select class="form-control select2" name="contractor_account_id" id="contractor_account_id" tabindex="5" style="width: 100%;">
-            <option value="" {{ empty(old('contractor_account_id')) ? 'selected' : '' }}>Select contractor</option>
-            @if(!empty($accounts))
-                @foreach($accounts as $account)
-                    <option value="{{ $account->id }}" {{ (old('contractor_account_id') == $account->id) ? 'selected' : '' }}>
-                        {{ $account->account_name }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
+        {{-- adding account select component --}}
+        @component('components.selects.accounts', ['selectedAccountId' => old('contractor_account_id'), 'cashAccountFlag' => true, 'selectName' => 'contractor_account_id', 'activeFlag' => false, 'tabindex' => 5])
+        @endcomponent
         @if(!empty($errors->first('contractor_account_id')))
             <p style="color: red;" >{{$errors->first('contractor_account_id')}}</p>
         @endif

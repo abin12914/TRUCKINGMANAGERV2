@@ -67,5 +67,6 @@ class ComposerServiceProvider extends ServiceProvider
         ], "App\Http\View\Composers\SiteTypeComponentComposer");
         //services to views
         View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
+        View::composer('components.forms.transportation', "App\Http\View\Composers\RentTypeComponentComposer");
     }
 }

@@ -96,10 +96,10 @@ class Transportation extends Model
     }
 
     /**
-     * Get the purchase record associated with the transportation if it is a supply.
+     * Get the employee wage record associated with the transportation.
      */
-    public function employeeWage()
+    public function employeeWages()
     {
-        return $this->hasOne('App\Models\EmployeeWage', 'trip_id');
+        return $this->hasMany('App\Models\EmployeeWage', 'transportation_id');
     }
 }
