@@ -66,7 +66,7 @@ class TransportationController extends Controller
             ],
             'material_id' => [
                 'paramName'     => 'material_id',
-                'paramOperator' => '=', 
+                'paramOperator' => '=',
                 'paramValue'    => $request->get('material_id'),
             ],
         ];
@@ -81,7 +81,7 @@ class TransportationController extends Controller
             'driver_id' => [
                 'relation'      => 'employeeWages',
                 'paramName'     => 'employee_id',
-                'paramOperator' => '=', 
+                'paramOperator' => '=',
                 'paramValue'    => $request->get('driver_id'),
             ],
         ];
@@ -92,7 +92,7 @@ class TransportationController extends Controller
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
         $relationalParams['to_date']['paramValue']   = $request->get('to_date');
         $params = array_merge($whereParams, $relationalParams);
-        
+
         return view('transportations.list', [
             'transportations'       => $transportations,
             'params'                => $params,
@@ -117,7 +117,7 @@ class TransportationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(
-        TransportaionRegistrationRequest $request,
+        TransportationRegistrationRequest $request,
         TransactionRepository $transactionRepo,
         AccountRepository $accountRepo,
         EmployeeWageRepository $employeeWageRepo,
@@ -131,6 +131,9 @@ class TransportationController extends Controller
         $driverWage         = null;
         $secondDriverWage   = null;
 
+        $driverWageType         = array_search('Per Trip [%]', config('constants.wageTypes'));
+        $secondDriverWageType   = array_search('Per Trip [%] [Assistant Driver]', config('constants.wageTypes'));
+
         $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
         $secondDriverId     = $request->get('second_driver_id');
@@ -143,7 +146,7 @@ class TransportationController extends Controller
                 'transportation_rent' => [
                     'paramName'     => 'account_name',
                     'paramOperator' => '=',
-                    'paramValue'    => "Transportaion-Rent",
+                    'paramValue'    => "Transportation-Rent",
                 ],
                 'employee_wage' => [
                     'paramName'     => 'account_name',
@@ -157,7 +160,7 @@ class TransportationController extends Controller
             {
                 throw new TMException("CustomError", 1);
             }
-            $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportaion-Rent')->id;
+            $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
             $employeeWageAccountId       = $baseAccounts->firstWhere('account_name', 'Employee-Wage')->id;
 
             $orWhereParams = [
@@ -173,19 +176,15 @@ class TransportationController extends Controller
                 ]
             ];
             $employees = $employeeRepo->getEmployees([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams=[], true);
-            $driver = $employees->firstWhere('id', $driverId);
-            if(!empty($secondDriverId)) {
-                $secondDriver = $employees->firstWhere('id', $secondDriverId);
-            }
+            $driver         = $employees->firstWhere('id', $driverId);
+            $secondDriver   = $employees->firstWhere('id', $secondDriverId);
 
             //if editing
             if(!empty($id)) {
-                $transportation = $this->transportationRepo->getTransportaion($id, ['employeeWages'], false);
+                $transportation = $this->transportationRepo->getTransportation($id, ['employeeWages'], false);
 
-                //Trip Bata (%) = 1
-                //Assistant Driver Trip Bata (%) = 4
-                $driverWage         = $transportation->employeeWages->firstWhere('wage_type', 1);
-                $secondDriverWage   = $transportation->employeeWages->firstWhere('wage_type', 4);
+                $driverWage         = $transportation->employeeWages->firstWhere('wage_type', $driverWageType);
+                $secondDriverWage   = $transportation->employeeWages->firstWhere('wage_type', $secondDriverWageType);
             }
 
             //save transportation transaction to table
@@ -204,7 +203,7 @@ class TransportationController extends Controller
             }
 
             //save to transportation table
-            $transportationResponse = $this->transportationRepo->saveTransportaion([
+            $transportationResponse = $this->transportationRepo->saveTransportation([
                 'transaction_id'    => $transactionResponse['transaction']->id,
                 'truck_id'          => $request->get('truck_id'),
                 'source_id'         => $request->get('source_id'),
@@ -224,25 +223,25 @@ class TransportationController extends Controller
             }
 
             //save driver wage transaction to table
-            $transactionResponse   = $transactionRepo->saveTransaction([
+            $wageTransactionResponse = $transactionRepo->saveTransaction([
                 'transaction_date'  => $transactionDate,
                 'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
                 'credit_account_id' => $driver->account_id, // credit the driver account
                 'amount'            => $request->get('total_wage_amount'),
-                'particulars'       => "Trip Bata of ". $request->get('no_of_trip'). ' trip.',
+                'particulars'       => "Wage of ". $request->get('no_of_trip'). ' trips.',
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($driverWage) ? $driverWage->transaction_id : null));
 
-            if(!$transactionResponse['flag']) {
-                throw new TMException("CustomError", $transactionResponse['errorCode']);
+            if(!$wageTransactionResponse['flag']) {
+                throw new TMException("CustomError", $wageTransactionResponse['errorCode']);
             }
 
             //save to driver wage table
             $driverWageResponse = $this->employeeWageRepo->saveEmployeeWage([
-                'transaction_id'    => $transactionResponse['transaction']->id,
+                'transaction_id'    => $wageTransactionResponse['transaction']->id,
                 'employee_id'       => $driverId,
-                'wage_type'         => array_search('Trip Bata (%)', config('constants.wageTypes')), //trip bata //key=1
+                'wage_type'         => $driverWageType,
                 'to_date'           => $transactionDate,
                 'transportation_id' => $transportationResponse['transportation']->id,
                 'trip_wage_amount'  => $request->get('trip_wage_amount'),
@@ -256,27 +255,27 @@ class TransportationController extends Controller
             }
 
             //second driver wage
-            if(!empty($secondDriverWage) || !empty($secondDriverId)) {
+            if(!empty($secondDriverId)) {
                 //save second driver wage transaction to table
-                $transactionResponse   = $transactionRepo->saveTransaction([
+                $secondWageTransactionResponse = $transactionRepo->saveTransaction([
                     'transaction_date'  => $transactionDate,
                     'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
                     'credit_account_id' => $secondDriver->account_id, // credit the driver account
                     'amount'            => $request->get('total_second_wage_amount'),
-                    'particulars'       => "Trip Bata of ". $request->get('no_of_trip'). ' trip.',
+                    'particulars'       => "Wage of ". $request->get('no_of_trip'). ' trips.',
                     'status'            => 1,
                     'created_by'        => Auth::id(),
                 ], (!empty($secondDriverWage) ? $secondDriverWage->transaction_id : null));
 
-                if(!$transactionResponse['flag']) {
-                    throw new TMException("CustomError", $transactionResponse['errorCode']);
+                if(!$secondWageTransactionResponse['flag']) {
+                    throw new TMException("CustomError", $secondWageTransactionResponse['errorCode']);
                 }
 
                 //save to driver wage table
                 $secondDriverWageResponse = $this->employeeWageRepo->saveEmployeeWage([
-                    'transaction_id'    => $transactionResponse['transaction']->id,
+                    'transaction_id'    => $secondWageTransactionResponse['transaction']->id,
                     'employee_id'       => $secondDriverId,
-                    'wage_type'         => array_search('Trip Bata (%)', config('constants.wageTypes')), //trip bata //key=1
+                    'wage_type'         => $secondDriverWageType,
                     'to_date'           => $transactionDate,
                     'transportation_id' => $transportationResponse['transportation']->id,
                     'trip_wage_amount'  => $request->get('trip_second_wage_amount'),
@@ -288,6 +287,10 @@ class TransportationController extends Controller
                 if(!$driverWageResponse['flag']) {
                     throw new TMException("CustomError", $driverWageResponse['errorCode']);
                 }
+            } elseif(!empty($secondDriverWage)) {
+                //old record has second driver but new record doesn't have
+                //soft delete second driver wage
+                $secondDriverWage->delete();
             }
 
             DB::commit();
@@ -299,7 +302,7 @@ class TransportationController extends Controller
                 ];
             }
 
-            return redirect(route('transportations.index'))->with("message","Transportaion details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('transportations.index'))->with("message","Transportation details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -323,7 +326,21 @@ class TransportationController extends Controller
      */
     public function show($id)
     {
-        //
+        $errorCode      = 0;
+        $transportation = [];
+
+        try {
+            $transportation = $this->transportationRepo->getTransportation($id, [], false);
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+
+            //throwing methodnotfound exception when no model is fetched
+            throw new ModelNotFoundException("Transportation", $errorCode);
+        }
+
+        return view('transportations.details', [
+            'transportations' => $transportations,
+        ]);
     }
 
     /**
@@ -334,7 +351,21 @@ class TransportationController extends Controller
      */
     public function edit($id)
     {
-        //
+        $errorCode      = 0;
+        $transportation = [];
+
+        try {
+            $transportation = $this->transportationRepo->getTransportation($id, [], false);
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            dd($e);
+            //throwing methodnotfound exception when no model is fetched
+            throw new ModelNotFoundException("Transportation", $errorCode);
+        }
+
+        return view('transportations.edit', [
+            'transportations' => $transportations,
+        ]);
     }
 
     /**
@@ -344,9 +375,17 @@ class TransportationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(
+        TransportationRegistrationRequest $request,
+        $id
+    ) {
+        $updateResponse = $this->store($request, $id);
+
+        if($updateResponse['flag']) {
+            return redirect(route('transportations.index'))->with("message","Transportations details updated successfully. Updated Record Number : ". $updateResponse['transportation']->id)->with("alert-class", "success");
+        }
+
+        return redirect()->back()->with("message","Failed to update the transportation details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -357,6 +396,26 @@ class TransportationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $errorCode  = 0;
+
+        //wrapping db transactions
+        DB::beginTransaction();
+        try {
+            $deleteResponse = $this->transportationRepo->deleteTransportation($id, false);
+
+            if(!$deleteResponse['flag']) {
+                throw new TMException("CustomError", $deleteResponse['errorCode']);
+            }
+
+            DB::commit();
+            return redirect(route('transportations.index'))->with("message","Transportation details deleted successfully.")->with("alert-class", "success");
+        } catch (Exception $e) {
+            //roll back in case of exceptions
+            DB::rollback();
+
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+        }
+
+        return redirect()->back()->with("message","Failed to delete the transportation details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

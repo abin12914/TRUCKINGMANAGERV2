@@ -1,5 +1,5 @@
 <?php
-//use extra caution while edit cause it may affect multiple parts of the project
+//use extra caution while edit, cause it may affect multiple parts of the project
 //never think of changing values in production, ever!!
 return [
     'accountRelations' => [
@@ -22,10 +22,11 @@ return [
     ],
 
     'wageTypes' => [
-        1 => 'Trip Bata (%)',
-        2 => 'Per Month',
-        3 => 'Per Day',
-        4 => 'Assistant Driver Trip Bata (%)'
+        1 => 'Per Trip [%]',
+        2 => 'Per Trip [Fixed]',
+        3 => 'Per Month [Fixed]',
+        4 => 'Per Day [Fixed]',
+        5 => 'Per Trip [%] [Assistant Driver]'
     ],
 
     'truckBodyTypes' => [

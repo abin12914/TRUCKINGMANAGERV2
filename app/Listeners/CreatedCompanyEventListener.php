@@ -35,15 +35,16 @@ class CreatedCompanyEventListener implements ShouldQueue
             'relation_type' => [
                 'paramName'     => 'company_id',
                 'paramOperator' => '=',
-                'paramValue'    => $event->company->id,
+                'paramValue'    => 17,//$event->company->id,
             ]
         ];
 
-        $companyAccountsCount = $this->accountRepo->getAccounts($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => 'count', 'value' => null], $withParams=[],$activeFlag=true);
+        $companyAccountsCount = $this->accountRepo->getAccounts($whereParams,[],[],['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'count', 'value' => null], [],true);
 
-        if($companyAccountsCount < 1)
-        {
-            return false;
+        //check if accounts already exist
+        if($companyAccountsCount > 0) {
+            //base accounts already exist do nothing and return
+            return;
         }
 
         //company have no accounts -> create new basic accounts
@@ -53,7 +54,6 @@ class CreatedCompanyEventListener implements ShouldQueue
         foreach ($accountConstants as $key => $value) {
             $value['company_id'] = $event->company->id;
             $inputArray[] = $value;
-
         }
 
         $account = Account::insert($inputArray);
