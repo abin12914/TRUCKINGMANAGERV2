@@ -47,47 +47,6 @@
         @endif
     </div>
     <div class="col-md-6">
-        <label for="rent_type" class="control-label"><b style="color: red;">* </b> Rent Type : </label>
-        <select class="form-control select2" name="rent_type" id="rent_type" tabindex="6" style="width: 100%;">
-            <option value="" {{ empty(old('rent_type')) ? 'selected' : '' }}>Select rent type</option>
-            @if(!empty($rentTypes))
-                @foreach($rentTypes as $key => $rentType)
-                    <option value="{{ $key }}" {{ (old('rent_type') == $key ) ? 'selected' : '' }}>
-                        {{ $rentType }}
-                    </option>
-                @endforeach
-            @endif
-        </select>
-        @if(!empty($errors->first('rent_type')))
-            <p style="color: red;" >{{$errors->first('rent_type')}}</p>
-        @endif
-    </div>
-</div>
-<div class="form-group">
-    <div class="col-md-6">
-        <label for="rent_measurement" class="control-label"><b style="color: red;">* </b> Measurement/Quantity : </label>
-        <input type="text" class="form-control decimal_number_only" name="rent_measurement" id="rent_measurement" placeholder="Measurement" value="{{ old('rent_type') == 3 ? 1 : old('rent_measurement') }}" {{ old('rent_type') == 3 ? "readonly" : "" }} tabindex="7">
-        @if(!empty($errors->first('rent_measurement')))
-            <p style="color: red;" >{{$errors->first('rent_measurement')}}</p>
-        @endif
-    </div>
-    <div class="col-md-6">
-        <label for="rent_rate" class="control-label"><b style="color: red;">* </b> Rent Rate : </label>
-        <input type="text" class="form-control decimal_number_only" name="rent_rate" id="rent_rate" placeholder="Rent rate" value="{{ old('rent_rate') }}" tabindex="8">
-        @if(!empty($errors->first('rent_rate')))
-            <p style="color: red;" >{{$errors->first('rent_rate')}}</p>
-        @endif
-    </div>
-</div>
-<div class="form-group">
-    <div class="col-md-6">
-        <label for="total_rent" class="control-label"><b style="color: red;">* </b> Total Rent : </label>
-        <input type="text" class="form-control decimal_number_only" name="total_rent" id="total_rent" placeholder="Total rent" value="{{ old('total_rent') }}" readonly tabindex="30">
-        @if(!empty($errors->first('total_rent')))
-            <p style="color: red;" >{{$errors->first('total_rent')}}</p>
-        @endif
-    </div>
-    <div class="col-md-6">
         <label for="material_id" class="control-label"><b style="color: red;">* </b> Material : </label>
         <select class="form-control select2" name="material_id" id="material_id" tabindex="9" style="width: 100%;">
             <option value="" {{ empty(old('material_id')) ? 'selected' : '' }}>Select material</option>
@@ -106,35 +65,108 @@
 </div>
 <div class="form-group">
     <div class="col-md-6">
-        <label for="employee_id" class="control-label"><b style="color: red;">* </b> Driver : </label>
-        <select class="form-control select2" name="employee_id" id="employee_id" tabindex="10" style="width: 100%;">
-            <option value="" {{ empty(old('employee_id')) ? 'selected' : '' }}>Select driver</option>
+        <label for="rent_type" class="control-label"><b style="color: red;">* </b> Rent Type : </label>
+        <select class="form-control select2" name="rent_type" id="rent_type" tabindex="6" style="width: 100%;">
+            <option value="" {{ empty(old('rent_type')) ? 'selected' : '' }}>Select rent type</option>
+            @if(!empty($rentTypes))
+                @foreach($rentTypes as $key => $rentType)
+                    <option value="{{ $key }}" {{ (old('rent_type') == $key ) ? 'selected' : '' }}>
+                        {{ $rentType }}
+                    </option>
+                @endforeach
+            @endif
+        </select>
+        @if(!empty($errors->first('rent_type')))
+            <p style="color: red;" >{{$errors->first('rent_type')}}</p>
+        @endif
+    </div>
+    <div class="col-md-6">
+        <label for="rent_measurement" class="control-label"><b style="color: red;">* </b> Measurement/Quantity : </label>
+        <input type="text" class="form-control decimal_number_only" name="rent_measurement" id="rent_measurement" placeholder="Measurement" value="{{ old('rent_type') == 3 ? 1 : old('rent_measurement') }}" {{ old('rent_type') == 3 ? "readonly" : "" }} tabindex="7">
+        @if(!empty($errors->first('rent_measurement')))
+            <p style="color: red;" >{{$errors->first('rent_measurement')}}</p>
+        @endif
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-6">
+        <label for="rent_rate" class="control-label"><b style="color: red;">* </b> Rent Rate : </label>
+        <input type="text" class="form-control decimal_number_only" name="rent_rate" id="rent_rate" placeholder="Rent rate" value="{{ old('rent_rate') }}" tabindex="8">
+        @if(!empty($errors->first('rent_rate')))
+            <p style="color: red;" >{{$errors->first('rent_rate')}}</p>
+        @endif
+    </div>
+    <div class="col-md-6">
+        <label for="trip_rent" class="control-label"><b style="color: red;">* </b> Trip Rent : </label>
+        <input type="text" class="form-control decimal_number_only" name="trip_rent" id="trip_rent" placeholder="Trip rent" value="{{ old('trip_rent') }}" readonly tabindex="30">
+        @if(!empty($errors->first('trip_rent')))
+            <p style="color: red;" >{{$errors->first('trip_rent')}}</p>
+        @endif
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-6">
+        <label for="no_of_trip" class="control-label"><b style="color: red;">* </b> No Of Transportations : </label>
+        <input type="text" class="form-control decimal_number_only" name="no_of_trip" id="no_of_trip" placeholder="No of transportations" value="{{ old('no_of_trip') }}" tabindex="12">
+        @if(!empty($errors->first('no_of_trip')))
+            <p style="color: red;" >{{$errors->first('no_of_trip')}}</p>
+        @endif
+    </div>
+    <div class="col-md-6">
+        <label for="total_rent" class="control-label"><b style="color: red;">* </b> Total Rent : </label>
+        <input type="text" class="form-control decimal_number_only" name="total_rent" id="total_rent" placeholder="Total rent" value="{{ old('total_rent') }}" readonly tabindex="30">
+        @if(!empty($errors->first('total_rent')))
+            <p style="color: red;" >{{$errors->first('total_rent')}}</p>
+        @endif
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-6">
+        <label for="driver_id" class="control-label"><b style="color: red;">* </b> Driver : </label>
+        <select class="form-control select2" name="driver_id" id="driver_id" tabindex="10" style="width: 100%;">
+            <option value="" {{ empty(old('driver_id')) ? 'selected' : '' }}>Select driver</option>
             @if(!empty($employees))
                 @foreach($employees as $employee)
-                    <option value="{{ $employee->id }}" data-wage-type={{ $employee->wage_type }} data-wage-amount={{ $employee->wage }} {{ (old('employee_id') == $employee->id) ? 'selected' : '' }}>
+                    <option value="{{ $employee->id }}" data-wage-type={{ $employee->wage_type }} data-wage-amount={{ $employee->wage }} {{ (old('driver_id') == $employee->id) ? 'selected' : '' }}>
                         {{ $employee->account->account_name }}
                     </option>
                 @endforeach
             @endif
         </select>
-        @if(!empty($errors->first('employee_id')))
-            <p style="color: red;" >{{$errors->first('employee_id')}}</p>
+        @if(!empty($errors->first('driver_id')))
+            <p style="color: red;" >{{$errors->first('driver_id')}}</p>
         @endif
     </div>
     <div class="col-md-6">
-        <label for="employee_wage" class="control-label"><b style="color: red;">* </b> Driver Bata : </label>
-        <input type="text" class="form-control decimal_number_only" name="employee_wage" id="employee_wage" placeholder="Driver bata" value="{{ old('employee_wage') }}" tabindex="11">
-        @if(!empty($errors->first('employee_wage')))
-            <p style="color: red;" >{{$errors->first('employee_wage')}}</p>
+        <label for="driver_wage" class="control-label"><b style="color: red;">* </b> Driver Trip Wage : </label>
+        <input type="text" class="form-control decimal_number_only" name="driver_wage" id="driver_wage" placeholder="Driver trip wage" value="{{ old('driver_wage') }}" tabindex="11">
+        @if(!empty($errors->first('driver_wage')))
+            <p style="color: red;" >{{$errors->first('driver_wage')}}</p>
         @endif
     </div>
 </div>
 <div class="form-group">
-    <div class="col-md-12">
-        <label for="no_of_trip" class="control-label"><b style="color: red;">* </b> No Of Transportations : </label>
-        <input type="text" class="form-control decimal_number_only" name="no_of_trip" id="no_of_trip" placeholder="No of transportations" value="{{ old('no_of_trip') }}" tabindex="12">
-        @if(!empty($errors->first('no_of_trip')))
-            <p style="color: red;" >{{$errors->first('no_of_trip')}}</p>
+    <div class="col-md-6">
+        <label for="second_driver_id" class="control-label"><b style="color: red;">* </b> Assistant Driver : </label>
+        <select class="form-control select2" name="second_driver_id" id="second_driver_id" tabindex="12" style="width: 100%;">
+            <option value="" {{ empty(old('second_driver_id')) ? 'selected' : '' }}>Select assistant driver</option>
+            @if(!empty($employees))
+                @foreach($employees as $employee)
+                    <option value="{{ $employee->id }}" data-wage-type={{ $employee->wage_type }} data-wage-amount={{ $employee->wage }} {{ (old('second_driver_id') == $employee->id) ? 'selected' : '' }}>
+                        {{ $employee->account->account_name }}
+                    </option>
+                @endforeach
+            @endif
+        </select>
+        @if(!empty($errors->first('second_driver_id')))
+            <p style="color: red;" >{{$errors->first('second_driver_id')}}</p>
+        @endif
+    </div>
+    <div class="col-md-6">
+        <label for="second_driver_wage" class="control-label"><b style="color: red;">* </b> Assistant Driver Trip Wage : </label>
+        <input type="text" class="form-control decimal_number_only" name="second_driver_wage" id="second_driver_wage" placeholder="Assistant driver trip wage" value="{{ old('second_driver_wage') }}" tabindex="13">
+        @if(!empty($errors->first('second_driver_wage')))
+            <p style="color: red;" >{{$errors->first('second_driver_wage')}}</p>
         @endif
     </div>
 </div>
