@@ -8,7 +8,7 @@ use Exception;
 
 class ServiceComponentComposer
 {
-    protected $services = [], $truckBodyTypes = [];
+    protected $services = [];
 
     /**
      * Create a new services partial composer.
@@ -21,8 +21,6 @@ class ServiceComponentComposer
         try {
             //getServices($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
             $this->services = $serviceRepo->getServices([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
-
-            $this->truckBodyTypes = config('constants.truckBodyTypes');
         } catch (Exception $e) {
 
         }

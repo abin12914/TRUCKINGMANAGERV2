@@ -34,4 +34,14 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 	    'sites'				=> 'SiteController',
 	    'transportations'	=> 'TransportationController'
 	]);
+
+    //ajax urls
+    Route::group(['middleware' => 'is.ajax'], function () {
+        //transportation form
+        Route::get('/last/transportation', 'TransportationController@getLastTransaction')->name('transportation.last');
+        //purchase form
+        Route::get('/purchase/details', 'PurchaseController@purchaseDetailsByCombo')->name('purchase.detail.combo');
+        //sale form
+        Route::get('/sale/details', 'SaleController@saleDetailsByCombo')->name('sale.detail.combo');
+    });
 });

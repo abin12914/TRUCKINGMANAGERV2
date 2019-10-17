@@ -91,7 +91,7 @@
                                         <label for="relation_type" class="col-md-3 control-label"><b style="color: red;">* </b> Primary Relation : </label>
                                         <div class="col-md-9">
                                             {{-- adding account select component --}}
-                                            @component('components.selects.account-relation-reg', ['selectedRelation' => old('relation_type', $account->relation), 'selectName' => 'relation_type', 'tabindex' => 6])
+                                            @component('components.selects.account-relation', ['registrationFlag' => true, 'selectedRelation' => old('relation_type', $account->relation), 'selectName' => 'relation_type', 'tabindex' => 6])
                                             @endcomponent
                                             {{-- adding error_message p tag component --}}
                                             @component('components.paragraph.error_message', ['fieldName' => 'relation_type'])

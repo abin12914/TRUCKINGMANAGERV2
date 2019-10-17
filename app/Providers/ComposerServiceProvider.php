@@ -36,8 +36,6 @@ class ComposerServiceProvider extends ServiceProvider
             'accounts.list',
             'accounts.details'
         ], "App\Http\View\Composers\AccountRelationComponentComposer");
-        //account relations to views
-        View::composer('components.selects.account-relation-reg', "App\Http\View\Composers\AccountRelationRegComponentComposer");
         //employee type to views
         View::composer('components.selects.employee-type', "App\Http\View\Composers\EmployeeTypeComponentComposer");
         //wage type to views
@@ -67,6 +65,9 @@ class ComposerServiceProvider extends ServiceProvider
         ], "App\Http\View\Composers\SiteTypeComponentComposer");
         //services to views
         View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
-        View::composer('components.forms.transportation', "App\Http\View\Composers\RentTypeComponentComposer");
+        //rent types to view
+        View::composer('components.selects.rent-type', "App\Http\View\Composers\RentTypeComponentComposer");
+        //materials to views
+        View::composer('components.selects.materials', "App\Http\View\Composers\MaterialComponentComposer");
     }
 }

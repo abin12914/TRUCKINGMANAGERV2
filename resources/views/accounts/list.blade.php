@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="relation_type" class="control-label">Relation : </label>
-                                        @component('components.selects.account-relation', ['selectedRelation' => $params['relation_type']['paramValue'], 'selectName' => 'relation_type', 'tabindex' => 2])
+                                        @component('components.selects.account-relation', ['registrationFlag' => false, 'selectedRelation' => $params['relation_type']['paramValue'], 'selectName' => 'relation_type', 'tabindex' => 2])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'relation_type'])

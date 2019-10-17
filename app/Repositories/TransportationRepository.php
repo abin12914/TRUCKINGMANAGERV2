@@ -43,7 +43,7 @@ class TransportationRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($transportations, $aggregates) : parent::getFilter($transportations, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -63,7 +63,7 @@ dd($e);
             } else {
                 $transportation = Transportation::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $transportation = $transportation->active();
             }
@@ -75,7 +75,7 @@ dd($e);
             } else {
                 $this->errorCode = $this->repositoryCode + 3;
             }
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -122,14 +122,14 @@ dd($e);
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $transportation->forceDelete() : $transportation->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [

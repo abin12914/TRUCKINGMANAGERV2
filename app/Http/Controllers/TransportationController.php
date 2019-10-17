@@ -131,8 +131,8 @@ class TransportationController extends Controller
         $driverWage         = null;
         $secondDriverWage   = null;
 
-        $driverWageType         = array_search('Per Trip [%]', config('constants.wageTypes'));
-        $secondDriverWageType   = array_search('Per Trip [%] [Assistant Driver]', config('constants.wageTypes'));
+        $driverWageType         = 1; //array_search('Per Trip [%]', config('constants.wageTypes'));
+        $secondDriverWageType   = 5; //array_search('Per Trip [%] [Assistant Driver]', config('constants.wageTypes'));
 
         $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
@@ -261,7 +261,7 @@ class TransportationController extends Controller
                     'transaction_date'  => $transactionDate,
                     'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
                     'credit_account_id' => $secondDriver->account_id, // credit the driver account
-                    'amount'            => $request->get('total_second_wage_amount'),
+                    'amount'            => $request->get('second_driver_total_wage'),
                     'particulars'       => "Wage of ". $request->get('no_of_trip'). ' trips.',
                     'status'            => 1,
                     'created_by'        => Auth::id(),
@@ -278,14 +278,14 @@ class TransportationController extends Controller
                     'wage_type'         => $secondDriverWageType,
                     'to_date'           => $transactionDate,
                     'transportation_id' => $transportationResponse['transportation']->id,
-                    'trip_wage_amount'  => $request->get('trip_second_wage_amount'),
+                    'trip_wage_amount'  => $request->get('second_driver_wage'),
                     'no_of_trip'        => $request->get('no_of_trip'),
-                    'total_wage_amount' => $request->get('total_second_wage_amount'),
+                    'total_wage_amount' => $request->get('second_driver_total_wage'),
                     'status'            => 1,
                 ], (!empty($secondDriverWage) ? $secondDriverWage->id : null));
 
-                if(!$driverWageResponse['flag']) {
-                    throw new TMException("CustomError", $driverWageResponse['errorCode']);
+                if(!$secondDriverWageResponse['flag']) {
+                    throw new TMException("CustomError", $secondDriverWageResponse['errorCode']);
                 }
             } elseif(!empty($secondDriverWage)) {
                 //old record has second driver but new record doesn't have
@@ -358,7 +358,7 @@ class TransportationController extends Controller
             $transportation = $this->transportationRepo->getTransportation($id, [], false);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-            dd($e);
+
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
@@ -417,5 +417,65 @@ class TransportationController extends Controller
         }
 
         return redirect()->back()->with("message","Failed to delete the transportation details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getLastTransaction(Request $request)
+    {
+        $whereParams = [];
+        $relationalParams = [];
+
+        if(!empty($request->get('truck_id'))) {
+            $whereParams['truck_id'] = [
+                'paramName'     => 'truck_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('truck_id'),
+            ];
+        }
+        if(!empty($request->get('source_id'))) {
+            $whereParams['source_id'] = [
+                'paramName'     => 'source_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('source_id'),
+            ];
+        }
+        if(!empty($request->get('destination_id'))) {
+            $whereParams['destination_id'] = [
+                'paramName'     => 'destination_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('destination_id'),
+            ];
+        }
+
+        if(!empty($request->get('contractor_account_id'))) {
+            $relationalParams['contractor_account_id'] = [
+                'relation'      => 'transaction',
+                'paramName'     => 'debit_account_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('contractor_account_id'),
+            ];
+        }
+
+        try {
+            $transportation = $this->transportationRepo->getTransportations($whereParams=[], $orWhereParams=[], $relationalParams=[], $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction'], $activeFlag=true);
+
+            if(!empty($transportation)) {
+                return [
+                    'flag'           => 'true',
+                    'transportation' => $transportation->toJson()
+                ];
+            }
+        } catch (Exception $e) {
+
+        }
+
+        return [
+            'flag' => 'false',
+        ];
     }
 }

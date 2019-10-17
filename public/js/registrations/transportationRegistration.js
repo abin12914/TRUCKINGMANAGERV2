@@ -87,19 +87,51 @@ $(function () {
 function calculateTotalRent() {
     var quantity    = ($('#rent_measurement').val() > 0 ? $('#rent_measurement').val() : 0 );
     var rate        = ($('#rent_rate').val() > 0 ? $('#rent_rate').val() : 0 );
+    var tripRent    = 0;
+    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
     var totalRent   = 0;
     var wageAmount  = 0;
     //driver wage calculation
     var employeeWageType    = $('#employee_id').find(':selected').data('wage-type');
     var employeeWageAmount  = $('#employee_id').find(':selected').data('wage-amount');
 
-    totalRent  = quantity * rate;
-    if(totalRent > 0) {
-        $('#total_rent').val(totalRent);
+    tripRent  = quantity * rate;
+    if(tripRent > 0) {
+        $('#trip_rent').val(tripRent);
 
+        totalRent = tripRent * noOfTrip;
+        if(totalRent > 0) {
+            $('#total_rent').val(totalRent);
+        } else {
+            $('#total_rent').val(0);
+            $('#trip_rent').val(0);
+            $('#employee_wage').val(0);
+        }
+
+        switch(employeeWageType) {
+            case 1:
+                //Per Trip [%]
+                wageAmount = tripRent * (employeeWageAmount/100);
+                break;
+            case 2:
+                //Per Trip [Fixed]
+                wageAmount = employeeWageAmount;
+                break;
+            case 3:
+                //Per Month [Fixed]
+                wageAmount = 0;
+            case 4:
+                //Per Day [Fixed]
+                wageAmount = 0;
+            case 5:
+                //Per Month [Fixed]
+                // code block
+            default:
+                // code block
+        }
         if(employeeWageType == 3 && employeeWageAmount > 0) {
             wageAmount = totalRent * (employeeWageAmount/100);
-            
+
             $('#employee_wage').val(wageAmount);
         } else {
             $('#employee_wage').val('');
@@ -138,16 +170,15 @@ function driverByTruck() {
 
     if(truckId) {
         $.ajax({
-            url: transportationDriverUrl, //"/transportation/driver",
+            url: "/last/transportation", //"/transportation/driver",
             method: "get",
             data: {
-                type        : 'driverByTruck',
-                truck_id    : truckId
+                truck_id : truckId
             },
             success: function(result) {
                 if(result && result.flag) {
                     var driverId  = result.driverId;
-                    
+
                     $('#employee_id').val(driverId);
                     $('#employee_id').trigger('change');
                 } else {
@@ -172,17 +203,16 @@ function contractorBySite() {
 
     if(sourceId && destinationId) {
         $.ajax({
-            url: transportationContractorUrl, //"/transportation/contractor",
+            url: "/last/transportation",
             method: "get",
             data: {
-                type            : 'contractorBySite',
                 source_id       : sourceId,
                 destination_id  : destinationId
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var contractorAccountId  = result.contractorAccountId;
-                    
+                    var contractorAccountId  = result.transportation.transaction.debit_account_id;
+
                     $('#contractor_account_id').val(contractorAccountId);
                     $('#contractor_account_id').trigger('change');
                 } else {
@@ -209,10 +239,9 @@ function rentDetailByCombo() {
 
     if(truckId && sourceId && destinationId && contractorAccountId) {
         $.ajax({
-            url: transportationRentDetailUrl, //"/transportation/rentDetail",
+            url: "/last/transportation",
             method: "get",
             data: {
-                type                    : 'rentDetailByCombo',
                 truck_id                : truckId,
                 source_id               : sourceId,
                 destination_id          : destinationId,
@@ -220,10 +249,10 @@ function rentDetailByCombo() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var rentType    = result.rentType;
-                    var rentRate    = result.rentRate;
-                    var materialId  = result.materialId;
-                    
+                    var rentType    = result.transportation.rent_type;
+                    var rentRate    = result.transportation.rent_rate;
+                    var materialId  = result.transportation.material_id;
+
                     $('#rent_type').val(rentType);
                     $('#rent_type').trigger('change');
                     $('#rent_rate').val(rentRate);
