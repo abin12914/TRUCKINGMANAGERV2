@@ -67,8 +67,32 @@ $(function () {
         calculateTotalRent();
     });
 
+    //action on no of trip keyup
+    $('body').on("keyup, change", "#no_of_trip", function (evt) {
+        //calculate total rent
+        calculateTotalRent();
+    });
+
     //action on rent rate keyup
-    $('body').on("change", "#employee_id", function (evt) {
+    $('body').on("change", "#driver_id", function (evt) {
+        //calculate total rent
+        calculateTotalRent();
+    });
+
+    //action on rent rate keyup
+    $('body').on("change", "#driver_wage", function (evt) {
+        //calculate total rent
+        calculateTotalRent();
+    });
+
+    //action on rent rate keyup
+    $('body').on("change", "#second_driver_id", function (evt) {
+        //calculate total rent
+        calculateTotalRent();
+    });
+
+    //action on rent rate keyup
+    $('body').on("change", "#second_driver_wage", function (evt) {
         //calculate total rent
         calculateTotalRent();
     });
@@ -87,58 +111,74 @@ $(function () {
 function calculateTotalRent() {
     var quantity    = ($('#rent_measurement').val() > 0 ? $('#rent_measurement').val() : 0 );
     var rate        = ($('#rent_rate').val() > 0 ? $('#rent_rate').val() : 0 );
-    var tripRent    = 0;
     var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+    var tripRent    = 0;
     var totalRent   = 0;
-    var wageAmount  = 0;
-    //driver wage calculation
-    var employeeWageType    = $('#employee_id').find(':selected').data('wage-type');
-    var employeeWageAmount  = $('#employee_id').find(':selected').data('wage-amount');
 
     tripRent  = quantity * rate;
     if(tripRent > 0) {
         $('#trip_rent').val(tripRent);
 
         totalRent = tripRent * noOfTrip;
+
         if(totalRent > 0) {
             $('#total_rent').val(totalRent);
         } else {
             $('#total_rent').val(0);
-            $('#trip_rent').val(0);
-            $('#employee_wage').val(0);
         }
+    } else {
+        $('#trip_rent').val(0);
+        $('#total_rent').val(0);
+    }
+    //calculateEmployeesWage
+    //driver wage
+    calculateEmployeesWage('#driver_id', tripRent, '#driver_wage', '#driver_total_wage');
+    //second driver wage
+    if($('#second_driver_id').val()) {
+        calculateEmployeesWage('#second_driver_id', tripRent, '#second_driver_wage', '#second_driver_total_wage');
+    }
+}
 
-        switch(employeeWageType) {
+function calculateEmployeesWage(employeeElement, tripRent, wageElement, totalWageElement) {
+    var tripWage   = 0;
+    var totalWage  = 0;
+
+    //wage calculation
+    var wageType    = $(employeeElement).find(':selected').data('wage-type');
+    var wageAmount  = ($(employeeElement).find(':selected').data('wage-amount') > 0 ? $(employeeElement).find(':selected').data('wage-amount') : 0);
+    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+
+    if(wageAmount > 0) {
+        switch(wageType) {
             case 1:
                 //Per Trip [%]
-                wageAmount = tripRent * (employeeWageAmount/100);
+                //will excute the same code block for case5
+            case 5:
+                //Per Trip [%] [Assistant Driver]
+                tripWage = tripRent * (wageAmount/100);
                 break;
             case 2:
                 //Per Trip [Fixed]
-                wageAmount = employeeWageAmount;
+                tripWage = wageAmount;
                 break;
             case 3:
                 //Per Month [Fixed]
-                wageAmount = 0;
+                tripWage = 0;
+                break;
             case 4:
                 //Per Day [Fixed]
-                wageAmount = 0;
-            case 5:
-                //Per Month [Fixed]
-                // code block
+                tripWage = 0;
+                break;
             default:
-                // code block
+                tripWage = 0;
         }
-        if(employeeWageType == 3 && employeeWageAmount > 0) {
-            wageAmount = totalRent * (employeeWageAmount/100);
+        totalWage = tripWage * noOfTrip;
 
-            $('#employee_wage').val(wageAmount);
-        } else {
-            $('#employee_wage').val('');
-        }
+        $(wageElement).val(tripWage);
+        $(totalWageElement).val(totalWage);
     } else {
-        $('#total_rent').val(0);
-        $('#employee_wage').val(0);
+        $(wageElement).val('');
+        $(totalWageElement).val('');
     }
 }
 
@@ -176,25 +216,25 @@ function driverByTruck() {
                 truck_id : truckId
             },
             success: function(result) {
-                if(result && result.flag) {
-                    var driverId  = result.driverId;
+                if(result && result.flag == 'true') {
+                    var employeeWage = result.employeeWage;
 
-                    $('#employee_id').val(driverId);
-                    $('#employee_id').trigger('change');
+                    $('#driver_id').val(employeeWage.employee_id);
+                    $('#driver_id').trigger('change');
                 } else {
-                    $('#employee_id').val('');
-                    $('#employee_id').trigger('change');
+                    $('#driver_id').val('');
+                    $('#driver_id').trigger('change');
                 }
             },
             error: function () {
-                $('#employee_id').val('');
-                $('#employee_id').trigger('change');
+                $('#driver_id').val('');
+                $('#driver_id').trigger('change');
             }
         });
     }
     //if no truck selected
-    $('#employee_id').val('');
-    $('#employee_id').trigger('change');
+    $('#driver_id').val('');
+    $('#driver_id').trigger('change');
 }
 
 function contractorBySite() {
@@ -211,9 +251,9 @@ function contractorBySite() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var contractorAccountId  = result.transportation.transaction.debit_account_id;
+                    var transaction = result.transaction;
 
-                    $('#contractor_account_id').val(contractorAccountId);
+                    $('#contractor_account_id').val(transaction.debit_account_id);
                     $('#contractor_account_id').trigger('change');
                 } else {
                     $('#contractor_account_id').val('');
@@ -249,9 +289,11 @@ function rentDetailByCombo() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var rentType    = result.transportation.rent_type;
-                    var rentRate    = result.transportation.rent_rate;
-                    var materialId  = result.transportation.material_id;
+                    var transportation  = result.transportation;
+
+                    var rentType    = transportation.rent_type;
+                    var rentRate    = transportation.rent_rate;
+                    var materialId  = transportation.material_id;
 
                     $('#rent_type').val(rentType);
                     $('#rent_type').trigger('change');

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\TransportationRepository;
+use App\Repositories\TransactionRepository;
+use App\Repositories\AccountRepository;
+use App\Repositories\EmployeeRepository;
 use App\Repositories\EmployeeWageRepository;
 use App\Http\Requests\TransportationRegistrationRequest;
 use App\Http\Requests\TransportationFilterRequest;
@@ -462,12 +465,16 @@ class TransportationController extends Controller
         }
 
         try {
-            $transportation = $this->transportationRepo->getTransportations($whereParams=[], $orWhereParams=[], $relationalParams=[], $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction'], $activeFlag=true);
+            $transportation = $this->transportationRepo->getTransportations($whereParams=[], $orWhereParams=[], $relationalParams=[], $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction', 'employeeWages'], $activeFlag=true);
+            $transaction    = $transportation->transaction;
+            $emplyeeWage    = $transportation->employeeWages->firstWhere('wage_type', '1');
 
             if(!empty($transportation)) {
                 return [
                     'flag'           => 'true',
-                    'transportation' => $transportation->toJson()
+                    'transportation' => $transportation->toJson(),
+                    'transaction'    => $transaction->toJson(),
+                    'employeeWage'   => $employeeWage->toJson()
                 ];
             }
         } catch (Exception $e) {

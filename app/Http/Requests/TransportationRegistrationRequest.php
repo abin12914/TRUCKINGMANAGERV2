@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TransportationRegistrationRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class TransportationRegistrationRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -87,7 +88,17 @@ class TransportationRegistrationRequest extends FormRequest
                                             'required',
                                             Rule::in(Employee::pluck('id')->toArray()),
                                         ],
-            'employee_wage'         =>  [
+            'driver_wage'         =>  [
+                                            'required',
+                                            'numeric',
+                                            'max:5000',
+                                            'min:10',
+                                        ],
+            'second_driver_id'             =>  [
+                                            'required',
+                                            Rule::in(Employee::pluck('id')->toArray()),
+                                        ],
+            'second_driver_wage'         =>  [
                                             'required',
                                             'numeric',
                                             'max:5000',
