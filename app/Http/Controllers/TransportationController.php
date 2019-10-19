@@ -89,11 +89,13 @@ class TransportationController extends Controller
             ],
         ];
 
-        $transportations = $this->transportationRepo->getTransportations($whereParams=[], $orWhereParams=[], $relationalParams=[], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], $aggregates=['key' => null, 'value' => null], $withParams=['employeeWages.employee.account'], $activeFlag=true);
+        $transportations = $this->transportationRepo->getTransportations(
+            $whereParams, [], $relationalParams, $orderBy=['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], $aggregates=['key' => null, 'value' => null], $withParams=['employeeWages.employee.account'], $activeFlag=true
+        );
 
         //params passing for auto selection
-        $relationalParams['from_date']['paramValue'] = $request->get('from_date');
-        $relationalParams['to_date']['paramValue']   = $request->get('to_date');
+        $whereParams['from_date']['paramValue'] = $request->get('from_date');
+        $whereParams['to_date']['paramValue']   = $request->get('to_date');
         $params = array_merge($whereParams, $relationalParams);
 
         return view('transportations.list', [

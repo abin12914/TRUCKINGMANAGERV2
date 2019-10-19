@@ -114,4 +114,31 @@ class TransportationRegistrationRequest extends FormRequest
                                         ]
         ];
     }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (!$this->checkCalculations()) {
+                $validator->errors()->add('calculations', 'Something went wrong with the calculations!&emsp; Please try again after reloading the page');
+            }
+        });
+    }
+
+    public function checkCalculations() {
+        $quanty             = $this->request->get("rent_measurement");
+        $rate               = $this->request->get("rent_rate");
+        $tripRent           = $this->request->get("trip_rent");
+        $noOfTrip           = $this->request->get("no_of_trip");
+        $totalRent          = $this->request->get("total_rent");
+        $driverWage         = $this->request->get("driver_wage");
+        $driverTotalWage    = $this->request->get("driver_total_wage");
+
+        return (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent && ($driverWage * $noOfTrip) == $driverTotalWage);
+    }
 }

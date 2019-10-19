@@ -65,9 +65,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script type="text/javascript">
-
-    </script>
-
     <script src="/js/registrations/transportationRegistration.js?rndstr={{ rand(1000,9999) }}"></script>
 @endsection

@@ -25,8 +25,7 @@ return [
         1 => 'Per Trip [%]',
         2 => 'Per Trip [Fixed]',
         3 => 'Per Month [Fixed]',
-        4 => 'Per Day [Fixed]',
-        5 => 'Per Trip [%] [Assistant Driver]'
+        4 => 'Per Day [Fixed]'
     ],
 
     'truckBodyTypes' => [
@@ -51,6 +50,12 @@ return [
         1   => 'KM Based Rent',
         2   => 'Tare Weight Based Rent',
         3   => 'Fixed Rent',
+    ],
+
+    'measureTypes' => [
+        1   => 'Weighment [Ton]',
+        2   => 'Volume [Feet]',
+        3   => 'Fixed For TruckType',
     ],
 
     'transactionRelations' => [
@@ -112,7 +117,7 @@ return [
             'opening_balance'   => 0,
             'name'              => 'Purchases account',
             'phone'             => '0000000000',
-            'status'            => 1,  
+            'status'            => 1,
             'company_id'        => 0,
         ],
 

@@ -72,5 +72,8 @@ class ComposerServiceProvider extends ServiceProvider
         ], "App\Http\View\Composers\RentTypeComponentComposer");
         //materials to views
         View::composer('components.selects.materials', "App\Http\View\Composers\MaterialComponentComposer");
+        View::composer([
+            'components.selects.measure-type',
+        ], "App\Http\View\Composers\MeasureTypeComponentComposer");
     }
 }

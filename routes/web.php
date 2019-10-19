@@ -36,7 +36,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 	    'trucks'			=> 'TruckController',
 	    'expenses'			=> 'ExpenseController',
 	    'sites'				=> 'SiteController',
-	    'transportations'	=> 'TransportationController'
+	    'transportations'	=> 'TransportationController',
+        'supply'            => 'SupplyTransportationController'
 	]);
 
     //ajax urls

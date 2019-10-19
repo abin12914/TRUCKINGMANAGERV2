@@ -1,14 +1,14 @@
 @extends('layouts.app')
-@section('title', 'Transportations List')
+@section('title', 'Supply Transportations List')
 @section('content')
 <section class="content-header">
     <h1>
-        Transportations
+        Supply Transportations
         <small>List</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="{{ route('transportations.index') }}"> Transportation</a></li>
+        <li><a href="{{ route('supply.index') }}"> Supply Transportation</a></li>
         <li class="active"> List</li>
     </ol>
 </section>
@@ -23,7 +23,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-header">
-                    <form action="{{ route('transportations.index') }}" method="get" class="form-horizontal" autocomplete="off">
+                    <form action="{{ route('supply.index') }}" method="get" class="form-horizontal" autocomplete="off">
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
@@ -149,9 +149,9 @@
                                         <th style="width: 10%;">Date</th>
                                         <th style="width: 10%;">Truck</th>
                                         <th style="width: 15%;">Contractor</th>
-                                        <th style="width: 25%;">Source - Destination</th>
+                                        <th style="width: 30%;">Source - Destination</th>
                                         <th style="width: 10%;" class="no-print">Material</th>
-                                        <th style="width: 15%;">Total Rent</th>
+                                        <th style="width: 10%;">No Of Trip</th>
                                         <th style="width: 10%;" class="no-print">Details</th>
                                     </tr>
                                 </thead>
@@ -163,13 +163,12 @@
                                                 <td>{{ $transportation->transaction->transaction_date->format('d-m-Y') }}</td>
                                                 <td>{{ $transportation->truck->reg_number }}</td>
                                                 <td>{{ $transportation->transaction->debitAccount->account_name }}</td>
-                                                <td>{{ $transportation->source->name }} - {{ $transportation->destination->name }}</td>
+                                                <td>{{ $transportation->source->name }}</td>
+                                                <td>{{ $transportation->destination->name }}</td>
                                                 <td class="no-print">{{ $transportation->material->name }}</td>
-                                                <td>
-                                                    {{ $transportation->trip_rent }} x {{ $transportation->no_of_trip }} = {{ $transportation->total_rent }}
-                                                </td>
+                                                <td>{{ $transportation->no_of_trip }}</td>
                                                 <td class="no-print">
-                                                    <a href="{{ route('supply.show', ['id' => $transportation->id]) }}">
+                                                    <a href="{{ route('transportations.show', ['id' => $transportation->id]) }}">
                                                         <button type="button" class="btn btn-default">Details</button>
                                                     </a>
                                                 </td>
