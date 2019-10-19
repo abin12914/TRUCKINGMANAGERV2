@@ -39,4 +39,12 @@ class EmployeeWage extends Model
     {
         return $query->where('status', 1);
     }
+
+    /**
+     * Get the employee details related to the wage record
+     */
+    public function employee()
+    {
+        return $this->belongsTo('App\Models\Employee');
+    }
 }

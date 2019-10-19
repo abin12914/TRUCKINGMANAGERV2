@@ -66,7 +66,10 @@ class ComposerServiceProvider extends ServiceProvider
         //services to views
         View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
         //rent types to view
-        View::composer('components.selects.rent-type', "App\Http\View\Composers\RentTypeComponentComposer");
+        View::composer([
+            'components.selects.rent-type',
+            'transportations.details'
+        ], "App\Http\View\Composers\RentTypeComponentComposer");
         //materials to views
         View::composer('components.selects.materials', "App\Http\View\Composers\MaterialComponentComposer");
     }

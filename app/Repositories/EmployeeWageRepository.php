@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\EmployeeWage;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class EmployeeWageRepository extends Repository
 {
@@ -43,8 +43,8 @@ class EmployeeWageRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($employeeWages, $aggregates) : parent::getFilter($employeeWages, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $employeeWages;
@@ -63,7 +63,7 @@ class EmployeeWageRepository extends Repository
             } else {
                 $employeeWage = EmployeeWage::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $employeeWage = $employeeWage->active();
             }
@@ -75,8 +75,8 @@ class EmployeeWageRepository extends Repository
             } else {
                 $this->errorCode = $this->repositoryCode + 3;
             }
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $employeeWage;
@@ -105,8 +105,8 @@ class EmployeeWageRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-
-            throw new AppCustomException("CustomError", $this->errorCode);
+dd($e);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
@@ -122,15 +122,15 @@ class EmployeeWageRepository extends Repository
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $employeeWage->forceDelete() : $employeeWage->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'          => false,

@@ -29,7 +29,6 @@
                         <h6 class="widget-user-desc">
                             {{ (!empty($accountRelations) && !empty($accountRelations[$account->relation])) ? $accountRelations[$account->relation] : "Error" }}
                         </h6>
-                        
                     </div>
                     <div class="box box-primary">
                         <div class="box-body">
@@ -109,9 +108,9 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         @if($account->financial_status == 1)
-                                            Creditor - 
+                                            Creditor -
                                         @elseif($account->financial_status == 2)
-                                            Debitor - 
+                                            Debitor -
                                         @endif
                                         {{ $account->opening_balance }}
                                     </p>

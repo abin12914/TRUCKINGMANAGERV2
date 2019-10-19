@@ -41,8 +41,11 @@ $(function () {
         autoclose: true,
     });
 
+    console.log($('.datepicker_reg').val());
     //setting current date as selected
-    $('.datepicker_reg').datepicker('setDate', 'now');
+    if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
+        $('.datepicker_reg').datepicker('setDate', 'now');
+    }
 
     //default value setting in account registering
     $('body').on("change", "#financial_status", function () {
@@ -60,7 +63,7 @@ $(function () {
     $('body').on("keydown", ".prevent-edit", function (evt) {
         return false;
     });
-    
+
     // for checking if the pressed key is a number
     $('body').on("keypress", ".number_only", function (evt) {
         var fieldValue  = $(this).val();
@@ -88,7 +91,7 @@ $(function () {
             $(this).data("title", "Only numbers are allowed!").tooltip("show");
             return false;
         }
-        
+
         $(this).data("title", "");
         return true;
     });
@@ -105,7 +108,7 @@ $(function () {
                 $(this).val('');
             }
         }
-        
+
         if (charCode > 31 && (charCode != 46 &&(charCode < 48 || charCode > 57))) {
             evt.preventDefault();
             $(this).data("title", "Only numbers are allowed!").tooltip("show");

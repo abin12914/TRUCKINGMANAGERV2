@@ -1,4 +1,12 @@
 $(function () {
+    //if editing activate siblings disabiling
+    if($('#source_id').val() != 'undefined') {
+        var sourceId      = $('#source_id').val();
+        var destinationId = $('#destination_id').val();
+
+        disableSiblings('#destination_id', sourceId);
+        disableSiblings('#source_id', destinationId);
+    }
 
     //setting last employee for selected truck
     $('body').on("change", "#truck_id", function() {
@@ -9,12 +17,8 @@ $(function () {
     $('body').on("change", "#source_id", function() {
         var fieldValue = $('#source_id').val();
 
-        $('#destination_id')
-            .children('option[value=' + fieldValue + ']')
-            .prop('disabled', true)
-            .siblings().prop('disabled', false);
+        disableSiblings('#destination_id', fieldValue);
 
-        initializeSelect2();
         //setting last contractor for selected sites
         contractorBySite();
     });
@@ -23,10 +27,7 @@ $(function () {
     $('body').on("change", "#destination_id", function() {
         var fieldValue = $('#destination_id').val();
 
-        $('#source_id')
-            .children('option[value=' + fieldValue + ']')
-            .prop('disabled', true)
-            .siblings().prop('disabled', false);
+        disableSiblings('#source_id', fieldValue);
 
         initializeSelect2();
         //setting last contractor for selected sites
@@ -52,49 +53,53 @@ $(function () {
         }
 
         //calculate total rent
-        calculateTotalRent();
+        calculateTripRent();
+        //calculate driver wage automatic
+        calculateDriverWage();
     });
 
     //action on rent measurement keyup
     $('body').on("keyup", "#rent_measurement", function (evt) {
         //calculate total rent
-        calculateTotalRent();
+        calculateTripRent();
+        //calculate driver wage automatic
+        calculateDriverWage();
     });
 
     //action on rent rate keyup
-    $('body').on("keyup, change", "#rent_rate", function (evt) {
+    $('body').on("keyup change", "#rent_rate", function (evt) {
         //calculate total rent
-        calculateTotalRent();
+        calculateTripRent();
+        //calculate driver default wage
+        calculateDriverWage();
     });
 
     //action on no of trip keyup
-    $('body').on("keyup, change", "#no_of_trip", function (evt) {
+    $('body').on("keyup change", "#no_of_trip", function (evt) {
         //calculate total rent
         calculateTotalRent();
+        //calculate driver wage total
+        calculateDriverWageTotal()
     });
 
     //action on rent rate keyup
     $('body').on("change", "#driver_id", function (evt) {
-        //calculate total rent
-        calculateTotalRent();
+        //calculate driver default wage
+        calculateDriverWage();
+
     });
 
     //action on rent rate keyup
-    $('body').on("change", "#driver_wage", function (evt) {
+    $('body').on("keyup change", "#driver_wage", function (evt) {
         //calculate total rent
-        calculateTotalRent();
-    });
+        var tripWage  = ($('#driver_wage').val() > 0 ? $('#driver_wage').val() : 0);
+        var noOfTrip  = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+        var totalWage = tripWage * noOfTrip;
 
-    //action on rent rate keyup
-    $('body').on("change", "#second_driver_id", function (evt) {
-        //calculate total rent
-        calculateTotalRent();
-    });
-
-    //action on rent rate keyup
-    $('body').on("change", "#second_driver_wage", function (evt) {
-        //calculate total rent
-        calculateTotalRent();
+        if(totalWage != 'undefined' && totalWage > 0)
+        {
+            $('#driver_total_wage').val(totalWage);
+        }
     });
 
     //submit transportation form
@@ -107,54 +112,76 @@ $(function () {
     });
 });
 
-//method for total rent calculation and driver wage calculation
-function calculateTotalRent() {
+//disable siblings's elements
+function disableSiblings(element, fieldValue) {
+    if(fieldValue && fieldValue != 'undefined')
+    {
+        $(element)
+            .children('option[value=' + fieldValue + ']')
+            .prop('disabled', true)
+            .siblings().prop('disabled', false);
+
+        initializeSelect2();
+    } else {
+        $(element).children().prop('disabled', false);
+    }
+}
+//method for total rent calculation
+function calculateTripRent() {
     var quantity    = ($('#rent_measurement').val() > 0 ? $('#rent_measurement').val() : 0 );
     var rate        = ($('#rent_rate').val() > 0 ? $('#rent_rate').val() : 0 );
-    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
     var tripRent    = 0;
-    var totalRent   = 0;
 
     tripRent  = quantity * rate;
     if(tripRent > 0) {
         $('#trip_rent').val(tripRent);
-
-        totalRent = tripRent * noOfTrip;
-
-        if(totalRent > 0) {
-            $('#total_rent').val(totalRent);
-        } else {
-            $('#total_rent').val(0);
-        }
     } else {
         $('#trip_rent').val(0);
-        $('#total_rent').val(0);
-    }
-    //calculateEmployeesWage
-    //driver wage
-    calculateEmployeesWage('#driver_id', tripRent, '#driver_wage', '#driver_total_wage');
-    //second driver wage
-    if($('#second_driver_id').val()) {
-        calculateEmployeesWage('#second_driver_id', tripRent, '#second_driver_wage', '#second_driver_total_wage');
     }
 }
 
-function calculateEmployeesWage(employeeElement, tripRent, wageElement, totalWageElement) {
+//method for total rent calculation
+function calculateTotalRent() {
+    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+    var tripRent    = ($('#trip_rent').val() > 0 ? $('#trip_rent').val() : 0 );
+    var totalRent   = 0;
+
+    totalRent = tripRent * noOfTrip;
+    if(totalRent > 0) {
+        $('#total_rent').val(totalRent);
+    } else {
+        $('#total_rent').val(0);
+    }
+}
+
+//method for total rent calculation
+function calculateDriverWageTotal() {
+    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+    var tripWage    = ($('#driver_wage').val() > 0 ? $('#driver_wage').val() : 0 );
+    var totalWage   = 0;
+
+    totalWage = tripWage * noOfTrip;
+    if(totalWage > 0) {
+        $('#driver_total_wage').val(totalWage);
+    } else {
+        $('#driver_total_wage').val(0);
+    }
+}
+
+function calculateDriverWage() {
+    var tripRent   = $('#trip_rent').val();
     var tripWage   = 0;
     var totalWage  = 0;
 
     //wage calculation
-    var wageType    = $(employeeElement).find(':selected').data('wage-type');
-    var wageAmount  = ($(employeeElement).find(':selected').data('wage-amount') > 0 ? $(employeeElement).find(':selected').data('wage-amount') : 0);
+    var wageType    = $('#driver_id').find(':selected').data('wage-type');
+    var wageAmount  = ($('#driver_id').find(':selected').data('wage-amount') > 0 ? $('#driver_id').find(':selected').data('wage-amount') : 0);
     var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
 
     if(wageAmount > 0) {
         switch(wageType) {
             case 1:
                 //Per Trip [%]
-                //will excute the same code block for case5
-            case 5:
-                //Per Trip [%] [Assistant Driver]
                 tripWage = tripRent * (wageAmount/100);
                 break;
             case 2:
@@ -163,22 +190,18 @@ function calculateEmployeesWage(employeeElement, tripRent, wageElement, totalWag
                 break;
             case 3:
                 //Per Month [Fixed]
-                tripWage = 0;
-                break;
             case 4:
                 //Per Day [Fixed]
-                tripWage = 0;
-                break;
             default:
                 tripWage = 0;
         }
         totalWage = tripWage * noOfTrip;
 
-        $(wageElement).val(tripWage);
-        $(totalWageElement).val(totalWage);
+        $('#driver_wage').val(tripWage);
+        $('#driver_total_wage').val(totalWage);
     } else {
-        $(wageElement).val('');
-        $(totalWageElement).val('');
+        $('#driver_wage').val('');
+        $('#driver_total_wage').val('');
     }
 }
 
@@ -217,9 +240,7 @@ function driverByTruck() {
             },
             success: function(result) {
                 if(result && result.flag == 'true') {
-                    var employeeWage = result.employeeWage;
-
-                    $('#driver_id').val(employeeWage.employee_id);
+                    $('#driver_id').val(result.employee_id);
                     $('#driver_id').trigger('change');
                 } else {
                     $('#driver_id').val('');
@@ -251,9 +272,7 @@ function contractorBySite() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var transaction = result.transaction;
-
-                    $('#contractor_account_id').val(transaction.debit_account_id);
+                    $('#contractor_account_id').val(result.contractor_account_id);
                     $('#contractor_account_id').trigger('change');
                 } else {
                     $('#contractor_account_id').val('');
@@ -289,17 +308,11 @@ function rentDetailByCombo() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    var transportation  = result.transportation;
-
-                    var rentType    = transportation.rent_type;
-                    var rentRate    = transportation.rent_rate;
-                    var materialId  = transportation.material_id;
-
-                    $('#rent_type').val(rentType);
+                    $('#rent_type').val(result.rent_type);
                     $('#rent_type').trigger('change');
-                    $('#rent_rate').val(rentRate);
+                    $('#rent_rate').val(result.rent_rate);
                     $('#rent_rate').trigger('change');
-                    $('#material_id').val(materialId);
+                    $('#material_id').val(result.material_id);
                     $('#material_id').trigger('change');
                 } else {
                     $('#rent_type').val('');

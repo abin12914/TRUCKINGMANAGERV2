@@ -18,7 +18,7 @@ class Transportation extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    protected $dates = ['transportation_date', 'deleted_at'];
 
     /**
      * Scope a query to only include active employees.
@@ -69,14 +69,6 @@ class Transportation extends Model
     public function material()
     {
         return $this->belongsTo('App\Models\Material','material_id');
-    }
-
-    /**
-     * Get the employee details associated with the transportation
-     */
-    public function employee()
-    {
-        return $this->belongsTo('App\Models\Employee','driver_id');
     }
 
     /**

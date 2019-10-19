@@ -14,13 +14,6 @@
 </section>
 <!-- Main content -->
 <section class="content">
-    @if (Session::has('message'))
-        <div class="alert {{ Session::get('alert-class', 'alert-info') }}" id="alert-message">
-            <h4>
-                {{ Session::get('message') }}
-            </h4>
-        </div>
-    @endif
     <!-- Main row -->
     <div class="row  no-print">
         <div class="col-md-12">
@@ -200,14 +193,14 @@
                                         @foreach($transportations as $index => $transportation)
                                             <tr>
                                                 <td>{{ $index + $transportations->firstItem() }}</td>
-                                                <td>{{ Carbon\Carbon::parse($transportation->date)->format('d-m-Y') }}</td>
+                                                <td>{{ $transportation->transaction->transaction_date->format('d-m-Y') }}</td>
                                                 <td>{{ $transportation->truck->reg_number }}</td>
                                                 <td>{{ $transportation->transaction->debitAccount->account_name }}</td>
                                                 <td>{{ $transportation->source->name }}</td>
                                                 <td>{{ $transportation->destination->name }}</td>
                                                 <td class="no-print">{{ $transportation->material->name }}</td>
                                                 <td>{{ $transportation->total_rent }}</td>
-                                                <td class="no-print">{{ $transportation->employee->account->name }}</td>
+                                                <td class="no-print">{{ $transportation->employeeWages->first()->employee->account->name }}</td>
                                                 <td class="no-print">{{ $transportation->driver_wage }}</td>
                                                 <td class="no-print">
                                                     <a href="{{ route('transportations.show', ['id' => $transportation->id]) }}">

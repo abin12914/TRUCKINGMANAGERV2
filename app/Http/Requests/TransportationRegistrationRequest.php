@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Auth;
 
 class TransportationRegistrationRequest extends FormRequest
 {
@@ -27,24 +28,33 @@ class TransportationRegistrationRequest extends FormRequest
         return [
             'truck_id'              =>  [
                                             'required',
-                                            'exists:trucks,id'
+                                            Rule::exists('trucks', 'id')->where(function ($query) {
+                                                $query->where('company_id', Auth::User()->company_id);
+                                            })
                                         ],
             'transportation_date'   =>  [
                                             'required',
                                             'date_format:d-m-Y',
+                                            'before_or_equal:today'
                                         ],
             'source_id'             =>  [
                                             'required',
-                                            'exists:sites,id'
+                                            Rule::exists('sites', 'id')->where(function ($query) {
+                                                $query->where('company_id', Auth::User()->company_id);
+                                            })
                                         ],
             'destination_id'        =>  [
                                             'required',
                                             'different:source_id',
-                                            'exists:sites,id'
+                                            Rule::exists('sites', 'id')->where(function ($query) {
+                                                $query->where('company_id', Auth::User()->company_id);
+                                            })
                                         ],
             'contractor_account_id' =>  [
                                             'required',
-                                            'exists:accounts,id'
+                                            Rule::exists('accounts', 'id')->where(function ($query) {
+                                                $query->where('company_id', Auth::User()->company_id);
+                                            })
                                         ],
             'material_id'           =>  [
                                             'required',
@@ -64,7 +74,7 @@ class TransportationRegistrationRequest extends FormRequest
                                             'required',
                                             'numeric',
                                             'min:0.1',
-                                            'max:25000',
+                                            'max:99999',
                                         ],
             'trip_rent'             =>  [
                                             'required',
@@ -86,24 +96,22 @@ class TransportationRegistrationRequest extends FormRequest
                                         ],
             'driver_id'             =>  [
                                             'required',
-                                            Rule::in(Employee::pluck('id')->toArray()),
+                                            Rule::exists('employees', 'id')->where(function ($query) {
+                                                $query->where('company_id', Auth::User()->company_id);
+                                            })
                                         ],
-            'driver_wage'         =>  [
+            'driver_wage'           =>  [
                                             'required',
                                             'numeric',
                                             'max:5000',
                                             'min:10',
                                         ],
-            'second_driver_id'             =>  [
-                                            'required',
-                                            Rule::in(Employee::pluck('id')->toArray()),
-                                        ],
-            'second_driver_wage'         =>  [
+            'driver_total_wage'     =>  [
                                             'required',
                                             'numeric',
-                                            'max:5000',
                                             'min:10',
-                                        ],
+                                            'max:9999'
+                                        ]
         ];
     }
 }

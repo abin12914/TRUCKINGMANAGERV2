@@ -12,6 +12,10 @@
 */
 
 Route::redirect('/', '/login');
+//temp
+Route::get('/signout', function() {
+    \Auth::logout();
+})->name('signout');
 
 //voyager
 Route::group(['prefix' => 'admin'], function () {
