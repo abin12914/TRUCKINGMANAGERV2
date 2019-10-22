@@ -26,7 +26,7 @@
         <div class="col-md-12">
             <!-- form start -->
             <form action="{{route('supply.store')}}" method="post" id="supply_registration_form" class="form-horizontal" autocomplete="off">
-                <input type="hidden" name="_token" value="{{csrf_token()}}">
+                @csrf
                 <!-- nav-tabs-custom -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">

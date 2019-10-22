@@ -2,7 +2,7 @@
     <option value="" {{ empty(old($selectName)) ? 'selected' : '' }}>Select measurement type</option>
     @if(!empty($measureTypes) && (count($measureTypes) > 0))
         @foreach($measureTypes as $key => $type)
-            <option value="{{ $key }}" {{ $selectedType == $key ? 'selected' : '' }}>
+            <option value="{{ $key }}" {{ $selectedMeasureTypeId == $key ? 'selected' : '' }}>
                 {{ $type }}
             </option>
         @endforeach

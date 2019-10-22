@@ -76,7 +76,7 @@ class Transportation extends Model
      */
     public function purchase()
     {
-        return $this->hasOne('App\Models\Purchase', 'trip_id');
+        return $this->hasOne('App\Models\Purchase', 'transportation_id');
     }
 
     /**
@@ -84,7 +84,7 @@ class Transportation extends Model
      */
     public function sale()
     {
-        return $this->hasOne('App\Models\Sale', 'trip_id');
+        return $this->hasOne('App\Models\Sale', 'transportation_id');
     }
 
     /**

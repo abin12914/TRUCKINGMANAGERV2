@@ -310,6 +310,8 @@ function rentDetailByCombo() {
                 if(result && result.flag) {
                     $('#rent_type').val(result.rent_type);
                     $('#rent_type').trigger('change');
+                    $('#rent_measurement').val(result.rent_measurement);
+                    $('#rent_measurement').trigger('change');
                     $('#rent_rate').val(result.rent_rate);
                     $('#rent_rate').trigger('change');
                     $('#material_id').val(result.material_id);
@@ -317,6 +319,8 @@ function rentDetailByCombo() {
                 } else {
                     $('#rent_type').val('');
                     $('#rent_type').trigger('change');
+                    $('#rent_measurement').val('');
+                    $('#rent_measurement').trigger('change');
                     $('#rent_rate').val('');
                     $('#rent_rate').trigger('change');
                     $('#material_id').val('');
@@ -326,6 +330,8 @@ function rentDetailByCombo() {
             error: function () {
                 $('#rent_type').val('');
                 $('#rent_type').trigger('change');
+                $('#rent_measurement').val('');
+                $('#rent_measurement').trigger('change');
                 $('#rent_rate').val('');
                 $('#rent_rate').trigger('change');
                 $('#material_id').val('');

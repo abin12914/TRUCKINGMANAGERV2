@@ -45,8 +45,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         //transportation form
         Route::get('/last/transportation', 'TransportationController@getLastTransaction')->name('transportation.last');
         //purchase form
-        Route::get('/purchase/details', 'PurchaseController@purchaseDetailsByCombo')->name('purchase.detail.combo');
+        Route::get('/last/purchase', 'PurchaseController@getLastTransaction')->name('purchase.last');
         //sale form
-        Route::get('/sale/details', 'SaleController@saleDetailsByCombo')->name('sale.detail.combo');
+        Route::get('last/sale', 'SaleController@getLastTransaction')->name('sale.last');
     });
 });

@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Purchase;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class PurchaseRepository extends Repository
 {
@@ -44,7 +44,7 @@ class PurchaseRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $purchases;
@@ -63,7 +63,7 @@ class PurchaseRepository extends Repository
             } else {
                 $purchase = Purchase::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $purchase = $purchase->active();
             }
@@ -72,7 +72,7 @@ class PurchaseRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $purchase;
@@ -100,7 +100,7 @@ class PurchaseRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
@@ -117,15 +117,15 @@ class PurchaseRepository extends Repository
             //force delete or soft delete
             //related models will be deleted by deleting event handlers
             $forceFlag ? $purchase->forceDelete() : $purchase->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'          => false,

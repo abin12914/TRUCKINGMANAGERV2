@@ -375,10 +375,8 @@ class TransportationController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * return last resource
      *
-     * @param  Request $request
-     * @return \Illuminate\Http\Response
      */
     public function getLastTransaction(Request $request)
     {
@@ -417,7 +415,7 @@ class TransportationController extends Controller
         }
 
         try {
-            $transportation = $this->transportationRepo->getTransportations($whereParams=[], $orWhereParams=[], $relationalParams=[], $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction', 'employeeWages'], $activeFlag=true);
+            $transportation = $this->transportationRepo->getTransportations($whereParams, [], $relationalParams, $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction', 'employeeWages'], $activeFlag=true);
 
             if(!empty($transportation)) {
                 return [
@@ -425,6 +423,7 @@ class TransportationController extends Controller
                     'contractor_account_id' => $transportation->transaction->debit_account_id,
                     'employee_id'           => $transportation->employeeWages->firstWhere('wage_type', $this->driverWageType)->employee_id,
                     'rent_type'             => $transportation->rent_type,
+                    'rent_measurement'      => ($transportation->rent_type == 2 ? null : $transportation->measurement),
                     'rent_rate'             => $transportation->rent_rate,
                     'material_id'           => $transportation->material_id,
                 ];

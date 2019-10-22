@@ -1,9 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Transportation Details')
 @section('content')
-    @php
-        $employeeWage = $transportation->employeeWages->first();
-    @endphp
+@php
+    $employeeWage = $transportation->employeeWages->first();
+@endphp
 <section class="content-header">
     <h1>
         Transportation
@@ -113,7 +113,7 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         @if(!empty($rentTypes))
-                                            {{ $rentTypes[$transportation->rent_type] ?? '<bv class="text-red">Error</b>' }}
+                                            {{ $rentTypes[$transportation->rent_type] ?? '<b class="text-red">Error</b>' }}
                                         @else
                                             <b class="text-red">Error</b>
                                         @endif

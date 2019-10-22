@@ -168,7 +168,7 @@
                                                 <td class="no-print">{{ $transportation->material->name }}</td>
                                                 <td>{{ $transportation->no_of_trip }}</td>
                                                 <td class="no-print">
-                                                    <a href="{{ route('transportations.show', ['id' => $transportation->id]) }}">
+                                                    <a href="{{ route('supply.show', ['id' => $transportation->id]) }}">
                                                         <button type="button" class="btn btn-default">Details</button>
                                                     </a>
                                                 </td>

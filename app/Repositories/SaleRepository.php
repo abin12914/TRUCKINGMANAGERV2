@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Sale;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class SaleRepository extends Repository
 {
@@ -44,7 +44,7 @@ class SaleRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $sales;
@@ -63,7 +63,7 @@ class SaleRepository extends Repository
             } else {
                 $sale = Sale::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $sale = $sale->active();
             }
@@ -72,7 +72,7 @@ class SaleRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $sale;
@@ -100,7 +100,7 @@ class SaleRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
@@ -117,15 +117,15 @@ class SaleRepository extends Repository
             //force delete or soft delete
             //related models will be deleted by deleting event handlers
             $forceFlag ? $sale->forceDelete() : $sale->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'          => false,

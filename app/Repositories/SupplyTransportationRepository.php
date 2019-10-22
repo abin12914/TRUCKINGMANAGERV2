@@ -62,9 +62,9 @@ class SupplyTransportationRepository extends Repository
 
         try {
             if(empty($withParams)) {
-                $transportation = SupplyTransportation::query();
+                $transportation = Transportation::query();
             } else {
-                $transportation = SupplyTransportation::with($withParams);
+                $transportation = Transportation::with($withParams);
             }
 
             //transportations which has reated sale and purchase are supply
