@@ -35,7 +35,7 @@ class CreatedCompanyEventListener implements ShouldQueue
             'relation_type' => [
                 'paramName'     => 'company_id',
                 'paramOperator' => '=',
-                'paramValue'    => 17,//$event->company->id,
+                'paramValue'    => $event->company->id,
             ]
         ];
 

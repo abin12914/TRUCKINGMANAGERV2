@@ -448,21 +448,49 @@ class SupplyTransportationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy(
+        TransportationRepository $transportationRepo,
+        PurchaseRepository $purchaseRepo,
+        SaleRepository $saleRepo,
+        EmployeeWageRepository $employeeWageRepo,
+        $id
+    ){
         $errorCode  = 0;
 
         //wrapping db transactions
         DB::beginTransaction();
         try {
-            $deleteResponse = $this->transportationRepo->deleteTransportation($id, false);
+            $transportation = $transportationRepo->getTransportation($id, ['employeeWages', 'purchase', 'sale'], false);
+            $employeeWage   = $transportation->employeeWages()->first();
+            $purchase       = $transportation->purchase;
+            $sale           = $transportation->sale;
 
-            if(!$deleteResponse['flag']) {
-                throw new TMException("CustomError", $deleteResponse['errorCode']);
+            $deleteEmployeeWage = $employeeWageRepo->$deleteEmployeeWage($employeeWage->id, false);
+
+            if(!$deleteEmployeeWage['flag']) {
+                throw new TMException("CustomError", $deleteEmployeeWage['errorCode']);
+            }
+
+            $deleteSale = $saleRepo->deleteSale($sale->id, false);
+
+            if(!$deleteSale['flag']) {
+                throw new TMException("CustomError", $deleteSale['errorCode']);
+            }
+
+            $deletePurchase = $purchaseRepo->deletePurchase($purchase->id, false);
+
+            if(!$deletePurchase['flag']) {
+                throw new TMException("CustomError", $deletePurchase['errorCode']);
+            }
+
+            $deleteTransportation = $transportationRepo->deleteTransportation($id, false);
+
+            if(!$deleteTransportation['flag']) {
+                throw new TMException("CustomError", $deleteTransportation['errorCode']);
             }
 
             DB::commit();
-            return redirect(route('transportations.index'))->with("message","Transportation details deleted successfully.")->with("alert-class", "success");
+            return redirect(route('supply.index'))->with("message","Supply details deleted successfully.")->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
@@ -470,6 +498,6 @@ class SupplyTransportationController extends Controller
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
         }
 
-        return redirect()->back()->with("message","Failed to delete the transportation details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the supply details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

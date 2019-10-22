@@ -22,7 +22,7 @@
 
                 <p>
                     {{-- "You don't have the power to upset me. Stay calm... We got it covered." --}}
-                    We could not find the page you were looking for. Meanwhile, you may
+                    We could not find the page you were looking for.<br />
                     <a href="{{ route('dashboard') }}">return to dashboard</a>
                 </p>
             </div>
