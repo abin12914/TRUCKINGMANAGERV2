@@ -7,7 +7,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
+    //soft delete
     use SoftDeletes;
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -17,7 +25,7 @@ class Service extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * Scope a query to only include active employees.
+     * Scope a query to only include active services.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder

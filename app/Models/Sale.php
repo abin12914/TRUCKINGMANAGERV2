@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Events\DeletingSaleEvent;
 
 class Sale extends Model
 {
@@ -14,6 +15,13 @@ class Sale extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -21,7 +29,16 @@ class Sale extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * Scope a query to only include active employees.
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'deleting' => DeletingSaleEvent::class,
+    ];
+
+    /**
+     * Scope a query to only include active sale records.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -32,7 +49,7 @@ class Sale extends Model
     }
 
     /**
-     * Get the transaction details associated with the transportation
+     * Get the transaction details associated with the sale
      */
     public function transaction()
     {
@@ -40,7 +57,7 @@ class Sale extends Model
     }
 
     /**
-     * Get the transportation details associated with the purchase
+     * Get the transportation details associated with the sale
      */
     public function transportation()
     {

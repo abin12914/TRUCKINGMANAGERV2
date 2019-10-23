@@ -10,6 +10,8 @@ class Account extends Model
 {
 	//landlord
     use BelongsToTenants;
+    //soft delete
+    use SoftDeletes;
 
     /**
      * The attributes that aren't mass assignable.
@@ -41,7 +43,7 @@ class Account extends Model
      */
     public function employee()
     {
-        return $this->hasOne('App\Models\Employee', 'account_id');
+        return $this->hasOne('App\Models\Employee', 'account_id')->withTrashed();
     }
 
     /**

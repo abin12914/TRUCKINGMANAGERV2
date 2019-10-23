@@ -7,7 +7,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TruckType extends Model
 {
+    //soft delete
     use SoftDeletes;
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be mutated to dates.

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Events\DeletingTransportationEvent;
 
 class Transportation extends Model
 {
@@ -14,14 +15,30 @@ class Transportation extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
      */
-    protected $dates = ['transportation_date', 'deleted_at'];
+    protected $dates = ['deleted_at'];
 
     /**
-     * Scope a query to only include active employees.
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'deleting' => DeletingTransportationEvent::class,
+    ];
+
+    /**
+     * Scope a query to only include active transportations.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -40,11 +57,11 @@ class Transportation extends Model
     }
 
     /**
-     * Get the vehicle details associated with the transportation
+     * Get the truck details associated with the transportation
      */
     public function truck()
     {
-        return $this->belongsTo('App\Models\Truck','truck_id');
+        return $this->belongsTo('App\Models\Truck','truck_id')->withTrashed();
     }
 
     /**
@@ -52,7 +69,7 @@ class Transportation extends Model
      */
     public function source()
     {
-        return $this->belongsTo('App\Models\Site','source_id');
+        return $this->belongsTo('App\Models\Site','source_id')->withTrashed();
     }
 
     /**
@@ -60,7 +77,7 @@ class Transportation extends Model
      */
     public function destination()
     {
-        return $this->belongsTo('App\Models\Site','destination_id');
+        return $this->belongsTo('App\Models\Site','destination_id')->withTrashed();
     }
 
     /**
@@ -68,7 +85,15 @@ class Transportation extends Model
      */
     public function material()
     {
-        return $this->belongsTo('App\Models\Material','material_id');
+        return $this->belongsTo('App\Models\Material','material_id')->withTrashed();
+    }
+
+    /**
+    * Get the employee wage record associated with the transportation.
+    */
+    public function employeeWages()
+    {
+        return $this->hasMany('App\Models\EmployeeWage', 'transportation_id');
     }
 
     /**
@@ -85,13 +110,5 @@ class Transportation extends Model
     public function sale()
     {
         return $this->hasOne('App\Models\Sale', 'transportation_id');
-    }
-
-    /**
-     * Get the employee wage record associated with the transportation.
-     */
-    public function employeeWages()
-    {
-        return $this->hasMany('App\Models\EmployeeWage', 'transportation_id');
     }
 }

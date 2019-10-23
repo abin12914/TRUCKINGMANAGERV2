@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Torzer\Awesome\Landlord\BelongsToTenants;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -13,6 +14,8 @@ class User extends \TCG\Voyager\Models\User
 
     //landlord
     use BelongsToTenants;
+    //soft delete
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

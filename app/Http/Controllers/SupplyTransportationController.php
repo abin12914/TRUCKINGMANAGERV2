@@ -465,7 +465,7 @@ class SupplyTransportationController extends Controller
             $purchase       = $transportation->purchase;
             $sale           = $transportation->sale;
 
-            $deleteEmployeeWage = $employeeWageRepo->$deleteEmployeeWage($employeeWage->id, false);
+            $deleteEmployeeWage = $employeeWageRepo->deleteEmployeeWage($employeeWage->id, false);
 
             if(!$deleteEmployeeWage['flag']) {
                 throw new TMException("CustomError", $deleteEmployeeWage['errorCode']);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Events\DeletingEmployeeWageEvent;
 
 class EmployeeWage extends Model
 {
@@ -12,6 +13,13 @@ class EmployeeWage extends Model
     use BelongsToTenants;
     //soft delete
     use SoftDeletes;
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -26,11 +34,11 @@ class EmployeeWage extends Model
      * @var array
      */
     protected $dispatchesEvents = [
-        'deleting' => DeletingExcavatorReadingEvent::class,
+        'deleting' => DeletingEmployeeWageEvent::class,
     ];
 
     /**
-     * Scope a query to only include active employees.
+     * Scope a query to only include active employeeWages.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -45,6 +53,22 @@ class EmployeeWage extends Model
      */
     public function employee()
     {
-        return $this->belongsTo('App\Models\Employee');
+        return $this->belongsTo('App\Models\Employee', 'employee_id')->withTrashed();
+    }
+
+    /**
+     * Get the transaction details associated with the employee wage
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction','transaction_id');
+    }
+
+    /**
+     * Get the transportation details associated with the employee wage
+     */
+    public function transportation()
+    {
+        return $this->belongsTo('App\Models\Transportation','transportation_id');
     }
 }

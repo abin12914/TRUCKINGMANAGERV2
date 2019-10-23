@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Events\DeletingPurchaseEvent;
 
 class Purchase extends Model
 {
@@ -14,6 +15,13 @@ class Purchase extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -21,7 +29,16 @@ class Purchase extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * Scope a query to only include active employees.
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'deleting' => DeletingPurchaseEvent::class,
+    ];
+
+    /**
+     * Scope a query to only include active purchase records.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder

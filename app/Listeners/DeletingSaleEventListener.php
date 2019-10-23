@@ -26,7 +26,7 @@ class DeletingSaleEventListener
      */
     public function handle(DeletingSaleEvent $event)
     {
-        $transaction = $event->sale->transaction->firstOrFail();
+        $transaction = $event->sale->transaction;
         $event->sale->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
     }
 }

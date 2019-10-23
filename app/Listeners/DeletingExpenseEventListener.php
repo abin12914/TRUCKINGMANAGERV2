@@ -26,7 +26,7 @@ class DeletingExpenseEventListener
      */
     public function handle(DeletingExpenseEvent $event)
     {
-        $transaction = $event->expense->transaction->firstOrFail();
+        $transaction = $event->expense->transaction;
         $event->expense->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
     }
 }

@@ -14,6 +14,13 @@ class Transaction extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -36,7 +43,7 @@ class Transaction extends Model
      */
     public function debitAccount()
     {
-        return $this->belongsTo('App\Models\Account','debit_account_id');
+        return $this->belongsTo('App\Models\Account','debit_account_id')->withTrashed();
     }
 
     /**
@@ -44,7 +51,15 @@ class Transaction extends Model
      */
     public function creditAccount()
     {
-        return $this->belongsTo('App\Models\Account','credit_account_id');
+        return $this->belongsTo('App\Models\Account','credit_account_id')->withTrashed();
+    }
+
+    /**
+     * Get the employeeWage record associated with the transaction.
+     */
+    public function employeeWage()
+    {
+        return $this->hasOne('App\Models\EmployeeWage', 'transaction_id');
     }
 
     /**
@@ -53,6 +68,22 @@ class Transaction extends Model
     public function expense()
     {
         return $this->hasOne('App\Models\Expense', 'transaction_id');
+    }
+
+    /**
+     * Get the purchase record associated with the transaction.
+     */
+    public function purchase()
+    {
+        return $this->hasOne('App\Models\Purchase', 'transaction_id');
+    }
+
+    /**
+     * Get the transportation record associated with the transaction.
+     */
+    public function transportation()
+    {
+        return $this->hasOne('App\Models\Transportation', 'transaction_id');
     }
 
     /**

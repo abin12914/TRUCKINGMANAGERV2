@@ -26,7 +26,7 @@ class DeletingTransportationEventListener
      */
     public function handle(DeletingTransportationEvent $event)
     {
-        $transaction = $event->transportation->transaction->firstOrFail();
+        $transaction = $event->transportation->transaction;
         $event->transportation->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
     }
 }

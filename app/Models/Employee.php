@@ -10,6 +10,15 @@ class Employee extends Model
 {
 	//landlord
     use BelongsToTenants;
+    //soft delete
+    use SoftDeletes;
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -34,7 +43,7 @@ class Employee extends Model
      */
     public function account()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Account')->withTrashed();
     }
 
     /**
