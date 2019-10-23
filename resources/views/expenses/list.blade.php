@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Expense List')
 @section('content')
- <section class="content-header">
+<section class="content-header">
     <h1>
         Expense
         <small>List</small>

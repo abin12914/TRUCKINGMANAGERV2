@@ -5,7 +5,7 @@ namespace App\Repositories;
 class Repository
 {
     public $loopKey = 0;
-    
+
     protected function whereFilter($query, $whereParams)
     {
         foreach ((array)$whereParams as $param) {

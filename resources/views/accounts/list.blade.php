@@ -8,7 +8,7 @@
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a> Accounts</a></li>
+        <li><a href="{{ route('accounts.index') }}"> Accounts</a></li>
         <li class="active"> List</li>
     </ol>
 </section>

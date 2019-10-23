@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Voucher;
 use Exception;
-use App\Exceptions\AppCustomException;
+use App\Exceptions\TMException;
 
 class VoucherRepository extends Repository
 {
@@ -21,6 +21,7 @@ class VoucherRepository extends Repository
     public function getVouchers(
         $whereParams=[],
         $orWhereParams=[],
+        $relationalParams=[],
         $relationalOrParams=[],
         $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],
         $aggregates=['key' => null, 'value' => null],
@@ -38,13 +39,15 @@ class VoucherRepository extends Repository
 
             $vouchers = parent::orWhereFilter($vouchers, $orWhereParams);
 
+            $vouchers = parent::relationalFilter($vouchers, $relationalParams);
+
             $vouchers = parent::relationalOrFilter($vouchers, $relationalOrParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($vouchers, $aggregates) : parent::getFilter($vouchers, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-
-            throw new AppCustomException("CustomError", $this->errorCode);
+dd($e);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $vouchers;
@@ -72,7 +75,7 @@ class VoucherRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 4);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return $voucher;
@@ -100,7 +103,7 @@ class VoucherRepository extends Repository
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
-            throw new AppCustomException("CustomError", $this->errorCode);
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return [
@@ -128,8 +131,8 @@ class VoucherRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
-            throw new AppCustomException("CustomError", $this->errorCode);
+
+            throw new TMException("CustomError", $this->errorCode);
         }
 
         return [
