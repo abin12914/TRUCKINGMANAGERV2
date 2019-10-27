@@ -23,7 +23,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-header">
-                    <form action="{{ route('voucher.index') }}" method="get" class="form-horizontal" autocomplete="off">
+                    <form action="{{ route('vouchers.index') }}" method="get" class="form-horizontal" autocomplete="off">
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
@@ -43,6 +43,19 @@
                                         @endcomponent
                                     </div>
                                     <div class="col-md-4">
+                                        <label class="control-label"><b style="color: red;">* </b> Voucher Type : </label>
+                                        <select class="form-control select2" name="transaction_type" id="transaction_type" tabindex="10" style="width: 100%;">
+                                            <option value="" {{ empty(old('transaction_type')) ? 'selected' : '' }}>Select voucher type</option>
+                                            <option value="1" {{ (old('transaction_type') == 1) ? 'selected' : '' }}>Reciept</option>
+                                            <option value="2" {{ (old('transaction_type') == 2) ? 'selected' : '' }}>Payment</option>
+                                        </select>
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
+                                        @endcomponent
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-8">
                                         <label for="account_id" class="control-label">Account : </label>
                                         {{-- adding account select component --}}
                                         @component('components.selects.accounts', ['selectedAccountId' => $params['account_id']['paramValue'], 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 5])
@@ -50,29 +63,6 @@
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'account_id'])
                                         @endcomponent
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-4">
-                                        <label class="control-label"><b style="color: red;">* </b> Voucher Type : </label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <input type="checkbox" name="transaction_type[]" id="transaction_type_debit" value="1" {{ empty($params['transaction_type']['paramValue']) || in_array(1, $params['transaction_type']['paramValue']) ? 'checked' : ''}} tabindex="4">
-                                            </span>
-                                            <label for="transaction_type_debit" class="form-control">Reciept / Payment</label>
-                                        </div>
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="control-label"><b style="color: red;">* </b> Voucher Type : </label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <input type="checkbox" name="transaction_type[]" id="transaction_type_credit" value="2"  {{ empty($params['transaction_type']['paramValue']) || in_array(2, $params['transaction_type']['paramValue']) ? 'checked' : ''}} tabindex="5">
-                                            </span>
-                                            <label for="transaction_type_credit" class="form-control">Credit / Payment</label>
-                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="no_of_records" class="control-label">No Of Records Per Page : </label>
@@ -151,10 +141,10 @@
                                                     <td>{{ $voucher->amount }}</td>
                                                 @endif
                                                 <td class="no-print">
-                                                    <a href="{{ route('voucher.edit', $voucher->id) }}" style="float: left;">
+                                                    <a href="{{ route('vouchers.edit', $voucher->id) }}" style="float: left;">
                                                         <button type="button" class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
                                                     </a>
-                                                    <form action="{{ route('voucher.destroy', $voucher->id) }}" method="post" class="form-horizontal">
+                                                    <form action="{{ route('vouchers.destroy', $voucher->id) }}" method="post" class="form-horizontal">
                                                         {{ method_field('DELETE') }}
                                                         {{ csrf_field() }}
                                                         <button type="button" class="btn btn-danger delete_button"><i class="fa fa-trash"></i> Delete</button>

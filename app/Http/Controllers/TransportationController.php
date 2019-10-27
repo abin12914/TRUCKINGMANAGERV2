@@ -155,12 +155,13 @@ class TransportationController extends Controller
             ];
             //confirming transportation rent account && employee wage account exist-ency.
             $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
-            if($baseAccounts->count() < 2)
+            $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
+            $employeeWageAccountId       = $baseAccounts->firstWhere('account_name', 'Employee-Wage')->id;
+
+            if($baseAccounts->count() < 2 || empty($transportationRentAccountId) || empty($employeeWageAccountId))
             {
                 throw new TMException("CustomError", 1);
             }
-            $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
-            $employeeWageAccountId       = $baseAccounts->firstWhere('account_name', 'Employee-Wage')->id;
 
             $whereParams = [
                 'driver_id' => [

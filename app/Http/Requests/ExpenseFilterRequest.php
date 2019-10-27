@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ExpenseFilterRequest extends FormRequest
 {
@@ -39,11 +40,13 @@ class ExpenseFilterRequest extends FormRequest
                                 ],
             'account_id'    =>  [
                                     'nullable',
-                                    'exists:accounts,id',
+                                    Rule::exists('accounts', 'id')->where(function ($query) {
+                                        $query->where('company_id', Auth::User()->company_id);
+                                    })
                                 ],
-            'excavator_id'  =>  [
+            'truck_id'      =>  [
                                     'nullable',
-                                    'exists:accounts,id',
+                                    'exists:trucks,id',
                                 ],
             'no_of_records' =>  [
                                     'nullable',

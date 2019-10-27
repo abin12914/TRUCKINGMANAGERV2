@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Auth;
 
-class ExpenseRegistrationRequest extends FormRequest
+class VoucherRegistrationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +26,9 @@ class ExpenseRegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'transaction_date'  =>  [
+            'transaction_type'  =>  [
                                         'required',
-                                        'date_format:d-m-Y',
-                                        'before_or_equal:today',
+                                        Rule::in([1, 2]),
                                     ],
             'account_id'        =>  [
                                         'required',
@@ -35,15 +36,10 @@ class ExpenseRegistrationRequest extends FormRequest
                                             $query->where('company_id', Auth::User()->company_id);
                                         })
                                     ],
-            'truck_id'          =>  [
+            'transaction_date'  =>  [
                                         'required',
-                                        Rule::exists('trucks', 'id')->where(function ($query) {
-                                            $query->where('company_id', Auth::User()->company_id);
-                                        })
-                                    ],
-            'service_id'        =>  [
-                                        'required',
-                                        'exists:services,id',
+                                        'date_format:d-m-Y',
+                                        'before_or_equal:today',
                                     ],
             'description'       =>  [
                                         'required',
@@ -53,7 +49,7 @@ class ExpenseRegistrationRequest extends FormRequest
             'amount'            =>  [
                                         'required',
                                         'numeric',
-                                        'min:1',
+                                        'min:10',
                                         'max:999999',
                                     ],
         ];

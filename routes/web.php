@@ -28,7 +28,9 @@ Auth::routes(['register' => false]);
 
 //auth check == true
 Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
-	Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+	Route::get('/profile/edit', 'UserController@edit')->name('profile');
+    Route::post('/profile/edit', 'UserController@update')->name('profile.update');
+    Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 
 	Route::resources([
 	    'accounts' 			=> 'AccountController',

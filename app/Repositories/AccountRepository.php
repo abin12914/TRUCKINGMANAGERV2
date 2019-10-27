@@ -44,7 +44,7 @@ class AccountRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($accounts, $aggregates): parent::getFilter($accounts, $orderBy));
         } catch (Exception $e) {dd($e);
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -64,7 +64,7 @@ class AccountRepository extends Repository
             } else {
                 $account = Account::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $account = $account->active();
             }
@@ -117,14 +117,14 @@ class AccountRepository extends Repository
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $account->forceDelete() : $account->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

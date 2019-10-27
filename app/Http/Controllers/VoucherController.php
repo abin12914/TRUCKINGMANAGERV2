@@ -33,17 +33,18 @@ class VoucherController extends Controller
      */
     public function index(VoucherFilterRequest $request)
     {
+        $whereParams        = [];
         $totalDebitAmount   = 0;
         $totalCreditAmount  = 0;
 
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
-        $transactionType    = $request->get('transaction_type');
+
         //date format conversion
         $fromDate    = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
         $toDate      = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
 
         $debitVoucherTypeWhere = [
-            'transaction_type'  =>  [
+            'transaction_type_debit' =>  [
                 'paramName'     => 'transaction_type',
                 'paramOperator' => '=',
                 'paramValue'    => 1,
@@ -51,20 +52,34 @@ class VoucherController extends Controller
         ];
 
         $creditVoucherTypeWhere = [
-            'transaction_type'  =>  [
+            'transaction_type_credit' =>  [
                 'paramName'     => 'transaction_type',
                 'paramOperator' => '=',
                 'paramValue'    => 2,
             ]
         ];
 
-        $whereParams = [
-            'transaction_type'  =>  [
-                'paramName'     => 'transaction_type',
+        $debitAccountParam = [
+            'debit_account_id' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'debit_account_id',
                 'paramOperator' => '=',
-                'paramValue'    => $transactionType,
-            ]
+                'paramValue'    => $request->get('account_id'),
+            ],
         ];
+
+        $creditAccountParam = [
+            'credit_account_id' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'credit_account_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('account_id'),
+            ],
+        ];
+
+        if(!empty($request->get('transaction_type') )){
+            $whereParams = $request->get('transaction_type') == 1 ? $debitVoucherTypeWhere : $creditVoucherTypeWhere;
+        }
 
         $relationalParams = [
             'from_date' => [
@@ -82,38 +97,34 @@ class VoucherController extends Controller
         ];
 
         $relationalOrParams = [
-            'account_id'    =>  [
+            'account_id' => [
                 'relation' => 'transaction',
-                'params'   => [
-                    'debit_account_id' => [
-                        'paramName'     => 'debit_account_id',
-                        'paramOperator' => '=',
-                        'paramValue'    => $request->get('account_id'),
-                    ],
-                    'credit_account_id' => [
-                        'paramName'     => 'credit_account_id',
-                        'paramOperator' => '=',
-                        'paramValue'    => $request->get('account_id'),
-                    ],
-                ]
+                'params'   => array_merge($creditAccountParam, $debitAccountParam)
             ]
         ];
 
         //getVouchers($whereParams=[],$orWhereParams=[],$relationalParams=[],$relationalOrParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
         $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
 
-        $totalVoucher = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, [], ['key' => 'sum', 'value' => 'amount'], [], true);
+        $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
+
+        if(!empty($allVouchers)) {
+            $totalDebitAmount   = $allVouchers->where('transaction_type', 1)->sum('amount');
+            $totalCreditAmount  = $allVouchers->where('transaction_type', 2)->sum('amount');
+        }
 
         //params passing for auto selection
-        $relationalParams['from_date']['paramValue'] = $request->get('from_date');
-        $relationalParams['to_date']['paramValue']   = $request->get('to_date');
+        $whereParams['from_date']['paramValue']     = $request->get('from_date');
+        $whereParams['to_date']['paramValue']       = $request->get('to_date');
+        $whereParams['account_id']['paramValue']    = $request->get('account_id');
 
         //getVouchers($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('vouchers.list', [
-            'vouchers'     => $vouchers,
-            'totalVoucher' => $totalVoucher,
-            'params'       => array_merge($whereParams, $relationalParams),
-            'noOfRecords'  => $noOfRecordsPerPage,
+            'vouchers'          => $vouchers,
+            'totalDebitAmount'  => $totalDebitAmount,
+            'totalCreditAmount' => $totalCreditAmount,
+            'params'            => $whereParams,
+            'noOfRecords'       => $noOfRecordsPerPage,
         ]);
     }
 
@@ -142,32 +153,60 @@ class VoucherController extends Controller
         $errorCode = 0;
         $voucher   = null;
 
-        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
-        $totalBill          = $request->get('amount');
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $transactionType = $request->get('transaction_type');
+        $accountId       = $request->get('account_id');
+        $description     = $request->get('description');
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $whereParams = [
+            $orWhereParams = [
                 'account_name' => [
                     'paramName'     => 'account_name',
                     'paramOperator' => '=',
-                    'paramValue'    => "Service-And-Vouchers",
+                    'paramValue'    => "Cash",
+                ],
+                'id' => [
+                    'paramName'     => 'id',
+                    'paramOperator' => '=',
+                    'paramValue'    => $accountId,
                 ]
             ];
-            //confirming voucher account exist-ency.
-            $voucherAccountId = $accountRepo->getAccounts($whereParams,$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)->id;
+
+            //confirming account exist-ency.
+            $baseAccounts   = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [],true);
+            $cashAccount    = $baseAccounts->firstWhere('account_name', '=', 'Cash');
+            $clientAccount  = $baseAccounts->firstWhere('id', '=', $accountId);
+
+            if($baseAccounts->count() < 2 || empty($cashAccount) || empty($clientAccount))
+            {
+                throw new TMException("CustomError", 1);
+            }
+
             if(!empty($id)) {
                 $voucher = $this->voucherRepo->getVoucher($id, [], false);
+            }
+
+            if($transactionType == 1) {
+                //Receipt : Debit cash account - Credit giver account
+                $debitAccountId     = $cashAccount->id;
+                $creditAccountId    = $clientAccount->id;
+                $particulars        = $description. "[Cash received from ". $clientAccount->account_name. "]";
+            } else {
+                //Payment : Debit receiver account - Credit cash account
+                $debitAccountId     = $clientAccount->id;
+                $creditAccountId    = $cashAccount->id;
+                $particulars        = $description. "[Cash paid to ". $clientAccount->account_name. "]";
             }
 
             //save voucher transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([
                 'transaction_date'  => $transactionDate,
-                'debit_account_id'  => $voucherAccountId, // debit the voucher account
-                'credit_account_id' => $request->get('account_id'), // credit the supplier
-                'amount'            => $totalBill,
-                'particulars'       => $request->get('description')."[Purchase & Voucher]",
+                'debit_account_id'  => $debitAccountId,
+                'credit_account_id' => $creditAccountId,
+                'amount'            => $request->get('amount'),
+                'particulars'       => $particulars,
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($voucher) ? $voucher->transaction_id : null));
@@ -179,10 +218,8 @@ class VoucherController extends Controller
             //save to voucher table
             $voucherResponse = $this->voucherRepo->saveVoucher([
                 'transaction_id'    => $transactionResponse['transaction']->id,
-                'truck_id'          => $request->get('truck_id'),
-                'service_id'        => $request->get('service_id'),
-                'description'       => $request->get('description'),
-                'amount'            => $totalBill,
+                'transaction_type'  => $transactionType,
+                'amount'            => $request->get('amount'),
                 'status'            => 1,
             ], $id);
 

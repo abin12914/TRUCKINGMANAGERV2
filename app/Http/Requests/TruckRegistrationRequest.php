@@ -36,12 +36,10 @@ class TruckRegistrationRequest extends FormRequest
                                                         }),
                                                 ],
             'reg_number_state_code'         =>  [
-                                                    'sometimes',
                                                     'required',
                                                     Rule::in(config('constants.stateCodes')),
                                                 ],
             'reg_number_region_code'        =>  [
-                                                    'sometimes',
                                                     'required',
                                                     'max:99',
                                                     'min:1',
@@ -54,7 +52,6 @@ class TruckRegistrationRequest extends FormRequest
                                                     'max:2',
                                                 ],
             'reg_number_unique_digit'       =>  [
-                                                    'sometimes',
                                                     'required',
                                                     'max:9999',
                                                     'min:1',
