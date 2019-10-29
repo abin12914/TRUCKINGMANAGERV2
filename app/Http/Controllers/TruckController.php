@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Repositories\TruckRepository;
 use App\Repositories\AccountRepository;
 use App\Http\Requests\TruckRegistrationRequest;
-use App\Http\Requests\TruckFilterRequest;
 use Carbon\Carbon;
 use Auth;
 use DB;
@@ -30,7 +29,7 @@ class TruckController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(TruckFilterRequest $request)
+    public function index(Request $request)
     {
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //getTrucks($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
@@ -98,7 +97,7 @@ class TruckController extends Controller
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-dd($e);
+
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
         }
         if(!empty($id)) {
@@ -125,7 +124,7 @@ dd($e);
             $truck = $this->truckRepo->getTruck($id, [], false);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-            
+
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Truck", $errorCode);
         }
@@ -149,8 +148,8 @@ dd($e);
         try {
             $truck = $this->truckRepo->getTruck($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-            
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Truck", $errorCode);
         }
@@ -174,7 +173,7 @@ dd($e);
         if($updateResponse['flag']) {
             return redirect(route('trucks.index'))->with("message","Trucks details updated successfully. Updated Record Number : ". $updateResponse['truck']->id)->with("alert-class", "success");
         }
-        
+
         return redirect()->back()->with("message","Failed to update the truck details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
@@ -192,11 +191,11 @@ dd($e);
         DB::beginTransaction();
         try {
             $deleteResponse = $this->truckRepo->deleteTruck($id, false);
-            
+
             if(!$deleteResponse['flag']) {
                 throw new TMException("CustomError", $deleteResponse['errorCode']);
             }
-            
+
             DB::commit();
             return redirect(route('truck.index'))->with("message","Truck details deleted successfully.")->with("alert-class", "success");
         } catch (Exception $e) {
@@ -205,7 +204,7 @@ dd($e);
 
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
         }
-        
+
         return redirect()->back()->with("message","Failed to delete the truck details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

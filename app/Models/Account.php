@@ -61,4 +61,12 @@ class Account extends Model
     {
         return $this->hasMany('App\Models\Transaction', 'credit_account_id');
     }
+
+    /**
+     * Get all transaction records associated with the account.
+     */
+    public function allTransactions()
+    {
+        return $this->debitTransactions->merge($this->creditTransactions);
+    }
 }

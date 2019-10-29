@@ -9,14 +9,14 @@ use App\Exceptions\TMException;
 
 class TransactionRepository extends Repository
 {
-    public $repositoryCode, $errorCode = 0, $transactionRelations=[], $loop = 0;
+    public $repositoryCode, $errorCode = 0;
 
     public function __construct()
     {
         $this->repositoryCode       = config('settings.repository_code.TransactionRepository');
         $this->transactionRelations = config('constants.transactionRelations');
     }
-    
+
     /**
      * Return transactions.
      */
@@ -69,15 +69,15 @@ class TransactionRepository extends Repository
             } else {
                 $transaction = Transaction::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $transaction = $transaction->active();
             }
 
             $transaction = $transaction->findOrFail($id);
         } catch (Exception $e) {
-            $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 4);
-            
+            $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -103,7 +103,7 @@ class TransactionRepository extends Repository
                 'flag'        => true,
                 'transaction' => $transaction,
             ];
-        } catch (Exception $e) {dd($e);
+        } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -123,14 +123,14 @@ class TransactionRepository extends Repository
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $transaction->forceDelete() : $transaction->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -138,43 +138,5 @@ class TransactionRepository extends Repository
             'flag'      => false,
             'errorCode' => $this->repositoryCode + 6,
         ];
-    }
-
-    /**
-     * Return transactions.
-     */
-    public function groupTransactions(
-        $whereParams=[],
-        $orWhereParams=[],
-        $relationalParams=[],
-        $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],
-        $withParams=[],
-        $groupBy=null,
-        $activeFlag=true
-    ){
-        $transactions = [];
-        if(empty($groupBy)) {
-            return false;
-        }
-
-        try {
-            $transactions = empty($withParams) ? Transaction::query() : Transaction::with($withParams);
-
-            $transactions = $activeFlag ? $transactions->active() : $transactions;
-
-            $transactions = parent::whereFilter($transactions, $whereParams);
-
-            $transactions = parent::orWhereFilter($transactions, $orWhereParams);
-
-            $transactions = parent::relationalFilter($transactions, $relationalParams);
-
-            $transactions = $transactions->groupBy($groupBy);
-        } catch (Exception $e) {
-            $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-            
-            throw new TMException("CustomError", $this->errorCode);
-        }
-
-        return $transactions;
     }
 }

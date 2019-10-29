@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ExpenseFilterRequest;
+use App\Http\Requests\ExpenseRegistrationRequest;
 use App\Repositories\ExpenseRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
-use App\Http\Requests\ExpenseRegistrationRequest;
-use App\Http\Requests\ExpenseFilterRequest;
 use Carbon\Carbon;
 use Auth;
 use DB;
@@ -78,7 +78,7 @@ class ExpenseController extends Controller
         //params passing for auto selection
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
         $relationalParams['to_date']['paramValue']   = $request->get('to_date');
-        
+
         //getExpenses($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('expenses.list', [
             'expenses'     => $expenses,
@@ -127,7 +127,7 @@ class ExpenseController extends Controller
                 ]
             ];
             //confirming expense account exist-ency.
-            $expenseAccountId = $accountRepo->getAccounts($whereParams,$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)->id;
+            $expenseAccountId = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true)->id;
             if(!empty($id)) {
                 $expense = $this->expenseRepo->getExpense($id, [], false);
             }
@@ -200,7 +200,7 @@ class ExpenseController extends Controller
             $expense = $this->expenseRepo->getExpense($id, [], false);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-            
+
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Expense", $errorCode);
         }
@@ -251,7 +251,7 @@ class ExpenseController extends Controller
         if($updateResponse['flag']) {
             return redirect(route('expenses.index'))->with("message","Expenses details updated successfully. Updated Record Number : ". $updateResponse['expense']->id)->with("alert-class", "success");
         }
-        
+
         return redirect()->back()->with("message","Failed to update the expenses details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
@@ -269,11 +269,11 @@ class ExpenseController extends Controller
         DB::beginTransaction();
         try {
             $deleteResponse = $this->expenseRepo->deleteExpense($id, false);
-            
+
             if(!$deleteResponse['flag']) {
                 throw new TMException("CustomError", $deleteResponse['errorCode']);
             }
-            
+
             DB::commit();
             return redirect(route('expenses.index'))->with("message","Expense details deleted successfully.")->with("alert-class", "success");
         } catch (Exception $e) {
@@ -282,7 +282,7 @@ class ExpenseController extends Controller
 
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
         }
-        
+
         return redirect()->back()->with("message","Failed to delete the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

@@ -1,11 +1,5 @@
 $(function () {
 
-    /*//datepicker for general datepickers
-    $('.datepicker').datepicker({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-    });*/
-
     //convert to uppper case
     $('body').on("change", "#reg_number_state_code", function (evt) {
         //append to main registratin number textbox
@@ -23,7 +17,7 @@ $(function () {
                     $('#reg_number_region_code').val('');
                 }
             }
-            
+
             //append to main registratin number textbox
             appendRegistrationNumber();
         }
@@ -32,7 +26,7 @@ $(function () {
     //convert to uppper case and append to main registratin number textbox
     $('body').on("keyup", "#reg_number_unique_alphabet", function (evt) {
         var fieldValue  = $(this).val();
-        
+
         if(fieldValue) {
             fieldValue = fieldValue.toUpperCase();
             $(this).val(fieldValue);

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\SiteFilterRequest;
+use App\Http\Requests\SiteRegistrationRequest;
 use App\Repositories\SiteRepository;
 use App\Repositories\AccountRepository;
-use App\Http\Requests\SiteRegistrationRequest;
-use App\Http\Requests\SiteFilterRequest;
 use Carbon\Carbon;
 use Auth;
 use DB;
@@ -47,8 +47,6 @@ class SiteController extends Controller
             ]
         ];
 
-        $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
-        
         return view('sites.list', [
             'sites'       => $this->siteRepo->getSites($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
             'params'      => $whereParams,
@@ -136,7 +134,7 @@ class SiteController extends Controller
             $site = $this->siteRepo->getSite($id, [], false);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-            
+
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Site", $errorCode);
         }
@@ -187,7 +185,7 @@ class SiteController extends Controller
         if($updateResponse['flag']) {
             return redirect(route('sites.index'))->with("message","Sites details updated successfully. Updated Record Number : ". $updateResponse['site']->id)->with("alert-class", "success");
         }
-        
+
         return redirect()->back()->with("message","Failed to update the site details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
@@ -205,11 +203,11 @@ class SiteController extends Controller
         DB::beginTransaction();
         try {
             $deleteResponse = $this->siteRepo->deleteSite($id, false);
-            
+
             if(!$deleteResponse['flag']) {
                 throw new TMException("CustomError", $deleteResponse['errorCode']);
             }
-            
+
             DB::commit();
             return redirect(route('sites.index'))->with("message","Site details deleted successfully.")->with("alert-class", "success");
         } catch (Exception $e) {
@@ -218,7 +216,7 @@ class SiteController extends Controller
 
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
         }
-        
+
         return redirect()->back()->with("message","Failed to delete the site details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

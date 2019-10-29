@@ -25,9 +25,6 @@ class EmployeeFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'          =>  [
-                                    'nullable'
-                                ],
             'employee_type' =>  [
                                     'nullable',
                                     Rule::in(array_keys(config('constants.employeeTypes'))),

@@ -5,16 +5,6 @@ $(function () {
         }
     });
 
-    /*swal({
-        title: 'Success...',
-        type: 'success',
-        text: 'Everything is ok!',
-        icon: "success",
-        timer: 5000,
-        allowOutsideClick : false,
-        showConfirmButton : false,
-    });*/
-
     if(alertType && alertMessage) {
         if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
             //'reach here using the browser "Back" or "Forward" button

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\TransportationFilterRequest;
+use App\Http\Requests\TransportationRegistrationRequest;
+use App\Http\Requests\TransportationAjaxRequests;
 use App\Repositories\TransportationRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\EmployeeWageRepository;
-use App\Http\Requests\TransportationRegistrationRequest;
-use App\Http\Requests\TransportationFilterRequest;
-use App\Http\Requests\TransportationAjaxRequests;
 use \Carbon\Carbon;
 use Auth;
 use DB;
@@ -21,12 +21,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class TransportationController extends Controller
 {
     protected $transportationRepo;
-    public $errorHead = null, $driverWageType = 1; //array_search('Per Trip [%]', config('constants.wageTypes'));;
+    public $errorHead = null;
 
     public function __construct(TransportationRepository $transportationRepo)
     {
         $this->transportationRepo = $transportationRepo;
-        $this->errorHead   = config('settings.controller_code.TransportationController');
+        $this->errorHead          = config('settings.controller_code.TransportationController');
     }
 
     /**
@@ -90,7 +90,7 @@ class TransportationController extends Controller
         ];
 
         $transportations = $this->transportationRepo->getTransportations(
-            $whereParams, [], $relationalParams, $orderBy=['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], $aggregates=['key' => null, 'value' => null], $withParams=['employeeWages.employee.account'], $activeFlag=true
+            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], ['employeeWages.employee.account'], true
         );
 
         //params passing for auto selection
@@ -170,7 +170,7 @@ class TransportationController extends Controller
                     'paramValue'    => $driverId,
                 ]
             ];
-            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], $withParams=[], true);
+            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
 
             //if editing
             if(!empty($id)) {
@@ -309,7 +309,7 @@ class TransportationController extends Controller
         try {
             $transportation = $this->transportationRepo->getTransportation($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
@@ -379,7 +379,7 @@ class TransportationController extends Controller
      * return last resource
      *
      */
-    public function getLastTransaction(Request $request)
+    public function getLastTransaction(TransportationAjaxRequests $request)
     {
         $whereParams = [];
         $relationalParams = [];
@@ -416,7 +416,7 @@ class TransportationController extends Controller
         }
 
         try {
-            $transportation = $this->transportationRepo->getTransportations($whereParams, [], $relationalParams, $orderBy=['by' => 'id', 'order' => 'desc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=['transaction', 'employeeWages'], $activeFlag=true);
+            $transportation = $this->transportationRepo->getTransportations($whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], ['key' => null, 'value' => null], ['transaction', 'employeeWages'], true);
 
             if(!empty($transportation)) {
                 return [

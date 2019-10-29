@@ -19,10 +19,8 @@ class MaterialComponentComposer
     public function __construct(MaterialRepository $materialRepo)
     {
         try {
-            //getMaterials($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-            $this->materials = $materialRepo->getMaterials([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
+            $this->materials = $materialRepo->getMaterials([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
         } catch (Exception $e) {
-dd($e);
         }
     }
 
@@ -34,8 +32,6 @@ dd($e);
      */
     public function compose(View $view)
     {
-        $view->with([
-            'materialsCombo' => $this->materials
-        ]);
+        $view->with('materialsCombo', $this->materials);
     }
 }

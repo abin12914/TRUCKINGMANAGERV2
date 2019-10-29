@@ -53,9 +53,9 @@ class TruckRegistrationRequest extends FormRequest
                                                 ],
             'reg_number_unique_digit'       =>  [
                                                     'required',
+                                                    'integer',
                                                     'max:9999',
                                                     'min:1',
-                                                    'integer',
                                                 ],
             'description'                   =>  [
                                                     'nullable',

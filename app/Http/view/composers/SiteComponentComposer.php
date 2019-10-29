@@ -19,8 +19,7 @@ class SiteComponentComposer
     public function __construct(SiteRepository $siteRepo)
     {
         try {
-            //getSites($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-            $this->sites = $siteRepo->getSites([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
+            $this->sites = $siteRepo->getSites([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
         } catch (Exception $e) {
         }
     }
@@ -33,6 +32,6 @@ class SiteComponentComposer
      */
     public function compose(View $view)
     {
-        $view->with(['sitesCombo' => $this->sites]);
+        $view->with('sitesCombo', $this->sites);
     }
 }

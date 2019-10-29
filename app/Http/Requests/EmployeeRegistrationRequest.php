@@ -34,7 +34,7 @@ class EmployeeRegistrationRequest extends FormRequest
     public function rules()
     {
         if(!empty($this->employee)) {
-            $employee = $this->employeeRepo->getEmployee($this->employee, ['account'], false);
+            $employee = $this->employeeRepo->getEmployee($this->employee, [], false);
 
             if(!empty($employee) && !empty($employee->id)) {
                 $this->accountId = $employee->account_id;
@@ -58,7 +58,7 @@ class EmployeeRegistrationRequest extends FormRequest
                                     ],
             'address'           =>  [
                                         'nullable',
-                                        'max:200',
+                                        'max:255',
                                     ],
             'employee_type'     =>  [
                                         'required',

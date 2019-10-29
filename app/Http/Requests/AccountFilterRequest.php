@@ -26,7 +26,8 @@ class AccountFilterRequest extends FormRequest
     {
         return [
             'name'          =>  [
-                                    'nullable'
+                                    'nullable',
+                                    'string'
                                 ],
             'relation_type' =>  [
                                     'nullable',
@@ -39,7 +40,7 @@ class AccountFilterRequest extends FormRequest
             'no_of_records' =>  [
                                     'nullable',
                                     'integer',
-                                    'min:2',
+                                    'min:1',
                                     'max:100',
                                 ],
             'page'          =>  [

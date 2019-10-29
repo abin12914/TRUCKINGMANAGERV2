@@ -8,7 +8,7 @@ use App\Exceptions\TMException;
 
 class SiteRepository extends Repository
 {
-    public $repositoryCode, $errorCode = 0, $loop = 0;
+    public $repositoryCode, $errorCode = 0;
 
     public function __construct()
     {
@@ -43,7 +43,7 @@ class SiteRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($sites, $aggregates) : parent::getFilter($sites, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -63,7 +63,7 @@ dd($e);
             } else {
                 $site = Site::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $site = $site->active();
             }
@@ -73,9 +73,9 @@ dd($e);
             if($e->getMessage() == "CustomError") {
                 $this->errorCode = $e->getCode();
             } else {
-                $this->errorCode = $this->repositoryCode + 3;
+                $this->errorCode = $this->repositoryCode + 2;
             }
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -122,14 +122,14 @@ dd($e);
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $site->forceDelete() : $site->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [

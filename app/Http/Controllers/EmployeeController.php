@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\EmployeeRegistrationRequest;
+use App\Http\Requests\EmployeeFilterRequest;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\AccountRepository;
 use App\Repositories\TransactionRepository;
-use App\Http\Requests\EmployeeRegistrationRequest;
-use App\Http\Requests\EmployeeFilterRequest;
 use \Carbon\Carbon;
 use Auth;
 use DB;
@@ -47,11 +47,11 @@ class EmployeeController extends Controller
                 'paramValue'    => $request->get('employee_id'),
             ]
         ];
-        
+
         return view('employees.list', [
-                'employees'         => $this->employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], $aggregates=['key' => null, 'value' => null], [], true),
-                'params'      => $whereParams,
-                'noOfRecords' => $noOfRecordsPerPage,
+                'employees'     => $this->employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+                'params'        => $whereParams,
+                'noOfRecords'   => $noOfRecordsPerPage,
             ]);
     }
 
@@ -123,8 +123,8 @@ class EmployeeController extends Controller
             $accountResponse = $accountRepo->saveAccount([
                 'account_name'      => $request->get('account_name'),
                 'description'       => $request->get('description'),
-                'type'              => array_search('Personal', (config('constants.accountTypes'))),
-                'relation'          => array_search('Employees', config('constants.accountRelations')), //employee //key=1
+                'type'              => 3, //personal account
+                'relation'          => 1, //employee relation type is 1
                 'financial_status'  => $financialStatus,
                 'opening_balance'   => $openingBalance,
                 'name'              => $name,
@@ -201,7 +201,7 @@ class EmployeeController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        
+
         return redirect()->back()->with("message","Failed to save the employee details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
@@ -219,10 +219,11 @@ class EmployeeController extends Controller
         try {
             $employee = $this->employeeRepo->getEmployee($id, [], false);
         } catch (Exception $e) {
-       $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
-        //throwing methodnotfound exception when no model is fetched
-        throw new ModelNotFoundException("Employee", $errorCode);
-    }
+           $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            //throwing methodnotfound exception when no model is fetched
+            throw new ModelNotFoundException("Employee", $errorCode);
+        }
+
         return view('employees.details', ['employee'  => $employee]);
     }
 
@@ -246,8 +247,7 @@ class EmployeeController extends Controller
         }
 
         return view('employees.edit', [
-            'employee'  => $employee,
-            'wageTypes' => config('constants.employeeWageTypes'),
+            'employee'  => $employee
         ]);
     }
 
@@ -269,7 +269,7 @@ class EmployeeController extends Controller
         if($updateResponse['flag']) {
             return redirect(route('employees.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. Updated Record Number : ". $updateResponse['employee']->id)->with("alert-class", "success");
         }
-        
+
         return redirect()->back()->with("message","Failed to update the employee details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 

@@ -19,8 +19,7 @@ class TruckTypeComponentComposer
     public function __construct(TruckTypeRepository $truckTypeRepo)
     {
         try {
-            //getTruckTypes($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-            $this->truckTypes = $truckTypeRepo->getTruckTypes([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
+            $this->truckTypes = $truckTypeRepo->getTruckTypes([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
 
             $this->truckBodyTypes = config('constants.truckBodyTypes');
         } catch (Exception $e) {

@@ -19,8 +19,7 @@ class EmployeeComponentComposer
     public function __construct(EmployeeRepository $employeeRepo)
     {
         try {
-            //getEmployees($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-            $this->employees = $employeeRepo->getEmployees([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
+            $this->employees = $employeeRepo->getEmployees([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
         } catch (Exception $e) {
         }
     }
@@ -33,6 +32,6 @@ class EmployeeComponentComposer
      */
     public function compose(View $view)
     {
-        $view->with(['employeesCombo' => $this->employees]);
+        $view->with('employeesCombo', $this->employees);
     }
 }

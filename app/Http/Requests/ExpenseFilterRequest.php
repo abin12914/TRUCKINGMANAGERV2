@@ -40,9 +40,7 @@ class ExpenseFilterRequest extends FormRequest
                                 ],
             'account_id'    =>  [
                                     'nullable',
-                                    Rule::exists('accounts', 'id')->where(function ($query) {
-                                        $query->where('company_id', Auth::User()->company_id);
-                                    })
+                                    'exists:accounts,id'
                                 ],
             'truck_id'      =>  [
                                     'nullable',

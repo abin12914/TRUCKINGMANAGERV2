@@ -37,7 +37,7 @@ class AccountRegistrationRequest extends FormRequest
                                         ],
             'description'           =>  [
                                             'nullable',
-                                            'max:200',
+                                            'max:255',
                                         ],
             'financial_status'      =>  [
                                             'required',
@@ -58,11 +58,14 @@ class AccountRegistrationRequest extends FormRequest
                                             'required',
                                             'numeric',
                                             'digits_between:10,13',
-                                            Rule::unique('accounts', 'phone')->ignore($this->account),
+                                            Rule::unique('accounts', 'phone')->ignore($this->account)
+                                                ->where(function ($query) {
+                                                    $query->where('company_id', Auth::User()->company_id);
+                                                }),
                                         ],
             'address'               =>  [
                                             'nullable',
-                                            'max:200',
+                                            'max:255',
                                         ],
             'relation_type'         =>  [
                                             'required',

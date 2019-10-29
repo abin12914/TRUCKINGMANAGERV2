@@ -30,6 +30,6 @@ class AllViewComposer
      */
     public function compose(View $view)
     {
-        $view->with(['loggedUser' => $this->loggedUser]);
+        $view->with('loggedUser', $this->loggedUser);
     }
 }

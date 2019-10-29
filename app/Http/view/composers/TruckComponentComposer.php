@@ -19,8 +19,7 @@ class TruckComponentComposer
     public function __construct(TruckRepository $truckRepo)
     {
         try {
-            //getTrucks($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-            $this->trucks = $truckRepo->getTrucks([], [],  [], $orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[], $activeFlag=true);
+            $this->trucks = $truckRepo->getTrucks([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
         } catch (Exception $e) {
         }
     }
@@ -33,6 +32,6 @@ class TruckComponentComposer
      */
     public function compose(View $view)
     {
-        $view->with(['trucksCombo' => $this->trucks]);
+        $view->with('trucksCombo', $this->trucks);
     }
 }

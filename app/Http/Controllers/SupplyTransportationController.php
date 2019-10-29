@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\TransportationFilterRequest;
+use App\Http\Requests\SupplyRegistrationRequest;
 use App\Repositories\SupplyTransportationRepository;
 use App\Repositories\TransportationRepository;
 use App\Repositories\TransactionRepository;
@@ -11,9 +13,6 @@ use App\Repositories\EmployeeRepository;
 use App\Repositories\EmployeeWageRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\SaleRepository;
-use App\Http\Requests\TransportationRegistrationRequest;
-use App\Http\Requests\TransportationFilterRequest;
-use App\Http\Requests\TransportationAjaxRequests;
 use \Carbon\Carbon;
 use Auth;
 use DB;
@@ -91,7 +90,7 @@ class SupplyTransportationController extends Controller
         ];
 
         $transportations = $transportationRepo->getSupplyTransportations(
-            $whereParams, [], $relationalParams, $orderBy=['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], $aggregates=['key' => null, 'value' => null], $withParams=['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account'], $activeFlag=true
+            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account'], true
         );
 
         //params passing for auto selection
@@ -123,7 +122,7 @@ class SupplyTransportationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(
-        TransportationRegistrationRequest $request,
+        SupplyRegistrationRequest $request,
         TransportationRepository $transportationRepo,
         TransactionRepository $transactionRepo,
         AccountRepository $accountRepo,
@@ -189,7 +188,7 @@ class SupplyTransportationController extends Controller
                     'paramValue'    => $driverId,
                 ]
             ];
-            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], $withParams=[], true);
+            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
 
             //if editing
             if(!empty($id)) {
@@ -404,15 +403,13 @@ class SupplyTransportationController extends Controller
         try {
             $transportation = $transportationRepo->getTransportation($id, ['employeeWages', 'purchase.transaction', 'sale.transaction'], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
 
-        return view('supply.edit', [
-            'transportation' => $transportation,
-        ]);
+        return view('supply.edit', compact('transportation'));
     }
 
     /**

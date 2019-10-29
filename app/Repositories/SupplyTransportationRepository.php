@@ -76,11 +76,7 @@ class SupplyTransportationRepository extends Repository
 
             $transportation = $transportation->findOrFail($id);
         } catch (Exception $e) {
-            if($e->getMessage() == "CustomError") {
-                $this->errorCode = $e->getCode();
-            } else {
-                $this->errorCode = $this->repositoryCode + 3;
-            }
+            $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
         }

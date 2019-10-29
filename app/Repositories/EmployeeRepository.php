@@ -64,7 +64,7 @@ class EmployeeRepository extends Repository
             } else {
                 $employee = Employee::with($withParams);
             }
-            
+
             if($activeFlag) {
                 $employee = $employee->active();
             }
@@ -72,7 +72,7 @@ class EmployeeRepository extends Repository
             $employee = $employee->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -100,12 +100,12 @@ class EmployeeRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [
             'flag'      => false,
-            'errorCode' => $repositoryCode + 3,
+            'errorCode' => $repositoryCode + 4,
         ];
     }
 
@@ -127,7 +127,7 @@ class EmployeeRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class VoucherFilterRequest extends FormRequest
 {
@@ -24,7 +25,32 @@ class VoucherFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'from_date'         =>  [
+                                        'nullable',
+                                        'date_format:d-m-Y',
+                                    ],
+            'to_date'           =>  [
+                                        'nullable',
+                                        'date_format:d-m-Y',
+                                    ],
+            'transaction_type'  =>  [
+                                        'nullable',
+                                        Rule::in([1, 2]))
+                                    ],
+            'account_id'        =>  [
+                                        'nullable',
+                                        'exists:accounts,id'
+                                    ],
+            'no_of_records'     =>  [
+                                        'nullable',
+                                        'integer',
+                                        'min:1',
+                                        'max:100',
+                                    ],
+            'page'                  =>  [
+                                        'nullable',
+                                        'integer',
+                                    ]
         ];
     }
 }

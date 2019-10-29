@@ -25,7 +25,6 @@ Route::group(['prefix' => 'admin'], function () {
 //laravel auth
 Auth::routes(['register' => false]);
 
-
 //auth check == true
 Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/dashboard', 'HomeController@index')->name('dashboard');
@@ -45,11 +44,11 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 
     //ajax urls
     Route::group(['middleware' => 'is.ajax'], function () {
-        //transportation form
+        //last transportation via ajax
         Route::get('/last/transportation', 'TransportationController@getLastTransaction')->name('transportation.last');
-        //purchase form
+        //last purchase via ajax
         Route::get('/last/purchase', 'PurchaseController@getLastTransaction')->name('purchase.last');
-        //sale form
+        //last sale via ajax
         Route::get('last/sale', 'SaleController@getLastTransaction')->name('sale.last');
     });
 });

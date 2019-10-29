@@ -104,7 +104,7 @@ class PurchaseRepository extends Repository
         }
         return [
             'flag'      => false,
-            'errorCode' => $this->repositoryCode + 3,
+            'errorCode' => $this->repositoryCode + 4,
         ];
     }
 

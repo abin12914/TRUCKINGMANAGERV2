@@ -8,7 +8,7 @@ use App\Exceptions\TMException;
 
 class TransportationRepository extends Repository
 {
-    public $repositoryCode, $errorCode = 0, $loop = 0;
+    public $repositoryCode, $errorCode = 0;
 
     public function __construct()
     {
@@ -73,7 +73,7 @@ class TransportationRepository extends Repository
             if($e->getMessage() == "CustomError") {
                 $this->errorCode = $e->getCode();
             } else {
-                $this->errorCode = $this->repositoryCode + 3;
+                $this->errorCode = $this->repositoryCode + 2;
             }
 
             throw new TMException("CustomError", $this->errorCode);
@@ -87,8 +87,6 @@ class TransportationRepository extends Repository
      */
     public function saveTransportation($inputArray, $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $transportation = Transportation::findOrNew($id);

@@ -41,7 +41,7 @@ class ExpenseRepository extends Repository
             $expenses = parent::relationalFilter($expenses, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($expenses, $aggregates) : parent::getFilter($expenses, $orderBy));
-        } catch (Exception $e) {dd($e);
+        } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -104,7 +104,7 @@ class ExpenseRepository extends Repository
         }
         return [
             'flag'      => false,
-            'errorCode' => $this->repositoryCode + 3,
+            'errorCode' => $this->repositoryCode + 4,
         ];
     }
 
