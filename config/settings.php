@@ -39,9 +39,4 @@ return [
     ],
     'no_of_record_per_page' => env('NO_OF_RECORD_PER_PAGE', 25),
     'print_head_flag'       => env('PRINT_HEAD_FLAG', true),
-    'display_phone_flag'    => env('DISPLAY_PHONE_FLAG', false),
-    'company_name'          => env('COMPANY_NAME', 'VSMS'),
-    'company_address'       => env('COMPANY_ADDRESS', 'ADDRESS'),
-    'company_phones'        => env('COMPANY_PHONE', 'PHONE'),
-    'company_GSTIN'         => env('COMPANY_GSTIN', 'GSTIN'),
 ];

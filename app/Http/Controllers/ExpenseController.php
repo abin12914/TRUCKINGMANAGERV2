@@ -95,7 +95,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('expenses.register');
+        return view('expenses.edit-add');
     }
 
     /**
@@ -228,7 +228,7 @@ class ExpenseController extends Controller
             throw new ModelNotFoundException("Expense", $errorCode);
         }
 
-        return view('expenses.edit', [
+        return view('expenses.edit-add', [
             'expense' => $expense,
         ]);
     }

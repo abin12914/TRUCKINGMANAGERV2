@@ -1,14 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Transportation Registration')
+@section('title', 'Transportation '. empty($transportation) ? 'Add' : 'Edit')
 @section('content')
 <section class="content-header">
     <h1>
-        Transportation
-        <small>Registartion</small>
+        {{ empty($transportation) ? 'Add' : 'Edit' }}
+        <small>Transportation</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li><a href="{{ route('transportations.index') }}"> Transportation</a></li>
+        <li><a href="{{ route('transportations.index') }}"> Transportation</a></li>
+        <li class="active">{{ empty($transportation) ? 'Add' : 'Edit' }}</li>
     </ol>
 </section>
 <!-- Main content -->
@@ -30,9 +31,11 @@
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
-                <form action="{{route('transportations.update', $transportation->id) }}" method="post" id="transportation_registration_form" class="form-horizontal" autocomplete="off">
+                <form action="{{ empty($transportation) ? route('transportations.store') : route('transportations.update', $transportation->id) }}" method="post" id="transportation_registration_form" class="form-horizontal" autocomplete="off">
+                    @if(!empty($transportation))
+                        @method('PUT')
+                    @endif
                     @csrf
-                    @method('PUT')
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-1"></div>
@@ -43,12 +46,14 @@
                         </div>
                         <div class="clearfix"> </div><br>
                         <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-3">
-                                <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="13">Clear</button>
+                            <div class="col-lg-3 col-md-3 col-sm-2 ol-xs-2"></div>
+                            <div class="col-lg-3 col-md-3 col-sm-4 ol-xs-4">
+                                <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="14">Clear</button>
                             </div>
-                            <div class="col-md-3">
-                                <button type="button" id="save_button" class="btn btn-primary btn-block btn-flat" tabindex="14">Submit</button>
+                            <div class="col-lg-3 col-md-3 col-sm-4 ol-xs-4">
+                                <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary submit-button ' : 'warning update_button ' }} btn-block btn-flat" tabindex="13">
+                                    {{ empty($transportation) ? 'Add' : 'Update' }}
+                                </button>
                             </div>
                             <!-- /.col -->
                         </div><br>
@@ -66,9 +71,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script type="text/javascript">
-
-    </script>
-
     <script src="/js/registrations/transportationRegistration.js?rndstr={{ rand(1000,9999) }}"></script>
 @endsection

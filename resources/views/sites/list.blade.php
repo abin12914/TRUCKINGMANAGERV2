@@ -27,7 +27,16 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <div class="col-md-4">
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                        <label for="site_id" class="control-label">Site : </label>
+                                        {{-- adding site select component --}}
+                                        @component('components.selects.sites', ['selectedSiteId' => $params['site_id']['paramValue'], 'selectName' => 'site_id', 'tabindex' => 2])
+                                        @endcomponent
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'site_id'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="site_type" class="control-label">Site Type : </label>
                                         <select class="form-control select2" name="site_type" id="site_type" style="width: 100%" tabindex="1">
                                             <option value="">Select site type</option>
@@ -41,16 +50,7 @@
                                         @component('components.paragraph.error_message', ['fieldName' => 'site_type'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="site_id" class="control-label">Site : </label>
-                                        {{-- adding site select component --}}
-                                        @component('components.selects.sites', ['selectedSiteId' => $params['site_id']['paramValue'], 'selectName' => 'site_id', 'tabindex' => 2])
-                                        @endcomponent
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'site_id'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-md-4">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="no_of_records" class="control-label">No Of Records Per Page : </label>
                                         {{-- adding no of records text component --}}
                                         @component('components.texts.no-of-records-text', ['noOfRecords' => $noOfRecords, 'tabindex' => 3])

@@ -112,11 +112,7 @@
                                         <i class="fa fa-tag margin-r-5"></i> Rent Type
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        @if(!empty($rentTypes))
-                                            {{ $rentTypes[$transportation->rent_type] ?? '<b class="text-red">Error</b>' }}
-                                        @else
-                                            <b class="text-red">Error</b>
-                                        @endif
+                                        {{ !empty($rentTypes)) && $rentTypes[$transportation->rent_type] ? $rentTypes[$transportation->rent_type] : 'Error!' }}
                                     </p>
                                     <hr>
                                 </div>
@@ -166,14 +162,14 @@
                         <div class="box-footer">
                             <div class="clearfix"> </div>
                             <div class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4">
-                                    <div class="col-md-6">
+                                <div class="col-lg-4 col-md-4 col-sm-2 col-xs-2"></div>
+                                <div class="col-lg-4 col-md-4 col-sm-8 col-xs-8">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <form action="{{ route('transportations.edit', $transportation->id) }}" method="get" class="form-horizontal">
                                             <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
                                         </form>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <form action="{{ route('transportations.destroy', $transportation->id) }}" method="post" class="form-horizontal">
                                             {{ method_field('DELETE') }}
                                             {{ csrf_field() }}

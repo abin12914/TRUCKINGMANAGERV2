@@ -43,4 +43,12 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the company details related to the user
+     */
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company');
+    }
 }

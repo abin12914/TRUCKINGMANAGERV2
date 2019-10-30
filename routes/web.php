@@ -53,3 +53,7 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         Route::get('last/sale', 'SaleController@getLastTransaction')->name('sale.last');
     });
 });
+
+Route::fallback(function () {
+    return view('errors.404');
+});

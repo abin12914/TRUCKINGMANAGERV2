@@ -61,7 +61,7 @@ class SiteController extends Controller
      */
     public function create()
     {
-        return view('sites.register');
+        return view('sites.edit-add');
     }
 
     /**
@@ -163,7 +163,7 @@ class SiteController extends Controller
             throw new ModelNotFoundException("Site", $errorCode);
         }
 
-        return view('sites.edit', [
+        return view('sites.edit-add', [
             'site'      => $site,
             'siteTypes' => config('constants.siteTypes')
         ]);

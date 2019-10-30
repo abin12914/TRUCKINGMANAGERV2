@@ -81,7 +81,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('expense/*') || Request::is('expense')? 'active' : '' }}">
+            <li class="treeview {{ Request::is('expenses/*') || Request::is('expenses')? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-wrench"></i>
                     <span>Services & Expences</span>
@@ -90,12 +90,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::is('expense/create')? 'active' : '' }}">
+                    <li class="{{ Request::is('expenses/create')? 'active' : '' }}">
                         <a href="{{route('expenses.create') }}">
                             <i class="fa fa-circle-o text-yellow"></i> Register
                         </a>
                     </li>
-                    <li class="{{ Request::is('expense')? 'active' : '' }}">
+                    <li class="{{ Request::is('expenses')? 'active' : '' }}">
                         <a href="{{ route('expenses.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>
@@ -123,7 +123,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('site/*') || Request::is('site')? 'active' : '' }}">
+            <li class="treeview {{ Request::is('sites/*') || Request::is('sites')? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-map"></i>
                     <span>Site</span>
@@ -132,12 +132,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::is('site/create')? 'active' : '' }}">
+                    <li class="{{ Request::is('sites/create')? 'active' : '' }}">
                         <a href="{{route('sites.create') }}">
                             <i class="fa fa-circle-o text-yellow"></i> Register
                         </a>
                     </li>
-                    <li class="{{ Request::is('site')? 'active' : '' }}">
+                    <li class="{{ Request::is('sites')? 'active' : '' }}">
                         <a href="{{route('sites.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>

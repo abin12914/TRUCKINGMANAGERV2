@@ -66,11 +66,11 @@
                         </div>
                         <div class="clearfix"></div><br>
                         <div class="row">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-2">
+                            <div class="col-lg-4 col-md-4 col-sm-2 col-xs-0"></div>
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                                 <button type="reset" class="btn btn-default btn-block btn-flat"  value="reset" tabindex="6">Clear</button>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                                 <button type="submit" class="btn btn-primary btn-block btn-flat submit-button" tabindex="5"><i class="fa fa-search"></i> Search</button>
                             </div>
                         </div>

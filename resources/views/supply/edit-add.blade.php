@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Supply Registration')
+@section('title', 'Supply '. empty($transportation) ? 'Add' : 'Edit')
 @section('content')
 <section class="content-header">
     <h1>
-        Supply
-        <small>Registartion</small>
+        {{ empty($transportation) ? 'Add' : 'Edit' }}
+        <small>Supply</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="{{ route('accounts.index') }}"> Supply</a></li>
-        <li class="active">Registration</li>
+        <li><a href="{{ route('transportations.index') }}"> Supply</a></li>
+        <li class="active">{{ empty($transportation) ? 'Add' : 'Edit' }}</li>
     </ol>
 </section>
 <!-- Main content -->
@@ -25,7 +25,10 @@
     <div class="row no-print">
         <div class="col-md-12">
             <!-- form start -->
-            <form action="{{route('supply.store')}}" method="post" id="supply_registration_form" class="form-horizontal" autocomplete="off">
+            <form action="{{ empty($transportation) ? route('supply.store') : route('supply.update', $transportation->id) }}" method="post" id="supply_registration_form" class="form-horizontal" autocomplete="off">
+                @if(!empty($transportation))
+                    @method('PUT')
+                @endif
                 @csrf
                 <!-- nav-tabs-custom -->
                 <div class="nav-tabs-custom">
@@ -112,7 +115,9 @@
                                             <a href="#purchase_tab" data-toggle="tab" class="arrows">
                                                 <button type="button" class="btn btn-default" tabindex="-1">Prev</button>
                                             </a>
-                                            <button type="button" id="save_button" class="btn btn-info pull-right" tabindex="7">Submit</button>
+                                            <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary submit-button ' : 'warning update_button ' }} pull-right" tabindex="7">
+                                                {{ empty($transportation) ? 'Add' : 'Update' }}
+                                            </button>
                                         </div>
                                     </div>
                                     <!-- /.box-footer -->

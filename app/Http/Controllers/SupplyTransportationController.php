@@ -112,7 +112,7 @@ class SupplyTransportationController extends Controller
      */
     public function create()
     {
-        return view('supply.register');
+        return view('supply.edit-add');
     }
 
     /**
@@ -409,7 +409,7 @@ class SupplyTransportationController extends Controller
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
 
-        return view('supply.edit', compact('transportation'));
+        return view('supply.edit-add', compact('transportation'));
     }
 
     /**

@@ -92,7 +92,7 @@
                                         <i class="fa fa-calendar margin-r-5"></i> Insurance Certificate Valid Upto
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ Carbon\Carbon::parse($truck->insurance_upto)->format('d-m-Y') }}&emsp;
+                                        {{ $truck->insurance_upto->format('d-m-Y') }}&emsp;
                                         @if($truck->insuranceFlag == 1)
                                             <i class="fa fa-check text-green" title="Valid"> Valid</i>
                                         @elseif($truck->insuranceFlag == 2)
@@ -110,7 +110,7 @@
                                         <i class="fa fa-calendar margin-r-5"></i> Tax Certificate Valid Upto
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ Carbon\Carbon::parse($truck->tax_upto)->format('d-m-Y') }}&emsp;
+                                        {{ $truck->tax_upto->format('d-m-Y') }}&emsp;
                                         @if($truck->taxFlag == 1)
                                             <i class="fa fa-check text-green" title="Valid"> Valid</i>
                                         @elseif($truck->taxFlag == 2)
@@ -126,7 +126,7 @@
                                         <i class="fa fa-calendar margin-r-5"></i> Fitness Certificate Valid Upto
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ Carbon\Carbon::parse($truck->fitness_upto)->format('d-m-Y') }}&emsp;
+                                        {{ $truck->fitness_upto->format('d-m-Y') }}&emsp;
                                         @if($truck->fitnessFlag == 1)
                                             <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
                                         @elseif($truck->fitnessFlag == 2)
@@ -144,7 +144,7 @@
                                         <i class="fa fa-calendar margin-r-5"></i> Permit Certificate Valid Upto
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ Carbon\Carbon::parse($truck->permit_upto)->format('d-m-Y') }}&emsp;
+                                        {{ $truck->permit_upto->format('d-m-Y') }}&emsp;
                                         @if($truck->permitFlag == 1)
                                             <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
                                         @elseif($truck->permitFlag == 2)
@@ -160,7 +160,7 @@
                                         <i class="fa fa-calendar margin-r-5"></i> Polution Certificate Valid Upto
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ Carbon\Carbon::parse($truck->pollution_upto)->format('d-m-Y') }}&emsp;
+                                        {{ $truck->pollution_upto->format('d-m-Y') }}&emsp;
                                         @if($truck->pollutionFlag == 1)
                                             <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
                                         @elseif($truck->pollutionFlag == 2)
@@ -177,13 +177,11 @@
                         <div class="box-footer">
                             <div class="clearfix"> </div>
                             <div class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4">
-                                    <div class="col-md-12">
-                                        <form action="{{ route('trucks.edit', $truck->id) }}" method="get" class="form-horizontal">
-                                            <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
-                                        </form>
-                                    </div>
+                                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-3"></div>
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <form action="{{ route('trucks.edit', $truck->id) }}" method="get" class="form-horizontal">
+                                        <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

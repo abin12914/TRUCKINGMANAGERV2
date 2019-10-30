@@ -67,7 +67,7 @@ class ComposerServiceProvider extends ServiceProvider
         ], "App\Http\View\Composers\TruckTypeComponentComposer");
         //site type to views
         View::composer([
-            'sites.register',
+            'sites.edit-add',
             'sites.list',
         ], "App\Http\View\Composers\SiteTypeComponentComposer");
         //rent types to view

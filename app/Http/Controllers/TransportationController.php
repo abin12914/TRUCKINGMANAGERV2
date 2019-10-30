@@ -36,7 +36,7 @@ class TransportationController extends Controller
      */
     public function index(TransportationFilterRequest $request)
     {
-        $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
+        $noOfRecords = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
         $fromDate   = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : "";
         $toDate     = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : "";
@@ -90,7 +90,7 @@ class TransportationController extends Controller
         ];
 
         $transportations = $this->transportationRepo->getTransportations(
-            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], ['employeeWages.employee.account'], true
+            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecords], ['key' => null, 'value' => null], ['employeeWages.employee.account'], true
         );
 
         //params passing for auto selection
@@ -99,9 +99,9 @@ class TransportationController extends Controller
         $params = array_merge($whereParams, $relationalParams);
 
         return view('transportations.list', [
-            'transportations'       => $transportations,
-            'params'                => $params,
-            'noOfRecordsPerPage'    => $noOfRecordsPerPage,
+            'transportations'   => $transportations,
+            'params'            => $params,
+            'noOfRecords'       => $noOfRecords,
         ]);
     }
 
@@ -112,7 +112,7 @@ class TransportationController extends Controller
      */
     public function create()
     {
-        return view('transportations.register');
+        return view('transportations.edit-add');
     }
 
     /**
@@ -315,7 +315,7 @@ class TransportationController extends Controller
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
 
-        return view('transportations.edit', [
+        return view('transportations.edit-add', [
             'transportation' => $transportation,
         ]);
     }
