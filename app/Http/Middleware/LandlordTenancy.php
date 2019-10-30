@@ -20,6 +20,9 @@ class LandlordTenancy
         if (Auth::check()) {
             $tenantId = Auth::user()->company_id;
 
+            if(empty($tenantId)) {
+                return redirect(route('home'))->with("message","Unauthorized!.")->with("alert-class","error");
+            }
             Landlord::addTenant('company_id', $tenantId);
         }
 

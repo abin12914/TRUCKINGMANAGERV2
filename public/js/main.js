@@ -119,7 +119,7 @@ $(function () {
         var fieldValue = $(this).val();
         var charCode = (evt.which) ? evt.which : event.keyCode;
 
-        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || (charCode == 32))) {
             evt.preventDefault();
             $(this).data("title", "Only alphabets are allowed!").tooltip("show");
             return false;

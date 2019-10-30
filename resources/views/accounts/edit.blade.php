@@ -128,11 +128,11 @@
                             </div>
                             <div class="clearfix"> </div><br>
                             <div class="row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-3">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-0"></div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                                     <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="10">Clear</button>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                                     <button type="button" class="btn btn-warning btn-block btn-flat update_button" tabindex="9">Update</button>
                                 </div>
                                 <!-- /.col -->

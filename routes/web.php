@@ -11,7 +11,8 @@
 |
 */
 
-Route::redirect('/', '/login');
+//Route::redirect('/', '/login');
+Route::get('/', 'HomeController@index')->name('home');
 //temp
 Route::get('/signout', function() {
     \Auth::logout();
@@ -27,7 +28,7 @@ Auth::routes(['register' => false]);
 
 //auth check == true
 Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
-    Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+    Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 	Route::get('/profile/edit', 'UserController@profileEdit')->name('user.profile.edit');
     Route::post('/profile/update', 'UserController@profileUpdate')->name('user.profile.update');
 
