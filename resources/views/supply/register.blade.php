@@ -51,7 +51,7 @@
                                     <div class="box-footer">
                                         <div class="col-md-1"></div>
                                         <div class="col-md-10">
-                                            <button type="button" class="btn btn-default" disabled tabindex="35">Prev</button>
+                                            <button type="button" class="btn btn-default" disabled tabindex="-1">Prev</button>
                                             <a href="#purchase_tab" data-toggle="tab" class="arrows">
                                                 <button type="button" class="btn btn-info pull-right" tabindex="13">Next</button>
                                             </a>
@@ -80,10 +80,10 @@
                                         <div class="col-md-1"></div>
                                         <div class="col-md-10">
                                             <a href="#transportation_tab" data-toggle="tab" class="arrows">
-                                                <button type="button" class="btn btn-default" tabindex="36">Prev</button>
+                                                <button type="button" class="btn btn-default" tabindex="-1">Prev</button>
                                             </a>
                                             <a href="#sale_tab" data-toggle="tab" class="arrows">
-                                                <button type="button" class="btn btn-info pull-right" tabindex="20">Next</button>
+                                                <button type="button" class="btn btn-info pull-right" tabindex="7">Next</button>
                                             </a>
                                         </div>
                                     </div>
@@ -110,9 +110,9 @@
                                         <div class="col-md-1"></div>
                                         <div class="col-md-10">
                                             <a href="#purchase_tab" data-toggle="tab" class="arrows">
-                                                <button type="button" class="btn btn-default" tabindex="37">Prev</button>
+                                                <button type="button" class="btn btn-default" tabindex="-1">Prev</button>
                                             </a>
-                                            <button type="button" id="save_button" class="btn btn-info pull-right" tabindex="27">Submit</button>
+                                            <button type="button" id="save_button" class="btn btn-info pull-right" tabindex="7">Submit</button>
                                         </div>
                                     </div>
                                     <!-- /.box-footer -->

@@ -122,25 +122,16 @@
                         <div class="box-footer">
                             <div class="clearfix"> </div>
                             <div class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4">
-                                    <div class="col-md-{{ $account->status == 1 ? '12' : '6' }}">
-                                        @if($account->relation == 1)
-                                            <a href="{{ route('employee.show', $account->employee->id) }}">
-                                                <button type="button" class="btn btn-info btn-block btn-flat">Employee Details</button>
-                                            </a>
-                                        @else
-                                            <form action="{{ route('accounts.edit', $account->id) }}" method="get" class="form-horizontal">
-                                                <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                    @if($account->status != 1)
-                                        <div class="col-md-6">
-                                            <form action="#" method="get" class="form-horizontal">
-                                                <button type="button" class="btn btn-warning btn-block btn-flat">Activate</button>
-                                            </form>
-                                        </div>
+                                <div class="col-lg-5 col-md-5 col-sm-4 col-xs-3"></div>
+                                <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+                                    @if($account->relation == 1)
+                                        <a href="{{ route('employees.show', $account->employee->id) }}">
+                                            <button type="button" class="btn btn-info btn-block btn-flat">Employee Details</button>
+                                        </a>
+                                    @else
+                                        <form action="{{ route('accounts.edit', $account->id) }}" method="get" class="form-horizontal">
+                                            <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
+                                        </form>
                                     @endif
                                 </div>
                             </div>

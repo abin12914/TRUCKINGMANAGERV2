@@ -62,7 +62,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return view('employees.register');
+        return view('employees.edit-add');
     }
 
     /**
@@ -246,7 +246,7 @@ class EmployeeController extends Controller
             throw new ModelNotFoundException("Employee", $errorCode);
         }
 
-        return view('employees.edit', [
+        return view('employees.edit-add', [
             'employee'  => $employee
         ]);
     }

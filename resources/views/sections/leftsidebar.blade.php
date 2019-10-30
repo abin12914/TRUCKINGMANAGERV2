@@ -144,7 +144,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('account/*') || Request::is('account') ? 'active' : '' }}">
+            <li class="treeview {{ Request::is('accounts/*') || Request::is('accounts') ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-book"></i>
                     <span>Accounts</span>
@@ -153,19 +153,19 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::is('account/create')? 'active' : '' }}">
+                    <li class="{{ Request::is('accounts/create')? 'active' : '' }}">
                         <a href="{{route('accounts.create') }}">
                             <i class="fa fa-circle-o text-yellow"></i> Register
                         </a>
                     </li>
-                    <li class="{{ Request::is('account')? 'active' : '' }}">
+                    <li class="{{ Request::is('accounts')? 'active' : '' }}">
                         <a href="{{route('accounts.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('employee/*') || Request::is('employee')? 'active' : '' }}">
+            <li class="treeview {{ Request::is('employees/*') || Request::is('employees')? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-male"></i>
                     <span>Employees</span>
@@ -174,12 +174,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::is('employee/create')? 'active' : '' }}">
+                    <li class="{{ Request::is('employees/create')? 'active' : '' }}">
                         <a href="{{route('employees.create') }}">
                             <i class="fa fa-circle-o text-yellow"></i> Register
                         </a>
                     </li>
-                    <li class="{{ Request::is('employee')? 'active' : '' }}">
+                    <li class="{{ Request::is('employees')? 'active' : '' }}">
                         <a href="{{route('employees.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>

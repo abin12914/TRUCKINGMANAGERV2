@@ -83,7 +83,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        return view('accounts.register');
+        return view('accounts.edit-add');
     }
 
     /**
@@ -255,7 +255,7 @@ class AccountController extends Controller
             throw new ModelNotFoundException("Account", $errorCode);
         }
 
-        return view('accounts.edit', [
+        return view('accounts.edit-add', [
             'account' => $account
         ]);
     }

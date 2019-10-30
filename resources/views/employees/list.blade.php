@@ -28,16 +28,7 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <div class="col-md-4">
-                                        <label for="employee_type" class="control-label">Employee Type : </label>
-                                        {{-- adding account employee type component --}}
-                                        @component('components.selects.employee-type', ['selectedType' => old('employee_type'. $params['employee_type']['paramValue']), 'selectName' => 'employee_type', 'tabindex' => 1])
-                                        @endcomponent
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'employee_type'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-md-4">
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                         <label for="employee_id" class="control-label">Employee : </label>
                                         {{-- adding employee select component --}}
                                         @component('components.selects.employees', ['selectedEmployeeId' => $params['employee_id']['paramValue'], 'selectName' => 'employee_id', 'tabindex' => 2])
@@ -46,7 +37,16 @@
                                         @component('components.paragraph.error_message', ['fieldName' => 'employee_id'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <label for="employee_type" class="control-label">Employee Type : </label>
+                                        {{-- adding account employee type component --}}
+                                        @component('components.selects.employee-type', ['selectedType' => old('employee_type'. $params['employee_type']['paramValue']), 'selectName' => 'employee_type', 'tabindex' => 1])
+                                        @endcomponent
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'employee_type'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="no_of_records" class="control-label">No Of Records Per Page : </label>
                                         {{-- adding no of records text component --}}
                                         @component('components.texts.no-of-records-text', ['noOfRecords' => $noOfRecords, 'tabindex' => 3])
@@ -60,11 +60,11 @@
                         </div>
                         <div class="clearfix"></div><br>
                         <div class="row">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-2">
+                            <div class="col-lg-4 col-md-4 col-sm-2 col-xs-0"></div>
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                                 <button type="reset" class="btn btn-default btn-block btn-flat"  value="reset" tabindex="5">Clear</button>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                                 <button type="submit" class="btn btn-primary btn-block btn-flat submit-button" tabindex="4"><i class="fa fa-search"></i> Search</button>
                             </div>
                         </div>
@@ -80,13 +80,13 @@
                 {{-- page header for printers --}}
                 @include('sections.print-head')
                 <div class="box-header no-print">
-                    @if(!empty($params['wage_type']['paramValue']) || !empty($params['employee_id']['paramValue']))
+                    @if(!empty($params['employee_type']['paramValue']) || !empty($params['employee_id']['paramValue']))
                         <b>Filters applied!</b>
                     @endif
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-md-12" style="overflow-x:scroll;">
+                        <div class="col-md-12">
                             <table class="table table-responsive table-bordered table-hover">
                                 <thead>
                                     <tr>

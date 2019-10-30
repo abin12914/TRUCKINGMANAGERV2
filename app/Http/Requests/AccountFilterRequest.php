@@ -40,7 +40,7 @@ class AccountFilterRequest extends FormRequest
             'no_of_records' =>  [
                                     'nullable',
                                     'integer',
-                                    'min:1',
+                                    'min:2',
                                     'max:100',
                                 ],
             'page'          =>  [

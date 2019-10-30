@@ -86,9 +86,9 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         @if($employee->account->financial_status == 1)
-                                            Creditor - 
+                                            Creditor -
                                         @elseif($employee->account->financial_status == 2)
-                                            Debitor - 
+                                            Debitor -
                                         @endif
                                         {{ $employee->account->opening_balance }}
                                     </p>
@@ -100,8 +100,8 @@
                         <div class="box-footer">
                             <div class="clearfix"> </div>
                             <div class="row">
-                                <div class="col-md-5"></div>
-                                <div class="col-md-2">
+                                <div class="col-lg-5 col-md-5 col-sm-4 col-xs-3"></div>
+                                <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
                                     <form action="{{ route('employees.edit', $employee->id) }}" method="get" class="form-horizontal">
                                         <button type="submit" class="btn btn-primary btn-block btn-flat">Edit</button>
                                     </form>
