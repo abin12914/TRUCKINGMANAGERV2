@@ -35,7 +35,7 @@ class VoucherFilterRequest extends FormRequest
                                     ],
             'transaction_type'  =>  [
                                         'nullable',
-                                        Rule::in([1, 2]))
+                                        Rule::in([1, 2])
                                     ],
             'account_id'        =>  [
                                         'nullable',
@@ -44,7 +44,7 @@ class VoucherFilterRequest extends FormRequest
             'no_of_records'     =>  [
                                         'nullable',
                                         'integer',
-                                        'min:1',
+                                        'min:2',
                                         'max:100',
                                     ],
             'page'                  =>  [

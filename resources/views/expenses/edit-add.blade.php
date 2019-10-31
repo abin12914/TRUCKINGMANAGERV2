@@ -24,7 +24,7 @@
                 </div><br>
                 <!-- /.box-header -->
                 <!-- form start -->
-                <form action="{{ empty($expense) ? route('accounts.store') : route('expenses.update', $expense->id)}}" method="post" class="form-horizontal" autocomplete="off">
+                <form action="{{ empty($expense) ? route('expenses.store') : route('expenses.update', $expense->id) }}" method="post" class="form-horizontal" autocomplete="off">
                     @if(!empty($expense))
                         @method('PUT')
                     @endif

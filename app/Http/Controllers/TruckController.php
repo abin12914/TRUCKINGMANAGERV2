@@ -31,11 +31,27 @@ class TruckController extends Controller
      */
     public function index(Request $request)
     {
-        $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
-        //getTrucks($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
+        $whereParams = [
+            'truck_type_id' => [
+                'paramName'     => 'truck_type_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('truck_type_id'),
+            ],
+            'truck_id' => [
+                'paramName'     => 'id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('truck_id'),
+            ],
+            'ownership_status' => [
+                'paramName'     => 'ownership_status',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('ownership_status'),
+            ]
+        ];
+
         return view('trucks.list', [
-            'trucks'  => $this->truckRepo->getTrucks([], [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
-            'noOfRecords' => $noOfRecordsPerPage,
+            'trucks' => $this->truckRepo->getTrucks($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true),
+            'params' => $whereParams,
         ]);
     }
 
@@ -46,7 +62,7 @@ class TruckController extends Controller
      */
     public function create()
     {
-        return view('trucks.register');
+        return view('trucks.edit-add');
     }
 
     /**
@@ -71,7 +87,7 @@ class TruckController extends Controller
                 'truck_type_id'     => $request->get('truck_type_id'),
                 'volume'            => $request->get('volume'),
                 'body_type'         => $request->get('body_type'),
-                'ownership_status'  => $request->get('ownership_status'),
+                'ownership_status'  => ($request->get('ownership_status') ?? 0),
                 'insurance_upto'    => Carbon::createFromFormat('d-m-Y', $request->get("insurance_upto"))->format('Y-m-d'),
                 'tax_upto'          => Carbon::createFromFormat('d-m-Y', $request->get("tax_upto"))->format('Y-m-d'),
                 'fitness_upto'      => Carbon::createFromFormat('d-m-Y', $request->get("fitness_upto"))->format('Y-m-d'),
@@ -154,7 +170,7 @@ class TruckController extends Controller
             throw new ModelNotFoundException("Truck", $errorCode);
         }
 
-        return view('trucks.edit', [
+        return view('trucks.edit-add', [
             'truck' => $truck,
         ]);
     }

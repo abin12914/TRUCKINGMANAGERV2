@@ -8,7 +8,7 @@
         <div class="pull-left info">
             @if(!empty($loggedUser))
                 <p>{{ $loggedUser->name }}</p>
-                <a href="#"><i class="fa  fa-hand-o-right"></i> View Profile</a>
+                <a href="{{ route('user.profile.edit') }}"><i class="fa  fa-hand-o-right"></i> View Profile</a>
             @else
                 <p>Login</p>
                 <a href="{{ route('login') }}"><i class="fa  fa-hand-o-right"></i> To continue</a>
@@ -102,7 +102,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('voucher/*') || Request::is('voucher')? 'active' : '' }}">
+            <li class="treeview {{ Request::is('vouchers/*') || Request::is('vouchers')? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-envelope-o"></i>
                     <span>Vouchers & Reciepts</span>
@@ -111,12 +111,12 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::is('voucher/create')? 'active' : '' }}">
+                    <li class="{{ Request::is('vouchers/create')? 'active' : '' }}">
                         <a href="{{route('vouchers.create') }}">
                             <i class="fa fa-circle-o text-yellow"></i> Register
                         </a>
                     </li>
-                    <li class="{{ Request::is('voucher')? 'active' : '' }}">
+                    <li class="{{ Request::is('vouchers')? 'active' : '' }}">
                         <a href="{{route('vouchers.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>

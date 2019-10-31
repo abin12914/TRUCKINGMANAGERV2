@@ -114,9 +114,10 @@ class VoucherController extends Controller
         }
 
         //params passing for auto selection
-        $whereParams['from_date']['paramValue']     = $request->get('from_date');
-        $whereParams['to_date']['paramValue']       = $request->get('to_date');
-        $whereParams['account_id']['paramValue']    = $request->get('account_id');
+        $whereParams['from_date']['paramValue']         = $request->get('from_date');
+        $whereParams['to_date']['paramValue']           = $request->get('to_date');
+        $whereParams['account_id']['paramValue']        = $request->get('account_id');
+        $whereParams['transaction_type']['paramValue']  = $request->get('transaction_type');
 
         //getVouchers($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('vouchers.list', [
@@ -135,7 +136,7 @@ class VoucherController extends Controller
      */
     public function create()
     {
-        return view('vouchers.register');
+        return view('vouchers.edit-add');
     }
 
     /**
@@ -294,7 +295,7 @@ class VoucherController extends Controller
             throw new ModelNotFoundException("Voucher", $errorCode);
         }
 
-        return view('vouchers.edit', [
+        return view('vouchers.edit-add', [
             'voucher' => $voucher,
         ]);
     }

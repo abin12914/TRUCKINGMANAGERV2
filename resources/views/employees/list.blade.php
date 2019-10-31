@@ -31,7 +31,7 @@
                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                         <label for="employee_id" class="control-label">Employee : </label>
                                         {{-- adding employee select component --}}
-                                        @component('components.selects.employees', ['selectedEmployeeId' => $params['employee_id']['paramValue'], 'selectName' => 'employee_id', 'tabindex' => 2])
+                                        @component('components.selects.employees', ['selectedEmployeeId' => old('employee_id', $params['employee_id']['paramValue']), 'selectName' => 'employee_id', 'tabindex' => 1])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'employee_id'])
@@ -40,7 +40,7 @@
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="employee_type" class="control-label">Employee Type : </label>
                                         {{-- adding account employee type component --}}
-                                        @component('components.selects.employee-type', ['selectedType' => old('employee_type'. $params['employee_type']['paramValue']), 'selectName' => 'employee_type', 'tabindex' => 1])
+                                        @component('components.selects.employee-type', ['selectedType' => old('employee_type', $params['employee_type']['paramValue']), 'selectName' => 'employee_type', 'tabindex' => 2])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'employee_type'])

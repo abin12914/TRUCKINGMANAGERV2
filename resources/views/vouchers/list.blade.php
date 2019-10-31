@@ -30,14 +30,14 @@
                                 <div class="form-group">
                                     <div class="col-md-4">
                                         <label for="from_date" class="control-label">From Date : </label>
-                                        <input type="text" class="form-control datepicker" name="from_date" id="from_date" value="{{ !empty(old('from_date')) ? old('from_date') : $params['from_date']['paramValue'] }}" tabindex="1">
+                                        <input type="text" class="form-control datepicker" name="from_date" id="from_date" value="{{ old('from_date', $params['from_date']['paramValue']) }}" tabindex="1">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'from_date'])
                                         @endcomponent
                                     </div>
                                     <div class="col-md-4">
                                         <label for="to_date" class="control-label">To Date : </label>
-                                        <input type="text" class="form-control datepicker" name="to_date" id="to_date" value="{{ !empty(old('to_date')) ? old('to_date') : $params['to_date']['paramValue'] }}" tabindex="2">
+                                        <input type="text" class="form-control datepicker" name="to_date" id="to_date" value="{{ old('to_date', $params['to_date']['paramValue']) }}" tabindex="2">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'to_date'])
                                         @endcomponent
@@ -46,8 +46,8 @@
                                         <label class="control-label"><b style="color: red;">* </b> Voucher Type : </label>
                                         <select class="form-control select2" name="transaction_type" id="transaction_type" tabindex="10" style="width: 100%;">
                                             <option value="" {{ empty(old('transaction_type')) ? 'selected' : '' }}>Select voucher type</option>
-                                            <option value="1" {{ (old('transaction_type') == 1) ? 'selected' : '' }}>Reciept</option>
-                                            <option value="2" {{ (old('transaction_type') == 2) ? 'selected' : '' }}>Payment</option>
+                                            <option value="1" {{ (old('transaction_type', $params['transaction_type']['paramValue']) == 1) ? 'selected' : '' }}>Reciept</option>
+                                            <option value="2" {{ (old('transaction_type', $params['transaction_type']['paramValue']) == 2) ? 'selected' : '' }}>Payment</option>
                                         </select>
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
@@ -58,7 +58,7 @@
                                     <div class="col-md-8">
                                         <label for="account_id" class="control-label">Account : </label>
                                         {{-- adding account select component --}}
-                                        @component('components.selects.accounts', ['selectedAccountId' => $params['account_id']['paramValue'], 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 5])
+                                        @component('components.selects.accounts', ['selectedAccountId' => old('account_id', $params['account_id']['paramValue']), 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 5])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'account_id'])

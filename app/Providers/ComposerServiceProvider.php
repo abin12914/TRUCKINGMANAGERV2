@@ -39,7 +39,7 @@ class ComposerServiceProvider extends ServiceProvider
         //materials to views
         View::composer('components.selects.materials', "App\Http\View\Composers\MaterialComponentComposer");
         //indian vehicle registation codes to views
-        View::composer('trucks.register', "App\Http\View\Composers\TruckRegStateCodeComposer");
+        View::composer('trucks.edit-add', "App\Http\View\Composers\TruckRegStateCodeComposer");
         //employee type to views
         View::composer('components.selects.employee-type', "App\Http\View\Composers\EmployeeTypeComponentComposer");
 
@@ -60,8 +60,7 @@ class ComposerServiceProvider extends ServiceProvider
         ], "App\Http\View\Composers\WageTypeComponentComposer");
         //truck type to views
         View::composer([
-            'trucks.register',
-            'trucks.edit',
+            'trucks.edit-add',
             'trucks.list',
             'trucks.details',
         ], "App\Http\View\Composers\TruckTypeComponentComposer");
