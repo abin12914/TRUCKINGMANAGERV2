@@ -195,7 +195,9 @@
                                 <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="16">Clear</button>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                                <button type="button" class="btn btn-primary btn-block btn-flat update_button" tabindex="15">Submit</button>
+                                <button type="button" class="btn btn-{{ empty($truck) ? 'primary submit-button ' : 'warning update_button ' }} btn-block btn-flat" tabindex="15">
+                                    {{ empty($truck) ? 'Add' : 'Update' }}
+                                </button>
                             </div>
                             <!-- /.col -->
                         </div><br>

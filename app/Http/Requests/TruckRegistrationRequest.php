@@ -27,7 +27,7 @@ class TruckRegistrationRequest extends FormRequest
     {
         return [
             'reg_number'                    =>  [
-                                                    'required',
+                                                    'required_without:_method',
                                                     'max:13',
                                                     'regex:(([A-Z]){2}(-)(?:[0-9]){2}( )(((?:[A-Z]){1,2}(-)([0-9]){1,4})|(([0-9]){1,4})))',
                                                     Rule::unique('trucks', 'reg_number')->ignore($this->truck)
@@ -36,11 +36,11 @@ class TruckRegistrationRequest extends FormRequest
                                                         }),
                                                 ],
             'reg_number_state_code'         =>  [
-                                                    'required',
+                                                    'required_without:_method',
                                                     Rule::in(config('constants.stateCodes')),
                                                 ],
             'reg_number_region_code'        =>  [
-                                                    'required',
+                                                    'required_without:_method',
                                                     'max:99',
                                                     'min:1',
                                                     'digits:2',
@@ -52,10 +52,14 @@ class TruckRegistrationRequest extends FormRequest
                                                     'max:2',
                                                 ],
             'reg_number_unique_digit'       =>  [
-                                                    'required',
+                                                    'required_without:_method',
                                                     'integer',
                                                     'max:9999',
                                                     'min:1',
+                                                ],
+            'ownership_status'              =>  [
+                                                    'nullable',
+                                                    Rule::in([1,0]),
                                                 ],
             'description'                   =>  [
                                                     'nullable',

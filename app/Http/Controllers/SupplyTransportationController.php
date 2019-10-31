@@ -99,9 +99,9 @@ class SupplyTransportationController extends Controller
         $params = array_merge($whereParams, $relationalParams);
 
         return view('supply.list', [
-            'transportations'       => $transportations,
-            'params'                => $params,
-            'noOfRecordsPerPage'    => $noOfRecordsPerPage,
+            'transportations'   => $transportations,
+            'params'            => $params,
+            'noOfRecords'       => $noOfRecordsPerPage,
         ]);
     }
 

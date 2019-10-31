@@ -29,7 +29,7 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <label for="employee_id" class="control-label">Truck : </label>
+                                        <label for="truck_id" class="control-label">Truck : </label>
                                         {{-- adding truck select component --}}
                                         @component('components.selects.trucks', ['selectedTruckId' => old('truck_id', $params['truck_id']['paramValue']), 'selectName' => 'truck_id', 'tabindex' => 1])
                                         @endcomponent
@@ -38,12 +38,12 @@
                                         @endcomponent
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                                        <label for="employee_type" class="control-label">Truck Type : </label>
+                                        <label for="truck_type" class="control-label">Truck Type : </label>
                                         <select class="form-control select2" name="truck_type_id" id="truck_type_id" tabindex="6" style="width: 100%;">
                                             <option value="" {{ empty(old('truck_type_id')) ? 'selected' : '' }}>Select truck type</option>
                                             @if(!empty($truckTypesCombo))
                                                 @foreach($truckTypesCombo as $truckType)
-                                                    <option value="{{ $truckType->id }}" {{ (old('truck_type_id', !empty($truck) ? $truck->truck_type_id : null) == $truckType->id) ? 'selected' : '' }}>
+                                                    <option value="{{ $truckType->id }}" {{ (old('truck_type_id', $params['truck_type_id']['paramValue']) == $truckType->id) ? 'selected' : '' }}>
                                                         {{ $truckType->name }} - {{ $truckType->generic_quantity }} cubic unit class
                                                     </option>
                                                 @endforeach
