@@ -178,7 +178,7 @@ class AccountController extends Controller
                 'credit_account_id' => $creditAccountId,
                 'amount'            => $openingBalance,
                 'particulars'       => $particulars,
-                'status'            => 1,
+                'status'            => $openingBalance > 0 ? 1 : 0,
                 'created_by'        => Auth::id(),
             ], $openingTransactionId);
 

@@ -63,10 +63,10 @@ class Account extends Model
     }
 
     /**
-     * Get all transaction records associated with the account.
+     * Get the sum of debit transaction records associated with the account.
      */
-    public function allTransactions()
+    public function getdebitTransactionsSum()
     {
-        return $this->debitTransactions->merge($this->creditTransactions);
+        return $this->debitTransactions()->sum('amount');
     }
 }

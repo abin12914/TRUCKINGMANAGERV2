@@ -154,8 +154,13 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td class="text-red"><strong> Total Amount</strong></td>
-                                                <td class="text-red"><strong> {{ ($subTotalDebit + $obDebit) }}</strong></td>
-                                                <td class="text-red"><strong> {{ ($subTotalCredit + $obCredit) }}</strong></td>
+                                                @if($obDebit > $obCredit)
+                                                    <td class="text-red"><strong> {{ ($subTotalDebit + ($obDebit - $obCredit)) }}</strong></td>
+                                                    <td class="text-red"><strong> {{ $subTotalCredit }}</strong></td>
+                                                @else
+                                                    <td class="text-red"><strong> {{ $subTotalDebit }}</strong></td>
+                                                    <td class="text-red"><strong> {{ ($subTotalCredit + ($obCredit - $obDebit)) }}</strong></td>
+                                                @endif
                                             </tr>
                                             <tr>
                                                 <td></td>

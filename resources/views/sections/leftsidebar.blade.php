@@ -33,7 +33,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li class="{{ Request::is('reports/account-statement')? 'active' : '' }}">
-                        <a href="{{ route('dashboard') }}">
+                        <a href="{{ route('reports.account-statement') }}">
                             <i class="fa fa-circle-o text-green"></i> Account Statement
                         </a>
                     </li>

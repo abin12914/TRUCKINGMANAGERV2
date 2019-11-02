@@ -43,7 +43,9 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         'vouchers'          => 'VoucherController'
 	]);
 
+    //reports
     Route::get('/reports/account-statement', 'ReportController@accountStatement')->name('reports.account-statement');
+    Route::get('/reports/credit-statement', 'ReportController@creditStatement')->name('reports.credit-statement');
 
     //ajax urls
     Route::group(['middleware' => 'is.ajax'], function () {

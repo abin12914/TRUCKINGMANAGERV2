@@ -51,22 +51,6 @@ class ReportController extends Controller
             ],
         ];
 
-        $debitParam = [
-            'account_id_debit' => [
-                'paramName'     => 'debit_account_id',
-                'paramOperator' => '=',
-                'paramValue'    => $accountId,
-            ]
-        ];
-
-        $creditParam = [
-            'account_id_credit' => [
-                'paramName'     => 'credit_account_id',
-                'paramOperator' => '=',
-                'paramValue'    => $accountId,
-            ]
-        ];
-
         $obWhereParams = [
             'ob_up_to_date' => [
                 'paramName'     => 'transaction_date',
@@ -95,6 +79,23 @@ class ReportController extends Controller
 
         try {
             $account = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $accountId = $accountId ?? $account->id; //setting default to cash if no account is selected
+
+            $debitParam = [
+                'account_id_debit' => [
+                    'paramName'     => 'debit_account_id',
+                    'paramOperator' => '=',
+                    'paramValue'    => $accountId,
+                ]
+            ];
+
+            $creditParam = [
+                'account_id_credit' => [
+                    'paramName'     => 'credit_account_id',
+                    'paramOperator' => '=',
+                    'paramValue'    => $accountId,
+                ]
+            ];
 
             $transactions = $transactionRepo->getTransactions($whereParams, array_merge($debitParam, $creditParam), [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecords], [], [], null, true);
             if($transactions->lastPage() || $transactions->lastPage() == 1) {
@@ -116,10 +117,69 @@ class ReportController extends Controller
         //params passing for auto selection
         $params['from_date']['paramValue']  = $request->get('from_date');
         $params['to_date']['paramValue']    = $request->get('to_date');
-        $params['account_id']['paramValue'] = $accountId ?? $account->id; //setting default to cash if no account is selected
+        $params['account_id']['paramValue'] = $accountId;
 
         return view('reports.account-statement',
             compact('account', 'transactions', 'subTotalDebit', 'subTotalCredit', 'obDebit', 'obCredit', 'params', 'noOfRecords')
+        );
+    }
+
+    /**
+     * Display a listing of the accounts  and their credit statment.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function creditStatement(Request $request, AccountRepository $accountRepo, TransactionRepository $transactionRepo)
+    {
+        $accountWhereParam  = [];
+        $withParams         = ['debitTransactions', 'creditTransactions'];
+
+        if(!empty($toDate)) {
+            //date format conversion
+            $toDate = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
+
+            $withParams = [
+                'debitTransactions' => function ($query) {
+                    $query->where('transaction_date', '<=', $toDate);
+                },
+                'creditTransactions' => function ($query) {
+                    $query->where('transaction_date', '<=', $toDate);
+                }
+            ];
+        }
+
+        $accountWhereParam = [
+            'relation_type' => [
+                'paramName'     => 'relation',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('relation_type'),
+            ],
+            'type' => [
+                'paramName'     => 'type',
+                'paramOperator' => '=',
+                'paramValue'    => 3, //personal accounts
+            ]
+        ];
+
+        try {
+            $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
+
+            foreach ($accounts as $key => $account) {
+                $account->creditAmount = ($account->debitTransactions->sum('amount') - $account->creditTransactions->sum('amount'));
+            }
+
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect()->back()->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
+        //params passing for auto selection
+        $params['to_date']['paramValue']       = $request->get('to_date');
+        $params['relation_type']['paramValue'] = $request->get('relation_type');
+
+        return view('reports.credit-statement',
+            compact('accounts', 'params')
         );
     }
 }
