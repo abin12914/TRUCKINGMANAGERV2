@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class TransportationController extends Controller
 {
     protected $transportationRepo;
-    public $errorHead = null;
+    public $errorHead = null, $driverWageType = 1;
 
     public function __construct(TransportationRepository $transportationRepo)
     {
@@ -258,7 +258,7 @@ class TransportationController extends Controller
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-
+dd($e);
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
         }
         if(!empty($id)) {

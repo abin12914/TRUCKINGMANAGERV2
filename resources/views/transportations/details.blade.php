@@ -112,7 +112,7 @@
                                         <i class="fa fa-tag margin-r-5"></i> Rent Type
                                     </strong>
                                     <p class="text-muted multi-line">
-                                        {{ !empty($rentTypes)) && $rentTypes[$transportation->rent_type] ? $rentTypes[$transportation->rent_type] : 'Error!' }}
+                                        {{ !empty($rentTypes) && $rentTypes[$transportation->rent_type] ? $rentTypes[$transportation->rent_type] : 'Error!' }}
                                     </p>
                                     <hr>
                                 </div>

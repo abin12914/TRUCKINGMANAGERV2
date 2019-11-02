@@ -27,20 +27,21 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                                        <label for="to_date" class="control-label">To Date : </label>
-                                        <input type="text" class="form-control datepicker" name="to_date" id="to_date" value="{{ old('to_date', $params['to_date']['paramValue']) }}" tabindex="1">
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'to_date'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                                        <label for="account_id" class="control-label">Account : </label>
+                                    <div class="col-lg-1 col-md-1 col-sm-0 col-xs-0"></div>
+                                    <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+                                        <label for="account_id" class="control-label">Account Relation : </label>
                                         {{-- adding account relation select component --}}
                                         @component('components.selects.account-relation', ['registrationFlag' => false, 'selectedRelation' => old('relation_type', $params['relation_type']['paramValue']), 'selectName' => 'relation_type', 'tabindex' => 2])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'account_id'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+                                        <label for="to_date" class="control-label">Up To Closing Date : </label>
+                                        <input type="text" class="form-control datepicker" name="to_date" id="to_date" value="{{ old('to_date', $params['to_date']['paramValue']) }}" tabindex="1">
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'to_date'])
                                         @endcomponent
                                     </div>
                                 </div>

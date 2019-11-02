@@ -167,7 +167,7 @@
                                                     {{ $transportation->trip_rent }} x {{ $transportation->no_of_trip }} = {{ $transportation->total_rent }}
                                                 </td>
                                                 <td class="no-print">
-                                                    <a href="{{ route('supply.show', ['id' => $transportation->id]) }}">
+                                                    <a href="{{ route('transportations.show', ['id' => $transportation->id]) }}">
                                                         <button type="button" class="btn btn-default">Details</button>
                                                     </a>
                                                 </td>

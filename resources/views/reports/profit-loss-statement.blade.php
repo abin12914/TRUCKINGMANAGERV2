@@ -1,14 +1,14 @@
 @extends('layouts.app')
-@section('title', 'Account Statement')
+@section('title', 'Profit-Loss Statement')
 @section('content')
 <section class="content-header">
     <h1>
-        Account Statement
+        Profit-Loss Statement
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
         <li> Reports</li>
-        <li class="active"> Account Statement</li>
+        <li class="active"> Profit-Loss Statement</li>
     </ol>
 </section>
 <!-- Main content -->
@@ -22,41 +22,32 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-header">
-                    <form action="{{ route('reports.account-statement') }}" method="get" class="form-horizontal" autocomplete="off">
+                    <form action="{{ route('reports.profit-loss-statement') }}" method="get" class="form-horizontal" autocomplete="off">
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="from_date" class="control-label">From Date : </label>
                                         <input type="text" class="form-control datepicker" name="from_date" id="from_date" value="{{ old('from_date', $params['from_date']['paramValue']) }}" tabindex="1">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'from_date'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="to_date" class="control-label">To Date : </label>
                                         <input type="text" class="form-control datepicker" name="to_date" id="to_date" value="{{ old('to_date', $params['to_date']['paramValue']) }}" tabindex="2">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'to_date'])
                                         @endcomponent
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
-                                        <label for="account_id" class="control-label">Account : </label>
-                                        {{-- adding account select component --}}
-                                        @component('components.selects.accounts', ['selectedAccountId' => old('account_id', $params['account_id']['paramValue']), 'cashAccountFlag' => true, 'selectName' => 'account_id', 'activeFlag' => true, 'tabindex' => 4])
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                        <label for="truck_id" class="control-label">Truck : </label>
+                                        {{-- adding truck select component --}}
+                                        @component('components.selects.trucks', ['selectedTruckId' => old('truck_id', $params['truck_id']['paramValue']), 'selectName' => 'truck_id', 'tabindex' => 4])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'account_id'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
-                                        <label for="no_of_records" class="control-label">No Of Records Per Page : </label>
-                                        {{-- adding no of records text component --}}
-                                        @component('components.texts.no-of-records-text', ['noOfRecords' => $noOfRecords, 'tabindex' => 6])
-                                        @endcomponent
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'no_of_records'])
                                         @endcomponent
                                     </div>
                                 </div>

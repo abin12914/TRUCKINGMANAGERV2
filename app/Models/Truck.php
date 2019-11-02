@@ -47,6 +47,14 @@ class Truck extends Model
     }
 
     /**
+    * Get the transportation records associated with the truck.
+    */
+    public function transportations()
+    {
+        return $this->hasMany('App\Models\Transportation', 'truck_id');
+    }
+
+    /**
     * Get the employeeWage records associated with the truck.
     */
     public function employeeWages()
@@ -97,13 +105,5 @@ class Truck extends Model
             'id',
             'id'
         );
-    }
-
-    /**
-    * Get the transportation records associated with the truck.
-    */
-    public function transportations()
-    {
-        return $this->hasMany('App\Models\Transportation', 'truck_id');
     }
 }
