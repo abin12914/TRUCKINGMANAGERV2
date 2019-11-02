@@ -65,8 +65,16 @@ class Account extends Model
     /**
      * Get the sum of debit transaction records associated with the account.
      */
-    public function getdebitTransactionsSum()
+    public function debitTransactionsSum()
     {
-        return $this->debitTransactions()->sum('amount');
+        return $this->debitTransactions()->selectRaw('sum(amount) as debit_sum, debit_account_id')->groupBy('debit_account_id');
+    }
+
+    /**
+     * Get the sum of credit transaction records associated with the account.
+     */
+    public function creditTransactionsSum()
+    {
+        return $this->creditTransactions()->selectRaw('sum(amount) as credit_sum, credit_account_id')->groupBy('credit_account_id');
     }
 }

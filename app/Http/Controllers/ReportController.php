@@ -7,6 +7,7 @@ use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
 use Carbon\Carbon;
 use Exception;
+use DB;
 
 class ReportController extends Controller
 {
@@ -132,17 +133,17 @@ class ReportController extends Controller
     public function creditStatement(Request $request, AccountRepository $accountRepo, TransactionRepository $transactionRepo)
     {
         $accountWhereParam  = [];
-        $withParams         = ['debitTransactions', 'creditTransactions'];
+        $withParams         = ['debitTransactionsSum', 'creditTransactionsSum'];
 
         if(!empty($toDate)) {
             //date format conversion
-            $toDate = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
+            $toDate = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : Carbon::now()->format('Y-m-d');
 
             $withParams = [
-                'debitTransactions' => function ($query) {
+                'debitTransactionsSum' => function ($query) use($toDate) {
                     $query->where('transaction_date', '<=', $toDate);
                 },
-                'creditTransactions' => function ($query) {
+                'creditTransactionsSum' => function ($query) use($toDate) {
                     $query->where('transaction_date', '<=', $toDate);
                 }
             ];
@@ -162,12 +163,14 @@ class ReportController extends Controller
         ];
 
         try {
+
             $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
 
             foreach ($accounts as $key => $account) {
-                $account->creditAmount = ($account->debitTransactions->sum('amount') - $account->creditTransactions->sum('amount'));
+                $debitSum  = ($account->debitTransactionsSum->count() > 0 ? $account->debitTransactionsSum[0]->debit_sum : 0);
+                $creditSum = ($account->creditTransactionsSum->count() > 0 ? $account->creditTransactionsSum[0]->credit_sum : 0);
+                $account->creditAmount = $debitSum - $creditSum;
             }
-
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
 
