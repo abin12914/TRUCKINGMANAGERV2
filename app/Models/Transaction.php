@@ -55,19 +55,19 @@ class Transaction extends Model
     }
 
     /**
+     * Get the transportation record associated with the transaction.
+     */
+    public function transportation()
+    {
+        return $this->hasOne('App\Models\Transportation', 'transaction_id');
+    }
+
+    /**
      * Get the employeeWage record associated with the transaction.
      */
     public function employeeWage()
     {
         return $this->hasOne('App\Models\EmployeeWage', 'transaction_id');
-    }
-
-    /**
-     * Get the expense record associated with the transaction.
-     */
-    public function expense()
-    {
-        return $this->hasOne('App\Models\Expense', 'transaction_id');
     }
 
     /**
@@ -79,11 +79,19 @@ class Transaction extends Model
     }
 
     /**
-     * Get the transportation record associated with the transaction.
+     * Get the purchase record associated with the transaction.
      */
-    public function transportation()
+    public function sale()
     {
-        return $this->hasOne('App\Models\Transportation', 'transaction_id');
+        return $this->hasOne('App\Models\Sale', 'transaction_id');
+    }
+
+    /**
+     * Get the expense record associated with the transaction.
+     */
+    public function expense()
+    {
+        return $this->hasOne('App\Models\Expense', 'transaction_id');
     }
 
     /**

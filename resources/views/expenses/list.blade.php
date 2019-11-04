@@ -139,13 +139,17 @@
                                                 <td>{{ $expense->description }}</td>
                                                 <td>{{ $expense->amount }}</td>
                                                 <td class="no-print">
-                                                    <a href="{{ route('expenses.edit', $expense->id) }}" style="float: left;">
-                                                        <button type="button" class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                                    <a href="{{ route('expenses.edit', $expense->id) }}" style="float: left; margin-right:2px;">
+                                                        <button type="button" class="btn btn-warning" title="edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
                                                     </a>
-                                                    <form action="{{ route('expenses.destroy', $expense->id) }}" method="post" class="form-horizontal">
+                                                    <form action="{{ route('expenses.destroy', $expense->id) }}" method="post">
                                                         {{ method_field('DELETE') }}
                                                         {{ csrf_field() }}
-                                                        <button type="button" class="btn btn-danger delete_button"><i class="fa fa-trash"></i> Delete</button>
+                                                        <button type="button" class="btn btn-danger delete_button" title="delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
                                                     </form>
                                                 </td>
                                             </tr>

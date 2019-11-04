@@ -58,6 +58,33 @@ return [
         3   => 'Fixed For TruckType',
     ],
 
+    'transactionRelations' => [
+        1 => [
+            'relationName'  => 'transportation',
+            'displayName'   => 'Transportation Rent'
+        ],
+        2 => [
+            'relationName'  => 'employeeWage',
+            'displayName'   => 'Employee Wage'
+        ],
+        3 => [
+            'relationName'  => 'purchase',
+            'displayName'   => 'Purchase'
+        ],
+        4 => [
+            'relationName'  => 'sale',
+            'displayName'   => 'Sale'
+        ],
+        4 => [
+            'relationName'  => 'expense',
+            'displayName'   => 'Expense'
+        ],
+        5 => [
+            'relationName'  => 'voucher',
+            'displayName'   => 'Voucher'
+        ]
+    ],
+
     'accountConstants' => [
         'Cash' => [
             'account_name'      => 'Cash',

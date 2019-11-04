@@ -74,14 +74,6 @@
             <div class="box">
                 {{-- page header for printers --}}
                 @include('sections.print-head')
-                <div class="box-header no-print">
-                    @foreach($params as $param)
-                        @if(!empty($param['paramValue']))
-                            <b>Filters applied!</b>
-                            @break
-                        @endif
-                    @endforeach
-                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -90,99 +82,32 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 5%;">#</th>
-                                        <th style="width: 10%;">Date</th>
-                                        <th style="width: 10%;">Ref.No.</th>
-                                        <th style="width: 45%;">Particulars</th>
-                                        <th style="width: 15%;">Expense</th>
-                                        <th style="width: 15%;">Income</th>
+                                        <th style="width: 15%;">Truck</th>
+                                        <th style="width: 10%;">Transportation Rent</th>
+                                        <th style="width: 10%;">Sales</th>
+                                        <th style="width: 10%;">Purchase</th>
+                                        <th style="width: 10%;">Employee Wage</th>
+                                        <th style="width: 10%;">Expense</th>
+                                        <th style="width: 10%;">Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(!empty($transactions))
-                                        @foreach($transactions as $index => $transaction)
+                                    @if(!empty($trucks))
+                                        @foreach($trucks as $index => $truck)
                                             <tr>
-                                                <td>{{ $index + $transactions->firstItem() }}</td>
-                                                <td>{{ $transaction->transaction_date->format('d-m-Y') }}</td>
-                                                <td>{{ $transaction->id }}</td>
-                                                <td>{{ $transaction->particulars }}</td>
-                                                @if($transaction->debit_account_id == $account->id)
-                                                    <td>{{ $transaction->amount }}</td>
-                                                    <td></td>
-                                                @elseif($transaction->credit_account_id == $account->id)
-                                                    <td></td>
-                                                    <td>{{ $transaction->amount }}</td>
-                                                @else
-                                                    <td>0</td>
-                                                    <td>0</td>
-                                                @endif
+                                                <td>#{{ $index }}</td>
+                                                <td>{{ $truck->reg_number }}</td>
+                                                <td>{{ $truck->transportations->transaction->sum() }}</td>
+                                                <td>{{ $truck->sales->transactions->sum() }}</td>
+                                                <td>{{ $truck->purchases->transactions->sum() }}</td>
+                                                <td>{{ $truck->employeeWages->transactions->sum() }}</td>
+                                                <td>{{ $truck->expenses->transactions->sum() }}</td>
+                                                <td>{{ $index }}</td>
                                             </tr>
                                         @endforeach
-                                        @if(Request::get('page') == $transactions->lastPage() || $transactions->lastPage() == 1)
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-red"><b>Sub Total</b></td>
-                                                <td class="text-red"><b>{{ $subTotalDebit }}</b></td>
-                                                <td class="text-red"><b>{{ $subTotalCredit }}</b></td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                @if($obDebit > $obCredit)
-                                                    <td class="text-red"><strong> Old Balance To Get</strong></td>
-                                                    <td class="text-red"><strong> {{ ($obDebit - $obCredit) }}</strong></td>
-                                                    <td></td>
-                                                @else
-                                                    <td class="text-red"><strong> Old Balance To Pay</strong></td>
-                                                    <td></td>
-                                                    <td class="text-red"><strong> {{ ($obCredit - $obDebit) }}</strong></td>
-                                                @endif
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-red"><strong> Total Amount</strong></td>
-                                                @if($obDebit > $obCredit)
-                                                    <td class="text-red"><strong> {{ ($subTotalDebit + ($obDebit - $obCredit)) }}</strong></td>
-                                                    <td class="text-red"><strong> {{ $subTotalCredit }}</strong></td>
-                                                @else
-                                                    <td class="text-red"><strong> {{ $subTotalDebit }}</strong></td>
-                                                    <td class="text-red"><strong> {{ ($subTotalCredit + ($obCredit - $obDebit)) }}</strong></td>
-                                                @endif
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                @if(($subTotalDebit + $obDebit) > ($subTotalCredit + $obCredit))
-                                                    <td class="text-red"><strong> Outstanding Balance To Get</strong></td>
-                                                    <td></td>
-                                                    <td class="text-red"><strong> {{ (($subTotalDebit + $obDebit) - ($subTotalCredit + $obCredit)) }}</strong></td>
-                                                @else
-                                                    <td class="text-red"><strong> Outstanding Balance To Pay</strong></td>
-                                                    <td class="text-red"><strong> {{ (($subTotalCredit + $obCredit) - ($subTotalDebit + $obDebit)) }}</strong></td>
-                                                    <td></td>
-                                                @endif
-                                            </tr>
-                                        @endif
                                     @endif
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            @if(!empty($transactions))
-                                <div>
-                                    Showing {{ $transactions->firstItem(). " - ". $transactions->lastItem(). " of ". $transactions->total() }}<br>
-                                </div>
-                                <div class=" no-print pull-right">
-                                    {{ $transactions->appends(Request::all())->links() }}
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>

@@ -195,7 +195,7 @@ class ReportController extends Controller
     public function profitLossStatement(Request $request, TruckRepository $truckRepo)
     {
         $whereParam = [];
-        $withParams = ['transportations.transaction', 'employeeWages.transaction', 'expenses.transaction', 'purchases.transaction', 'sales.transaction'];
+        $withParams = ['transportations.transaction', 'sales.transaction', 'purchases.transaction', 'employeeWages.transaction', 'expenses.transaction',];
 
         //date format conversion
         $fromDate   = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
@@ -224,11 +224,13 @@ class ReportController extends Controller
         ];
 
         try {
-            $truck = $truckRepo->getTrucks($whereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], $withParams, true);
-            dd($truck);
+            $trucks = $truckRepo->getTrucks(
+                $whereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true
+            );
+dd($trucks);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
-
+dd($e);
             return redirect()->back()
                 ->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)
                 ->with("alert-class", "error");
@@ -239,6 +241,6 @@ class ReportController extends Controller
         $params['to_date']['paramValue']    = $request->get('to_date');
         $params['truck_id']['paramValue']   = $truckId;
 
-        return view('reports.profit-loss-statement', compact('trucks'));
+        return view('reports.profit-loss-statement', compact('trucks', 'params'));
     }
 }

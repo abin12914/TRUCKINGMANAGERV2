@@ -93,9 +93,9 @@
                                         <th style="width: 5%;">#</th>
                                         <th style="width: 20%;">Name</th>
                                         <th style="width: 20%;">Place</th>
-                                        <th style="width: 30%;">Address</th>
+                                        <th style="width: 25%;">Address</th>
                                         <th style="width: 20%;">Site Type</th>
-                                        <th style="width: 5%;" class="no-print">Edit</th>
+                                        <th style="width: 10%;" class="no-print">Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -109,7 +109,9 @@
                                                 <td>{{ $siteTypes[$site->site_type] }}</td>
                                                 <td class="no-print">
                                                     <a href="{{ route('sites.edit', ['id' => $site->id]) }}" style="float: left;">
-                                                        <button type="button" class="btn btn-warning"><i class="fa fa-edit"></i> Edit</button>
+                                                        <button type="button" class="btn btn-warning" title="edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
                                                     </a>
                                                 </td>
                                             </tr>

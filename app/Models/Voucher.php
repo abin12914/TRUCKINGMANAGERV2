@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Events\DeletingExpenseEvent;
+use App\Events\DeletingVoucherEvent;
 
 class Voucher extends Model
 {
@@ -34,7 +34,7 @@ class Voucher extends Model
      * @var array
      */
     protected $dispatchesEvents = [
-        'deleting' => DeletingExpenseEvent::class,
+        'deleting' => DeletingVoucherEvent::class,
     ];
 
     /**

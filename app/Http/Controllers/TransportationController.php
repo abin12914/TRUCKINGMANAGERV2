@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class TransportationController extends Controller
 {
     protected $transportationRepo;
-    public $errorHead = null, $driverWageType = 1;
+    public $errorHead = null, $driverWageType = 1; // employee wage type = 1 => Per Trip [%]
 
     public function __construct(TransportationRepository $transportationRepo)
     {

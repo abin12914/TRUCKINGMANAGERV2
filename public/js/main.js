@@ -8,10 +8,10 @@ $(function () {
     if(alertType && alertMessage) {
         if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
             //'reach here using the browser "Back" or "Forward" button
-            $('#show_last_message').hide();
             return false;
+        } else {
+            showAlert();
         }
-        showAlert();
     }
 
     //Initialize Select2 Element for select box
@@ -136,34 +136,38 @@ $(function () {
 
     // for confirming delete
     $('body').on("click", ".update_button", function () {
-        swal({
-              title: 'Update?',
-              text: 'Are you sure to update the record?',
-              icon: 'warning',
-              buttons: true,
-              dangerMode: true
-            }).then((result) => {
-              if (result) {
+        swal.fire({
+            title: 'Update?',
+            text: 'Are you sure to update the record?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, update it!'
+        }).then((result) => {
+            if (result.value) {
                 //submit delete form on confirmation
                 $(this).parents('form:first').submit();
-              }
-            })
-        });
+            }
+        })
+    });
 
     // for confirming delete
     $('body').on("click", ".delete_button", function () {
-        swal({
-              title: 'Delete?',
-              text: "Are you sure to delete? You won't be able to revert this!",
-              icon: 'warning',
-              buttons: true,
-              dangerMode : true,
-            }).then((result) => {
-              if (result) {
+        swal.fire({
+            title: 'Delete?',
+            text: "Are you sure to delete? You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
                 //submit delete form on confirmation
                 $(this).parents('form:first').submit();
-              }
-            })
+            }
+        })
     });
 });
 
@@ -176,17 +180,15 @@ function initializeSelect2() {
 
 //display sweet alert
 function showAlert() {
-    if(alertType == 'error') {
-        messageTitle = "Failed";
-    } else {
-        messageTitle =  alertType;
-    }
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000
+    })
 
-    swal({
-        title: messageTitle,
-        icon: alertType,
-        text: alertMessage,
-        timer: 5000,
-        buttons : false,
-    });
+    Toast.fire({
+        type: alertType,
+        title: alertMessage
+    })
 }
