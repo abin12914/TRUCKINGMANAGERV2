@@ -44,7 +44,7 @@
                     </li>
                     <li class="{{ Request::is('reports/profit-loss-statement')? 'active' : '' }}">
                         <a href="{{ route('reports.profit-loss-statement') }}">
-                            <i class="fa fa-circle-o text-blue"></i> Profit Losss Statement
+                            <i class="fa fa-circle-o text-orange"></i> Profit Losss Statement
                         </a>
                     </li>
                 </ul>

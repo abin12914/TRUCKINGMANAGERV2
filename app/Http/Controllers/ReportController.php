@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\AccountStatementRequest;
+use App\Http\Requests\CreditStatementRequest;
+use App\Http\Requests\ProfitLossStatementRequest;
 use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
 use App\Repositories\TruckRepository;
@@ -23,7 +26,7 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function accountStatement(Request $request, TransactionRepository $transactionRepo, AccountRepository $accountRepo)
+    public function accountStatement(AccountStatementRequest $request, TransactionRepository $transactionRepo, AccountRepository $accountRepo)
     {
         $accountWhereParam = [];
 
@@ -112,7 +115,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
 
-            return redirect()->back()->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
 
         //params passing for auto selection
@@ -130,7 +133,7 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function creditStatement(Request $request, AccountRepository $accountRepo)
+    public function creditStatement(CreditStatementRequest $request, AccountRepository $accountRepo)
     {
         $accountWhereParam  = [];
         $withParams         = ['debitTransactionsSum', 'creditTransactionsSum'];
@@ -175,7 +178,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
-            return redirect()->back()->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
 
         //params passing for auto selection
@@ -192,55 +195,61 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function profitLossStatement(Request $request, TruckRepository $truckRepo)
+    public function profitLossStatement(ProfitLossStatementRequest $request, TransactionRepository $transactionRepo, TruckRepository $truckRepo)
     {
-        $whereParam = [];
-        $withParams = ['transportations.transaction', 'sales.transaction', 'purchases.transaction', 'employeeWages.transaction', 'expenses.transaction',];
+        $transportationRentAmount = 0;
+        $employeeWageAmount       = 0;
+        $purchaseAmount           = 0;
+        $saleAmount               = 0;
+        $expenseAmount            = 0;
 
-        //date format conversion
-        $fromDate   = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
-        $toDate     = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
-        $truckId    = $request->get('truck_id');
+        if(!empty($request->get('from_date')) && !empty($request->get('to_date')) && !empty($request->get('truck_id'))) {
+            //date format conversion
+            $fromDate   = Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d');
+            $toDate     = Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d');
 
-        $dateParams = [
-            'from_date' => [
-                'paramName'     => 'transaction_date',
-                'paramOperator' => '>=',
-                'paramValue'    => $fromDate,
-            ],
-            'to_date' => [
-                'paramName'     => 'transaction_date',
-                'paramOperator' => '<=',
-                'paramValue'    => $toDate,
-            ],
-        ];
+            try {
+                    $truck = $truckRepo->getTruck($request->get('truck_id'), [], true);
+                    $transactions = $transactionRepo->getTransactionReport($fromDate, $toDate, $request->get('truck_id'));
 
-        $whereParam = [
-            'truck_id' => [
-                'paramName'     => 'id',
-                'paramOperator' => '=',
-                'paramValue'    => $truckId,
-            ]
-        ];
+                    foreach ($transactions as $key => $transaction) {
+                        //if rent transaction
+                        if(!empty($transaction->transportation)) {
+                            $transportationRentAmount += $transaction->amount;
+                        }
+                        //if employee wage transaction
+                        if(!empty($transaction->employeeWage)) {
+                            $employeeWageAmount += $transaction->amount;
+                        }
+                        //if purchase transaction
+                        if($transaction->purchase) {
+                            $purchaseAmount += $transaction->amount;
+                        }
+                        //if sale transaction
+                        if($transaction->sale) {
+                            $saleAmount += $transaction->amount;
+                        }
+                        //if expense transaction
+                        if(!empty($transaction->expense)) {
+                            $expenseAmount += $transaction->amount;
+                        }
+                    }
+            } catch (\Exception $e) {
+                $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
-        try {
-            $trucks = $truckRepo->getTrucks(
-                $whereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true
-            );
-dd($trucks);
-        } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
-dd($e);
-            return redirect()->back()
-                ->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)
-                ->with("alert-class", "error");
+                return redirect(route('dashboard'))
+                    ->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)
+                    ->with("alert-class", "error");
+            }
         }
 
         //params passing for auto selection
         $params['from_date']['paramValue']  = $request->get('from_date');
         $params['to_date']['paramValue']    = $request->get('to_date');
-        $params['truck_id']['paramValue']   = $truckId;
+        $params['truck_id']['paramValue']   = $request->get('truck_id');
 
-        return view('reports.profit-loss-statement', compact('trucks', 'params'));
+        return view('reports.profit-loss-statement',
+            compact('truck', 'params', 'transportationRentAmount', 'employeeWageAmount', 'purchaseAmount', 'saleAmount', 'expenseAmount')
+        );
     }
 }

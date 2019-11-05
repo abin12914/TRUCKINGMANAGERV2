@@ -139,4 +139,42 @@ class TransactionRepository extends Repository
             'errorCode' => $this->repositoryCode + 6,
         ];
     }
+
+    /**
+     * Return transactions.
+     */
+    public function getTransactionReport($fromDate, $toDate, $truckId)
+    {
+        $transactions = [];
+
+        try {
+            $transactions = Transaction::with(
+                'transportation',
+                'employeeWage',
+                'purchase',
+                'sale',
+                'expense'
+            );
+
+            $transactions = $transactions->active()->whereBetween('transaction_date', [$fromDate, $toDate]);
+            $transactions = $transactions->whereHas('transportation', function ($query) use($truckId) {
+                $query->where('truck_id', '=', $truckId);
+            })->orWhereHas('employeeWage.transportation', function ($query) use($truckId) {
+                $query->where('truck_id', '=', $truckId);
+            })->orWhereHas('purchase.transportation', function ($query) use($truckId) {
+                $query->where('truck_id', '=', $truckId);
+            })->orWhereHas('sale.transportation', function ($query) use($truckId) {
+                $query->where('truck_id', '=', $truckId);
+            })->orWhereHas('expense', function ($query) use($truckId) {
+                $query->where('truck_id', '=', $truckId);
+            });
+            $transactions = $transactions->get();
+        } catch (Exception $e) {
+            $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 7);
+
+            throw new TMException("CustomError", $this->errorCode);
+        }
+
+        return $transactions;
+    }
 }
