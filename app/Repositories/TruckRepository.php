@@ -105,7 +105,7 @@ class TruckRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [

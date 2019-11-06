@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Carbon\Carbon;
 
 class Truck extends Model
 {
@@ -36,6 +37,28 @@ class Truck extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 1);
+    }
+
+    /**
+     * check whether certificate expired
+     *
+     */
+    public function isCertExpired($certificate)
+    {
+        $today = Carbon::now();
+
+        return $this->$certificate <= $today;
+    }
+
+    /**
+     * check whether certificate beyod threshold date
+     *
+     */
+    public function isCertCritical($certificate)
+    {
+        $thresholdDate = Carbon::now()->addDays(15);
+
+        return ($this->$certificate <= $thresholdDate);
     }
 
     /**

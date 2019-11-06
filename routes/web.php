@@ -14,9 +14,9 @@
 //Route::redirect('/', '/login');
 Route::get('/', 'HomeController@index')->name('home');
 //temp
-Route::get('/signout', function() {
-    \Auth::logout();
-})->name('signout');
+// Route::get('/signout', function() {
+//     \Auth::logout();
+// })->name('signout');
 
 //voyager
 Route::group(['prefix' => 'admin'], function () {
@@ -31,6 +31,9 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 	Route::get('/profile/edit', 'UserController@profileEdit')->name('user.profile.edit');
     Route::post('/profile/update', 'UserController@profileUpdate')->name('user.profile.update');
+
+    Route::get('/certificates/renew', 'CertificateController@renew')->name('certificates.renew');
+    Route::post('/certificates/renew', 'CertificateController@renewAction')->name('certificates.renew.action');
 
 	Route::resources([
 	    'accounts' 			=> 'AccountController',

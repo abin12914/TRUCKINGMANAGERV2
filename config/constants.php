@@ -58,6 +58,14 @@ return [
         3   => 'Fixed For TruckType',
     ],
 
+    'certificateTypes' => [
+        'Insurance' => 'insurance_upto',
+        'Road Tax'  => 'tax_upto',
+        'Fitness'   => 'fitness_upto',
+        'Permit'    => 'permit_upto',
+        'Pollution' => 'pollution_upto'
+    ],
+
     'transactionRelations' => [
         1 => [
             'relationName'  => 'transportation',

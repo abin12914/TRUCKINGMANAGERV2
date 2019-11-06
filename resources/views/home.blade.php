@@ -1,22 +1,113 @@
 @extends('layouts.app')
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Dashboard
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+    </ol>
+</section>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+<!-- Main content -->
+<section class="content">
+    <!-- Main row -->
+    <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-6 col-md-6 col-sm-12 col-xs-12 connectedSortable">
+            <!-- TO DO List -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="ion ion-clipboard"></i>
+                    <h3 class="box-title">Expired Certificates</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <ul class="todo-list">
+                        @forelse ($expiredCertTrucks as $key => $truck)
+                            <li>
+                                {{$loop->iteration}}.
+                                <span class="text">{{ $truck->reg_number }}</span>
 
-                    You are logged in!
+                                @foreach ($certificateTypes as $key => $certificate)
+                                    @if($truck->isCertExpired($certificate))
+                                        <small class="label label-danger" title="Expired">
+                                            <i class="fa fa-clock-o"></i> {{ $key }}
+                                        </small>
+                                    @endif
+                                @endforeach
+                                <div class="tools">
+                                    <a href="{{ route('trucks.show', $truck->id) }}">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        @empty
+                            <li>
+                                <span class="text">No expired certificates</span>
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix no-border">
+                    <button type="button" class="btn btn-default pull-right">
+                        Renew
+                    </button>
                 </div>
             </div>
-        </div>
+            <!-- /.box -->
+        </section>
+        <!-- /.Left col -->
+        <section class="col-lg-6 col-md-6 col-sm-12 col-xs-12 connectedSortable">
+            <!-- TO DO List -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <i class="ion ion-clipboard"></i>
+                    <h3 class="box-title">Certificates Expiring Soon</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <ul class="todo-list">
+                        @forelse ($criticalCertTrucks as $key => $truck)
+                            <li>
+                                {{$loop->iteration}}.
+                                <span class="text">{{ $truck->reg_number }}</span>
+
+                                @foreach ($certificateTypes as $key => $certificate)
+                                    @if(!$truck->isCertExpired($certificate) && $truck->isCertCritical($certificate))
+                                        <small class="label label-warning" title="Expired">
+                                            <i class="fa fa-clock-o"></i> {{ $key }}
+                                        </small>
+                                    @endif
+                                @endforeach
+                                <div class="tools">
+                                    <a href="{{ route('trucks.show', $truck->id) }}">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        @empty
+                            <li>
+                                <span class="text">Nothing to show</span>
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix no-border">
+                    <button type="button" class="btn btn-default pull-right">
+                        Renew
+                    </button>
+                </div>
+            </div>
+            <!-- /.box -->
+        </section>
+        <!-- /.Left col -->
     </div>
-</div>
+    <!-- /.row (main row) -->
+</section>
+<!-- /.content -->
 @endsection

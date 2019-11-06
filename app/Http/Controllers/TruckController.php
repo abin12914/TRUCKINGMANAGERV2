@@ -88,11 +88,11 @@ class TruckController extends Controller
                 'volume'            => $request->get('volume'),
                 'body_type'         => $request->get('body_type'),
                 'ownership_status'  => ($request->get('ownership_status') ?? 0),
-                'insurance_upto'    => Carbon::createFromFormat('d-m-Y', $request->get("insurance_upto"))->format('Y-m-d'),
-                'tax_upto'          => Carbon::createFromFormat('d-m-Y', $request->get("tax_upto"))->format('Y-m-d'),
-                'fitness_upto'      => Carbon::createFromFormat('d-m-Y', $request->get("fitness_upto"))->format('Y-m-d'),
-                'permit_upto'       => Carbon::createFromFormat('d-m-Y', $request->get("permit_upto"))->format('Y-m-d'),
-                'pollution_upto'    => Carbon::createFromFormat('d-m-Y', $request->get("pollution_upto"))->format('Y-m-d'),
+                'insurance_upto'    => !empty($request->get("insurance_upto")) ? Carbon::createFromFormat('d-m-Y', $request->get("insurance_upto"))->format('Y-m-d') : null,
+                'tax_upto'          => !empty($request->get("tax_upto")) ? Carbon::createFromFormat('d-m-Y', $request->get("tax_upto"))->format('Y-m-d') : null,
+                'fitness_upto'      => !empty($request->get("fitness_upto")) ? Carbon::createFromFormat('d-m-Y', $request->get("fitness_upto"))->format('Y-m-d') : null,
+                'permit_upto'       => !empty($request->get("permit_upto")) ? Carbon::createFromFormat('d-m-Y', $request->get("permit_upto"))->format('Y-m-d') : null,
+                'pollution_upto'    => !empty($request->get("pollution_upto")) ? Carbon::createFromFormat('d-m-Y', $request->get("pollution_upto"))->format('Y-m-d') : null,
                 'status'            => 1,
             ], $id);
 

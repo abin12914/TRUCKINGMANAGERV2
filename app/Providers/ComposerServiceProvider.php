@@ -80,5 +80,10 @@ class ComposerServiceProvider extends ServiceProvider
             'components.selects.measure-type',
             'supply.details'
         ], "App\Http\View\Composers\MeasureTypeComponentComposer");
+        //certificate types
+        View::composer([
+            'trucks.details',
+            'home'
+        ], "App\Http\View\Composers\CertificateTypeComponentComposer");
     }
 }

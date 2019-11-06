@@ -81,23 +81,28 @@ class TruckRegistrationRequest extends FormRequest
                                                     Rule::in(array_keys(config('constants.truckBodyTypes'))),
                                                 ],
             'insurance_upto'                =>  [
-                                                    'required',
+                                                    'required_if:ownership_status,1',
+                                                    'nullable',
                                                     'date_format:d-m-Y',
                                                 ],
             'tax_upto'                      =>  [
-                                                    'required',
+                                                    'required_if:ownership_status,1',
+                                                    'nullable',
                                                     'date_format:d-m-Y',
                                                 ],
             'permit_upto'                   =>  [
-                                                    'required',
+                                                    'required_if:ownership_status,1',
+                                                    'nullable',
                                                     'date_format:d-m-Y',
                                                 ],
             'fitness_upto'                  =>  [
-                                                    'required',
+                                                    'required_if:ownership_status,1',
+                                                    'nullable',
                                                     'date_format:d-m-Y',
                                                 ],
             'pollution_upto'                =>  [
-                                                    'required',
+                                                    'required_if:ownership_status,1',
+                                                    'nullable',
                                                     'date_format:d-m-Y',
                                                 ],
         ];
