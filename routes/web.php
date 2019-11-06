@@ -32,8 +32,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
 	Route::get('/profile/edit', 'UserController@profileEdit')->name('user.profile.edit');
     Route::post('/profile/update', 'UserController@profileUpdate')->name('user.profile.update');
 
-    Route::get('/certificates/renew', 'CertificateController@renew')->name('certificates.renew');
-    Route::post('/certificates/renew', 'CertificateController@renewAction')->name('certificates.renew.action');
+    Route::get('/certificates/renew/{truckId}', 'ExpenseController@certEdit')->name('expense.certificate.renew');
+    Route::post('/certificates/renew', 'ExpenseController@certUpdate')->name('expense.certificate.renew.action');
 
 	Route::resources([
 	    'accounts' 			=> 'AccountController',

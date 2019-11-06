@@ -83,7 +83,8 @@ class ComposerServiceProvider extends ServiceProvider
         //certificate types
         View::composer([
             'trucks.details',
-            'home'
+            'home',
+            'expenses.certificates.renew'
         ], "App\Http\View\Composers\CertificateTypeComponentComposer");
     }
 }

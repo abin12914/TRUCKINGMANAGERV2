@@ -23,6 +23,14 @@ $(function () {
         autoclose: true,
     });
 
+    //Date picker for certificate
+    $('.datepicker_forward').datepicker({
+        todayHighlight: false,
+        startDate: '+1d',
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+    });
+
     //Date picker for registrations
     $('.datepicker_reg').datepicker({
         todayHighlight: true,
@@ -31,7 +39,6 @@ $(function () {
         autoclose: true,
     });
 
-    console.log($('.datepicker_reg').val());
     //setting current date as selected
     if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
         $('.datepicker_reg').datepicker('setDate', 'now');
