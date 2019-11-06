@@ -53,7 +53,7 @@ class Handler extends ExceptionHandler
             return response()->view('errors.record-not-found', compact('exception'));
         } else if($exception instanceof TMException) {
             //return custom error page when custom exception is thrown
-            return response()->view('errors.app-custom-exception', compact('exception'));
+            return response()->view('errors.tm-exception', compact('exception'));
         }
 
         return parent::render($request, $exception);

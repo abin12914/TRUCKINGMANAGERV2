@@ -3,7 +3,7 @@
     <!-- Sidebar user panel -->
     <div class="user-panel">
         <div class="pull-left image">
-            <img src="{{ Voyager::image($loggedUser->avatar, '/images/default_user.jpg') }}" class="img-circle" alt="User Image">
+            <img src="{{ !empty($loggedUser) ? Voyager::image($loggedUser->avatar, '/images/default_user.jpg') : '/images/default_user.jpg' }}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
             @if(!empty($loggedUser))

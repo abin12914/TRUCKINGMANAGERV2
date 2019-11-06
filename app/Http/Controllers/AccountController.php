@@ -32,6 +32,7 @@ class AccountController extends Controller
      */
     public function index(AccountFilterRequest $request)
     {
+
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
         $whereParams = [
