@@ -223,4 +223,25 @@ class TruckController extends Controller
 
         return redirect()->back()->with("message","Failed to delete the truck details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
+
+    /**
+     * Display the list of expired & critical certificates
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function certificates()
+    {
+        $whereParams = [
+            'ownership_status' => [
+                'paramName'     => 'ownership_status',
+                'paramOperator' => '=',
+                'paramValue'    => 1, //own vehicles only
+            ]
+        ];
+
+        return view('trucks.certificates', [
+            'trucks' => $this->truckRepo->getTrucks($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true),
+        ]);
+    }
 }

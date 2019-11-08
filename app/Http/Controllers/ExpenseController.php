@@ -396,7 +396,7 @@ class ExpenseController extends Controller
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-dd($e);
+
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
         }
         return redirect()->back()->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");

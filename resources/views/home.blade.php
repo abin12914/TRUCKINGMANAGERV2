@@ -39,7 +39,7 @@
                                     @endif
                                 @endforeach
                                 <div class="tools">
-                                    <a href="{{ route('trucks.show', $truck->id) }}">
+                                    <a href="{{ route('expense.certificate.renew', $truck->id) }}">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </div>
@@ -53,9 +53,11 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer clearfix no-border">
-                    <button type="button" class="btn btn-default pull-right">
-                        Renew
-                    </button>
+                    <a href="{{ route('trucks.certificates') }}">
+                        <button type="button" class="btn btn-default pull-right">
+                            See list
+                        </button>
+                    </a>
                 </div>
             </div>
             <!-- /.box -->
@@ -77,14 +79,14 @@
                                 <span class="text">{{ $truck->reg_number }}</span>
 
                                 @foreach ($certificateTypes as $key => $certificate)
-                                    @if(!$truck->isCertExpired($certificate) && $truck->isCertCritical($certificate))
+                                    @if($truck->isCertCritical($certificate))
                                         <small class="label label-warning" title="Expired">
                                             <i class="fa fa-clock-o"></i> {{ $key }}
                                         </small>
                                     @endif
                                 @endforeach
                                 <div class="tools">
-                                    <a href="{{ route('trucks.show', $truck->id) }}">
+                                    <a href="{{ route('expense.certificate.renew', $truck->id) }}">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </div>
@@ -98,9 +100,11 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer clearfix no-border">
-                    <button type="button" class="btn btn-default pull-right">
-                        Renew
-                    </button>
+                    <a href="{{ route('trucks.certificates') }}">
+                        <button type="button" class="btn btn-default pull-right">
+                            See list
+                        </button>
+                    </a>
                 </div>
             </div>
             <!-- /.box -->

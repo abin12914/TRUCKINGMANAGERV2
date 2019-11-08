@@ -93,12 +93,12 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         {{ $truck->insurance_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->insuranceFlag == 1)
-                                            <i class="fa fa-check text-green" title="Valid"> Valid</i>
-                                        @elseif($truck->insuranceFlag == 2)
-                                            <i class="fa fa-warning text-orange" title="Expiring Soon.."> Expiring Soon..</i>
+                                        @if($truck->isCertExpired('insurance_upto'))
+                                            <i class="fa fa-times text-red" title="Expired"></i>
+                                        @elseif($truck->isCertCritical('insurance_upto'))
+                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
                                         @else
-                                            <i class="fa fa-times text-red" title="Expired.."> Expired</i>
+                                            <i class="fa fa-check text-green" title="Valid.."></i>
                                         @endif
                                     </p>
                                     <hr>
@@ -111,12 +111,12 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         {{ $truck->tax_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->taxFlag == 1)
-                                            <i class="fa fa-check text-green" title="Valid"> Valid</i>
-                                        @elseif($truck->taxFlag == 2)
-                                            <i class="fa fa-warning text-orange" title="Expiring Soon.."> Expiring Soon..</i>
+                                        @if($truck->isCertExpired('tax_upto'))
+                                            <i class="fa fa-times text-red" title="Expired"></i>
+                                        @elseif($truck->isCertCritical('tax_upto'))
+                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
                                         @else
-                                            <i class="fa fa-times text-red" title="Expired.."> Expired</i>
+                                            <i class="fa fa-check text-green" title="Valid.."></i>
                                         @endif
                                     </p>
                                     <hr>
@@ -127,12 +127,12 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         {{ $truck->fitness_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->fitnessFlag == 1)
-                                            <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
-                                        @elseif($truck->fitnessFlag == 2)
-                                            <i class="fa fa-warning text-orange" title="Expiring Soon.."> Expiring Soon..</i>
+                                        @if($truck->isCertExpired('fitness_upto'))
+                                            <i class="fa fa-times text-red" title="Expired"></i>
+                                        @elseif($truck->isCertCritical('fitness_upto'))
+                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
                                         @else
-                                            <i class="fa fa-times text-red" title="Expired.."> Expired</i>
+                                            <i class="fa fa-check text-green" title="Valid.."></i>
                                         @endif
                                     </p>
                                     <hr>
@@ -145,12 +145,12 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         {{ $truck->permit_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->permitFlag == 1)
-                                            <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
-                                        @elseif($truck->permitFlag == 2)
-                                            <i class="fa fa-warning text-orange" title="Expiring Soon.."> Expiring Soon..</i>
+                                        @if($truck->isCertExpired('permit_upto'))
+                                            <i class="fa fa-times text-red" title="Expired"></i>
+                                        @elseif($truck->isCertCritical('permit_upto'))
+                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
                                         @else
-                                            <i class="fa fa-times text-red" title="Expired.."> Expired</i>
+                                            <i class="fa fa-check text-green" title="Valid.."></i>
                                         @endif
                                     </p>
                                     <hr>
@@ -161,12 +161,12 @@
                                     </strong>
                                     <p class="text-muted multi-line">
                                         {{ $truck->pollution_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->pollutionFlag == 1)
-                                            <i class="fa fa-check-circle text-green" title="Valid"> Valid</i>
-                                        @elseif($truck->pollutionFlag == 2)
-                                            <i class="fa fa-warning text-orange" title="Expiring Soon.."> Expiring Soon..</i>
+                                        @if($truck->isCertExpired('pollution_upto'))
+                                            <i class="fa fa-times text-red" title="Expired"></i>
+                                        @elseif($truck->isCertCritical('pollution_upto'))
+                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
                                         @else
-                                            <i class="fa fa-times text-red" title="Expired.."> Expired</i>
+                                            <i class="fa fa-check text-green" title="Valid.."></i>
                                         @endif
                                     </p>
                                     <hr>

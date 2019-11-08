@@ -56,9 +56,10 @@ class Truck extends Model
      */
     public function isCertCritical($certificate)
     {
-        $thresholdDate = Carbon::now()->addDays(15);
+        $today = Carbon::now();
+        $thresholdDate = Carbon::now()->addDays(15); // do not use $today->addDays(15) it modifies $today
 
-        return ($this->$certificate <= $thresholdDate);
+        return ($this->$certificate <= $thresholdDate && $this->$certificate > $today);
     }
 
     /**

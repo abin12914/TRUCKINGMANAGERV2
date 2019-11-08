@@ -38,13 +38,10 @@ class ComposerServiceProvider extends ServiceProvider
         View::composer('components.selects.services', "App\Http\View\Composers\ServiceComponentComposer");
         //materials to views
         View::composer('components.selects.materials', "App\Http\View\Composers\MaterialComponentComposer");
-        //indian vehicle registation codes to views
-        View::composer('trucks.edit-add', "App\Http\View\Composers\TruckRegStateCodeComposer");
         //employee type to views
         View::composer('components.selects.employee-type', "App\Http\View\Composers\EmployeeTypeComponentComposer");
-
-
-
+        //indian vehicle registation codes to views
+        View::composer('trucks.edit-add', "App\Http\View\Composers\TruckRegStateCodeComposer");
 
         //account relation types to views
         View::composer([
@@ -84,7 +81,14 @@ class ComposerServiceProvider extends ServiceProvider
         View::composer([
             'trucks.details',
             'home',
-            'expenses.certificates.renew'
+            'expenses.certificates.renew',
+            'sections.header',
+            'trucks.certificates'
         ], "App\Http\View\Composers\CertificateTypeComponentComposer");
+        //certificate details
+        View::composer([
+            'home',
+            'sections.header'
+        ], "App\Http\View\Composers\CertificateDetailsComposer");
     }
 }

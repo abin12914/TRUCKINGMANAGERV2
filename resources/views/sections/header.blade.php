@@ -49,10 +49,12 @@
             <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-bell-o"></i>
-                    <span class="label label-warning">10</span>
+                    <span class="label label-warning">x</span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="header">You have 10 notifications</li>
+                    <li class="header">
+                        xxx certificate(s) expiring soon.
+                    </li>
                     <li>
                         <!-- inner menu: contains the actual data -->
                         <ul class="menu">
@@ -66,51 +68,59 @@
                     <li class="footer"><a href="#">View all</a></li>
                 </ul>
             </li>
-            <!-- Tasks: style can be found in dropdown.less -->
-            <li class="dropdown tasks-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-flag-o"></i>
-                    <span class="label label-danger">9</span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li class="header">You have 9 tasks</li>
-                    <li>
-                        <!-- inner menu: contains the actual data -->
-                        <ul class="menu">
-                            <li><!-- Task item -->
-                                <a href="#">
-                                    <h3>
-                                        Design some buttons
-                                        <small class="pull-right">20%</small>
-                                    </h3>
-                                    <div class="progress xs">
-                                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                            <span class="sr-only">20% Complete</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <!-- end task item -->
-                        </ul>
-                    </li>
-                    <li class="footer">
-                        <a href="#">View all tasks</a>
-                    </li>
-                </ul>
-            </li>
+            @if(!$expiredCertTrucks->isEmpty() || !$criticalCertTrucks->isEmpty())
+                <li class="dropdown tasks-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-flag-o"></i>
+                        <span class="label label-danger">~</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Important Messages</li>
+                        <li>
+                            <!-- inner menu: contains the actual data -->
+                            <ul class="menu">
+                                @if(!$expiredCertTrucks->isEmpty())
+                                    <li><!-- Task item -->
+                                        <a href="{{ route('trucks.certificates') }}">
+                                            <h3 class="text-red">
+                                                Certificates expired
+                                                <small class="pull-right">Renew now</small>
+                                            </h3>
+                                        </a>
+                                    </li>
+                                    <!-- end task item -->
+                                @endif
+                                @if(!$criticalCertTrucks->isEmpty())
+                                    <li><!-- Task item -->
+                                        <a href="{{ route('trucks.certificates') }}">
+                                            <h3 class="text-orange">
+                                                Certificates expiring soon
+                                                <small class="pull-right">Renew now</small>
+                                            </h3>
+                                        </a>
+                                    </li>
+                                    <!-- end task item -->
+                                @endif
+                            </ul>
+                        </li>
+                        <li class="footer">
+                            <a href="{{ route('trucks.certificates') }}">View all certificates</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
             <!-- User Account: style can be found in dropdown.less -->
             <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                    <span class="hidden-xs">Alexander Pierce</span>
+                    <img src="{{ !empty($loggedUser) ? Voyager::image($loggedUser->avatar, '/images/default_user.jpg') : '/images/default_user.jpg' }}" class="user-image" alt="User Image">
+                    <span class="hidden-xs">{{ $loggedUser->name }}</span>
                 </a>
                 <ul class="dropdown-menu">
                     <!-- User image -->
                     <li class="user-header">
-                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        <img src="{{ !empty($loggedUser) ? Voyager::image($loggedUser->avatar, '/images/default_user.jpg') : '/images/default_user.jpg' }}" class="img-circle" alt="User Image">
                         <p>
-                            Alexander Pierce - Web Developer
-                            <small>Member since Nov. 2012</small>
+                            {{ $loggedUser->name }}
                         </p>
                     </li>
 
