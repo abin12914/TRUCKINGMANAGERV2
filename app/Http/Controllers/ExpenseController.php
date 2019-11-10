@@ -383,7 +383,7 @@ class ExpenseController extends Controller
 
             //save truck to table
             $truckResponse   = $truckRepo->saveTruck([
-                $request->get('certificate_type') => !empty($request->get("updated_date")) ? Carbon::createFromFormat('d-m-Y', $request->get("updated_date"))->format('Y-m-d') : null,
+                $request->get('certificate_type') => Carbon::createFromFormat('d-m-Y', $request->get("updated_date"))->format('Y-m-d'),
             ], $request->get('truck_id'));
 
             if(!$truckResponse['flag']) {

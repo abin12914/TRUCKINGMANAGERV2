@@ -35,6 +35,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/certificates', 'TruckController@certificates')->name('trucks.certificates');
     Route::get('/certificates/renew/{truckId}', 'ExpenseController@certEdit')->name('expense.certificate.renew');
     Route::post('/certificates/renew', 'ExpenseController@certUpdate')->name('expense.certificate.renew.action');
+    Route::get('/fuel/refill/{truckId}', 'ExpenseController@fuelRefillEdit')->name('expense.fuel.refill');
+    Route::post('/fuel/refill', 'ExpenseController@fuelRefillUpdate')->name('expense.fuel.refill.action');
 
 	Route::resources([
 	    'accounts' 			=> 'AccountController',

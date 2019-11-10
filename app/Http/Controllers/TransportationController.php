@@ -258,7 +258,7 @@ class TransportationController extends Controller
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-dd($e);
+
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
         }
         if(!empty($id)) {
@@ -314,10 +314,12 @@ dd($e);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
+        //if supply
+        if(!empty($transportation->purchase)) {
+            return redirect(route('supply.edit', $id));
+        }
 
-        return view('transportations.edit-add', [
-            'transportation' => $transportation,
-        ]);
+        return view('transportations.edit-add', compact('transportation'));
     }
 
     /**

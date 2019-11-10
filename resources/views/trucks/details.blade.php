@@ -87,91 +87,105 @@
                                     </p>
                                     <hr>
                                 </div>
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-calendar margin-r-5"></i> Insurance Certificate Valid Upto
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $truck->insurance_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->isCertExpired('insurance_upto'))
-                                            <i class="fa fa-times text-red" title="Expired"></i>
-                                        @elseif($truck->isCertCritical('insurance_upto'))
-                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
-                                        @else
-                                            <i class="fa fa-check text-green" title="Valid.."></i>
-                                        @endif
-                                    </p>
-                                    <hr>
-                                </div>
+                                @if(!empty($truck->ownership_status == 1))
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-calendar margin-r-5"></i> Insurance Certificate Valid Upto
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $truck->insurance_upto->format('d-m-Y') }}&emsp;
+                                            @if($truck->isCertExpired('insurance_upto'))
+                                                <i class="fa fa-times text-red" title="Expired"></i>
+                                            @elseif($truck->isCertCritical('insurance_upto'))
+                                                <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
+                                            @else
+                                                <i class="fa fa-check text-green" title="Valid.."></i>
+                                            @endif
+                                        </p>
+                                        <hr>
+                                    </div>
+                                @else
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-user-secret margin-r-5"></i> Ownership
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            Not owned by company
+                                        </p>
+                                        <hr>
+                                    </div>
+                                @endif
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-calendar margin-r-5"></i> Tax Certificate Valid Upto
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $truck->tax_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->isCertExpired('tax_upto'))
-                                            <i class="fa fa-times text-red" title="Expired"></i>
-                                        @elseif($truck->isCertCritical('tax_upto'))
-                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
-                                        @else
-                                            <i class="fa fa-check text-green" title="Valid.."></i>
-                                        @endif
-                                    </p>
-                                    <hr>
+                            @if(!empty($truck->ownership_status == 1))
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-calendar margin-r-5"></i> Tax Certificate Valid Upto
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $truck->tax_upto->format('d-m-Y') }}&emsp;
+                                            @if($truck->isCertExpired('tax_upto'))
+                                                <i class="fa fa-times text-red" title="Expired"></i>
+                                            @elseif($truck->isCertCritical('tax_upto'))
+                                                <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
+                                            @else
+                                                <i class="fa fa-check text-green" title="Valid.."></i>
+                                            @endif
+                                        </p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-calendar margin-r-5"></i> Fitness Certificate Valid Upto
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $truck->fitness_upto->format('d-m-Y') }}&emsp;
+                                            @if($truck->isCertExpired('fitness_upto'))
+                                                <i class="fa fa-times text-red" title="Expired"></i>
+                                            @elseif($truck->isCertCritical('fitness_upto'))
+                                                <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
+                                            @else
+                                                <i class="fa fa-check text-green" title="Valid.."></i>
+                                            @endif
+                                        </p>
+                                        <hr>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-calendar margin-r-5"></i> Fitness Certificate Valid Upto
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $truck->fitness_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->isCertExpired('fitness_upto'))
-                                            <i class="fa fa-times text-red" title="Expired"></i>
-                                        @elseif($truck->isCertCritical('fitness_upto'))
-                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
-                                        @else
-                                            <i class="fa fa-check text-green" title="Valid.."></i>
-                                        @endif
-                                    </p>
-                                    <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-calendar margin-r-5"></i> Permit Certificate Valid Upto
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $truck->permit_upto->format('d-m-Y') }}&emsp;
+                                            @if($truck->isCertExpired('permit_upto'))
+                                                <i class="fa fa-times text-red" title="Expired"></i>
+                                            @elseif($truck->isCertCritical('permit_upto'))
+                                                <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
+                                            @else
+                                                <i class="fa fa-check text-green" title="Valid.."></i>
+                                            @endif
+                                        </p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-calendar margin-r-5"></i> Polution Certificate Valid Upto
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $truck->pollution_upto->format('d-m-Y') }}&emsp;
+                                            @if($truck->isCertExpired('pollution_upto'))
+                                                <i class="fa fa-times text-red" title="Expired"></i>
+                                            @elseif($truck->isCertCritical('pollution_upto'))
+                                                <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
+                                            @else
+                                                <i class="fa fa-check text-green" title="Valid.."></i>
+                                            @endif
+                                        </p>
+                                        <hr>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-calendar margin-r-5"></i> Permit Certificate Valid Upto
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $truck->permit_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->isCertExpired('permit_upto'))
-                                            <i class="fa fa-times text-red" title="Expired"></i>
-                                        @elseif($truck->isCertCritical('permit_upto'))
-                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
-                                        @else
-                                            <i class="fa fa-check text-green" title="Valid.."></i>
-                                        @endif
-                                    </p>
-                                    <hr>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-calendar margin-r-5"></i> Polution Certificate Valid Upto
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $truck->pollution_upto->format('d-m-Y') }}&emsp;
-                                        @if($truck->isCertExpired('pollution_upto'))
-                                            <i class="fa fa-times text-red" title="Expired"></i>
-                                        @elseif($truck->isCertCritical('pollution_upto'))
-                                            <i class="fa fa-clock-o text-orange" title="Expiring soon.."></i>
-                                        @else
-                                            <i class="fa fa-check text-green" title="Valid.."></i>
-                                        @endif
-                                    </p>
-                                    <hr>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer">

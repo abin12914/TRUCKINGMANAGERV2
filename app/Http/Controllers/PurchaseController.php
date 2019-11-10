@@ -141,8 +141,8 @@ class PurchaseController extends Controller
                 return [
                     'flag'          => 'true',
                     'measure_type'  => $purchase->measure_type,
-                    'quantity'      => $transportation->quantity,
-                    'rate'          => $transportation->rate
+                    'quantity'      => $purchase->quantity,
+                    'rate'          => $purchase->rate
                 ];
             }
         } catch (Exception $e) {

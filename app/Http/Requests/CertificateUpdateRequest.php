@@ -61,7 +61,7 @@ class CertificateUpdateRequest extends FormRequest
             'updated_date'      =>  [
                                         'required',
                                         'date_format:d-m-Y',
-                                        'after_or_equal:today',
+                                        'after:today',
                                     ],
         ];
     }

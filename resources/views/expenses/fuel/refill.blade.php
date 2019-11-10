@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Certificate Renewal')
+@section('title', 'Fuel Refill')
 @section('content')
 <section class="content-header">
     <h1>
-        Certificate
-        <small>Renewal</small>
+        Fuel
+        <small>Refill</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="{{ route('expenses.index') }}"> Expense</a></li>
-        <li class="active"> Certificate Renewal</li>
+        <li class="active"> Fuel Refill</li>
     </ol>
 </section>
 <!-- Main content -->
@@ -19,12 +19,12 @@
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title" style="float: left;">Certificate Renewal</h3>
+                    <h3 class="box-title" style="float: left;">Fuel Refill</h3>
                         <p>&nbsp&nbsp&nbsp(Fields marked with <b style="color: red;">* </b>are mandatory.)</p>
                 </div><br>
                 <!-- /.box-header -->
                 <!-- form start -->
-                <form action="{{ route('expense.certificate.renew.action') }}" method="post" class="form-horizontal" autocomplete="off">
+                <form action="{{ route('expense.fuel.refill.action') }}" method="post" class="form-horizontal" autocomplete="off">
                     @csrf()
                     <input type="hidden" name="truck_id" value="{{ !empty($truck) ? $truck->id : null }}" />
                     <div class="box-body">

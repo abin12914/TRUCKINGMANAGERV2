@@ -141,8 +141,8 @@ class SaleController extends Controller
                 return [
                     'flag'          => 'true',
                     'measure_type'  => $sale->measure_type,
-                    'quantity'      => $transportation->quantity,
-                    'rate'          => $transportation->rate
+                    'quantity'      => $sale->quantity,
+                    'rate'          => $sale->rate
                 ];
             }
         } catch (Exception $e) {
