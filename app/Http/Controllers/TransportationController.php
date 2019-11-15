@@ -134,6 +134,13 @@ class TransportationController extends Controller
         $driver             = null;
         $driverWage         = null;
 
+        //values for description
+        $truckRegNumber  = $request->get("truck_reg_number");
+        $sourceName      = strtok($request->get("source_name"), ',');
+        $destinationName = strtok($request->get("destination_name"), ',');
+        $noOfTrip        = $request->get('no_of_trip');
+        $tripDetails     = $truckRegNumber. " : ". $sourceName. " - ". $destinationName. " [". $noOfTrip. " Trip(s)]";
+
         $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
         $description        = $request->get('description');
@@ -184,7 +191,7 @@ class TransportationController extends Controller
                 'debit_account_id'  => $request->get('contractor_account_id'), // debit the contractor
                 'credit_account_id' => $transportationRentAccountId, // credit the transportation rent account
                 'amount'            => $request->get('total_rent'),
-                'particulars'       => ("Transportation Rent of ". $request->get('no_of_trip'). " trip. ". $description),
+                'particulars'       => ("Transportation Rent of ". $tripDetails. " / ". $description),
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($transportation) ? $transportation->transaction_id : null));
@@ -204,7 +211,7 @@ class TransportationController extends Controller
                 'measurement'       => $request->get('rent_measurement'),
                 'rent_rate'         => $request->get('rent_rate'),
                 'trip_rent'         => $request->get('trip_rent'),
-                'no_of_trip'        => $request->get('no_of_trip'),
+                'no_of_trip'        => $noOfTrip,
                 'total_rent'        => $request->get('total_rent'),
                 'status'            => 1,
             ], $id);
@@ -219,7 +226,7 @@ class TransportationController extends Controller
                 'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
                 'credit_account_id' => $driver->account_id, // credit the driver account
                 'amount'            => $request->get('driver_total_wage'),
-                'particulars'       => "Wage of ". $request->get('no_of_trip'). ' trips.',
+                'particulars'       => "Wage generated for ". $tripDetails,
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($driverWage) ? $driverWage->transaction_id : null));
@@ -236,7 +243,7 @@ class TransportationController extends Controller
                 'to_date'           => $transactionDate,
                 'transportation_id' => $transportationResponse['transportation']->id,
                 'wage_amount'       => $request->get('driver_wage'),
-                'no_of_trip'        => $request->get('no_of_trip'),
+                'no_of_trip'        => $noOfTrip,
                 'total_wage_amount' => $request->get('driver_total_wage'),
                 'status'            => 1,
             ], (!empty($driverWage) ? $driverWage->id : null));

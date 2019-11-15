@@ -10,11 +10,16 @@ $(function () {
 
     //setting last employee for selected truck
     $('body').on("change", "#truck_id", function() {
+        var truckRegNumber = $('#truck_id option:selected').text();
+        $('#truck_reg_number').val(truckRegNumber);
         driverByTruck();
     });
 
     //disabiling same value selection in 2 sites
     $('body').on("change", "#source_id", function() {
+        var sourceName = $('#source_id option:selected').text();
+        $('#source_name').val(sourceName);
+
         var fieldValue = $('#source_id').val();
 
         disableSiblings('#destination_id', fieldValue);
@@ -25,6 +30,9 @@ $(function () {
 
     //disabiling same value selection in 2 sites
     $('body').on("change", "#destination_id", function() {
+        var destinationName = $('#destination_id option:selected').text();
+        $('#destination_name').val(destinationName);
+
         var fieldValue = $('#destination_id').val();
 
         disableSiblings('#source_id', fieldValue);

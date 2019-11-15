@@ -133,3 +133,6 @@
         @endcomponent
     </div>
 </div>
+<input type="hidden" name="truck_reg_number" id="truck_reg_number" value="" />
+<input type="hidden" name="source_name" id="source_name" value="" />
+<input type="hidden" name="destination_name" id="destination_name" value="" />

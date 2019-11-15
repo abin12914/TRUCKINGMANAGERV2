@@ -124,8 +124,8 @@ class TransportationRegistrationRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if (!$this->checkCalculations()) {
-                $validator->errors()->add('calculations', 'Something went wrong with the calculations!&emsp; Please try again after reloading the page');
+            if (!$this->checkCalculations() || !$this->hasNameValues()) {
+                $validator->errors()->add('calculations', 'Something went wrong!&emsp; Please try again after reloading the page');
             }
         });
     }
@@ -140,5 +140,13 @@ class TransportationRegistrationRequest extends FormRequest
         $driverTotalWage    = $this->request->get("driver_total_wage");
 
         return (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent && ($driverWage * $noOfTrip) == $driverTotalWage);
+    }
+
+    public function hasNameValues() {
+        $truckRegNumber  = $this->request->get("truck_reg_number");
+        $sourceName      = $this->request->get("source_name");
+        $destinationName = $this->request->get("destination_name");
+
+        return (!empty($truckRegNumber) && !empty($sourceName) && !empty($destinationName));
     }
 }
