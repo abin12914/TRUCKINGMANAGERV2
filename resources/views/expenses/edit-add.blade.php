@@ -64,7 +64,7 @@
                                     <div class="col-md-6">
                                         <label for="service_id" class="control-label"><b style="color: red;">* </b> Service : </label>
                                         {{-- adding services select component --}}
-                                        @component('components.selects.services', ['selectedServiceId' => old('service_id', !empty($expense) ? $expense->service_id : null), 'selectName' => 'service_id', 'tabindex' => 4])
+                                        @component('components.selects.services', ['selectedServiceId' => old('service_id', !empty($expense) ? $expense->service_id : null), 'disableSpecialServices' => true, 'selectName' => 'service_id', 'tabindex' => 4])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'service_id'])

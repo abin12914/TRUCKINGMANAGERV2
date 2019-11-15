@@ -33,20 +33,25 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <label for="truck" class="control-label"><b style="color: red;">* </b> Truck : </label>
-                                        <input type="text" class="form-control read-only" name="truck" id="truck" placeholder="Truck" value="{{ !empty($truck) ? $truck->reg_number : null }}" tabindex="-1" readonly>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <label for="service" class="control-label"><b style="color: red;">* </b> Service : </label>
-                                        <input type="text" class="form-control read-only" name="service" id="service" placeholder="Service" value="Certificate Renewal" tabindex="-1" readonly>
+                                        <input type="text" class="form-control read-only" name="service" id="service" placeholder="Service" value="Fuel Refill" tabindex="-1" readonly>
                                     </div>
-                                </div>
-                                <div class="form-group">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <label for="transaction_date" class="control-label"><b style="color: red;">* </b> Transaction Date : </label>
                                         <input type="text" class="form-control decimal_number_only datepicker_reg" name="transaction_date" id="transaction_date" placeholder="Transaction date" value="{{ old('transaction_date') }}" tabindex="1">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'transaction_date'])
+                                        @endcomponent
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <label for="truck_id" class="control-label"><b style="color: red;">* </b> Truck : </label>
+                                        {{-- adding trucks select component --}}
+                                        @component('components.selects.trucks', ['selectedTruckId' => old('truck_id', !empty($expense) ? $expense->truck_id : null), 'selectName' => 'truck_id', 'tabindex' => 3])
+                                        @endcomponent
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'truck_id'])
                                         @endcomponent
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -61,46 +66,53 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <label for="description" class="control-label"><b style="color: red;">* </b> Description: </label>
-                                        @if(!empty(old('description')))
-                                            <textarea class="form-control" name="description" id="description" rows="1" placeholder="Description" style="resize: none;" tabindex="3">{{ old('description') }}</textarea>
-                                        @else
-                                            <textarea class="form-control" name="description" id="description" rows="1" placeholder="Description" style="resize: none;" tabindex="3"></textarea>
-                                        @endif
+                                        <label for="odometer_reading" class="control-label"><b style="color: red;">* </b> Odometer Reading: </label>
+                                        <input type="text" class="form-control decimal_number_only" name="odometer_reading" id="odometer_reading" placeholder="Odometer Reading" value="{{ old('odometer_reading') }}" maxlength="15" tabindex="3">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'description'])
                                         @endcomponent
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <label for="last_odometer_reading" class="control-label"><b style="color: red;">* </b> Last Reading: </label>
+                                        <input type="text" class="form-control no_edit" name="last_odometer_reading" id="last_odometer_reading" placeholder="Last Odometer Reading" value="" maxlength="15" tabindex="-1" readonly>
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'description'])
+                                        @endcomponent
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                                        <label for="fuel_quantity" class="control-label"><b style="color: red;">* </b> Fuel Quantity : </label>
+                                        <input type="text" class="form-control decimal_number_only" name="fuel_quantity" id="fuel_quantity" placeholder="Fuel Quantity" value="{{ old('fuel_quantity') }}" tabindex="4">
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'updated_date'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                                        <label for="fuel_rate" class="control-label"><b style="color: red;">* </b> Rate : </label>
+                                        <input type="text" class="form-control decimal_number_only" name="fuel_rate" id="fuel_rate" placeholder="Fuel Rate" value="{{ old('fuel_rate') }}" tabindex="-1" disabled>
+                                        {{-- adding error_message p tag component --}}
+                                        @component('components.paragraph.error_message', ['fieldName' => 'updated_date'])
+                                        @endcomponent
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <label for="amount" class="control-label"><b style="color: red;">* </b> Bill Amount: </label>
-                                        <input type="text" class="form-control decimal_number_only" name="amount" id="amount" placeholder="Bill amount" value="{{ old('amount') }}" maxlength="8" tabindex="4">
+                                        <input type="text" class="form-control decimal_number_only" name="amount" id="amount" placeholder="Bill amount" value="{{ old('amount') }}" maxlength="8" tabindex="5">
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'amount'])
                                         @endcomponent
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <label for="certificate_type" class="control-label"><b style="color: red;">* </b> Certificate: </label>
-                                        <select class="form-control select2" name="certificate_type" id="certificate_type" tabindex="5" style="width: 100%;">
-                                            <option value="">Select certificate</option>
-                                            @foreach ($certificateTypes as $key => $certificate)
-                                                @if($truck->isCertExpired($certificate) || $truck->isCertCritical($certificate))
-                                                    <option value="{{ $certificate }}" {{ old('certificate_type') == $certificate ? 'selected' : '' }}>
-                                                        {{ $key }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <label for="description" class="control-label"><b style="color: red;">* </b> Description: </label>
+                                        @if(!empty(old('description')))
+                                            <textarea class="form-control" name="description" id="description" rows="1" placeholder="Description" style="resize: none;" tabindex="6">{{ old('description') }}</textarea>
+                                        @else
+                                            <textarea class="form-control" name="description" id="description" rows="1" placeholder="Description" style="resize: none;" tabindex="6"></textarea>
+                                        @endif
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'description'])
-                                        @endcomponent
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <label for="updated_date" class="control-label"><b style="color: red;">* </b> Updated Validity Date : </label>
-                                        <input type="text" class="form-control decimal_number_only datepicker_forward" name="updated_date" id="updated_date" placeholder="Insurance expires" value="{{ old('updated_date') }}" tabindex="6">
-                                        {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'updated_date'])
                                         @endcomponent
                                     </div>
                                 </div>
@@ -128,4 +140,7 @@
     <!-- /.row (main row) -->
 </section>
 <!-- /.content -->
+@endsection
+@section('scripts')
+    <script src="/js/registrations/fuelRefillRegistration.js?rndstr={{ rand(1000,9999) }}"></script>
 @endsection

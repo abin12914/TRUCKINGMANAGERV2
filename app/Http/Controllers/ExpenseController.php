@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseFilterRequest;
 use App\Http\Requests\ExpenseRegistrationRequest;
 use App\Http\Requests\CertificateUpdateRequest;
+use App\Http\Requests\FuelRefillUpdateRequest;
 use App\Repositories\ExpenseRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
 use App\Repositories\TruckRepository;
 use App\Repositories\ServiceRepository;
+use App\Repositories\FuelRefillRepository;
 use Carbon\Carbon;
 use Auth;
 use DB;
@@ -133,6 +135,12 @@ class ExpenseController extends Controller
             $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
             if(!empty($id)) {
                 $expense = $this->expenseRepo->getExpense($id, [], false);
+
+                //delete fuel refill if editing refill to any other service type
+                $fuelRefill  = $expense->fuelRefill;
+                if(!empty($fuelRefill) && $expense->service_id != $request->get('service_id')) {
+                    $fuelRefill->delete();
+                }
             }
 
             //save expense transaction to table
@@ -400,5 +408,112 @@ class ExpenseController extends Controller
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
         }
         return redirect()->back()->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+    }
+
+    /**
+     * Show the form for editing the fuel refilling of a truck
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function fuelRefillEdit()
+    {
+        return view('expenses.fuel.refill');
+    }
+
+    /**
+     * update renewed certificate in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function fuelRefillUpdate(
+        FuelRefillUpdateRequest $request,
+        TransactionRepository $transactionRepo,
+        AccountRepository $accountRepo,
+        ServiceRepository $serviceRepo,
+        FuelRefillRepository $fuelRefillRepo
+    ) {
+        $errorCode = 0;
+
+        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $totalBill          = $request->get('amount');
+
+        //wrappin db transactions
+        DB::beginTransaction();
+        try {
+            $whereParams = [
+                'account_name' => [
+                    'paramName'     => 'account_name',
+                    'paramOperator' => '=',
+                    'paramValue'    => "Service-And-Expenses",
+                ]
+            ];
+            //confirming expense account exist-ency.
+            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+
+            $serviceWhere = [
+                'service_type'  => [
+                    'paramName'     => 'name',
+                    'paramOperator' => '=',
+                    'paramValue'    => 'Fuel Refill'
+                ]
+            ];
+            $serviceType = $serviceRepo->getServices($serviceWhere, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+
+            //save expense transaction to table
+            $transactionResponse   = $transactionRepo->saveTransaction([
+                'transaction_date'  => $transactionDate,
+                'debit_account_id'  => $expenseAccount->id, // debit the expense account
+                'credit_account_id' => $request->get('account_id'), // credit the supplier
+                'amount'            => $totalBill,
+                'particulars'       => $request->get('description'). " : Fuel Refill [Purchase & Expense]",
+                'status'            => 1,
+                'created_by'        => Auth::id(),
+            ], null);
+
+            if(!$transactionResponse['flag']) {
+                throw new TMException("CustomError", $transactionResponse['errorCode']);
+            }
+
+            //save to expense table
+            $expenseResponse = $this->expenseRepo->saveExpense([
+                'transaction_id'    => $transactionResponse['transaction']->id,
+                'truck_id'          => $request->get('truck_id'),
+                'service_id'        => $serviceType->id,
+                'description'       => 'Fuel Refill',
+                'amount'            => $totalBill,
+                'status'            => 1,
+            ], null);
+
+            if(!$expenseResponse['flag']) {
+                throw new TMException("CustomError", $expenseResponse['errorCode']);
+            }
+
+            //save fuelRefill to table
+            $fuelRefillResponse   = $fuelRefillRepo->saveFuelRefill([
+                'truck_id'          => $request->get('truck_id'),
+                'expense_id'        => $expenseResponse['expense']->id,
+                'refill_date'       => $transactionDate,
+                'odometer_reading'  => $request->get('odometer_reading'),
+                'fuel_quantity'     => $request->get('fuel_quantity'),
+                'total_fuel_price'  => $totalBill,
+                'status'            => 1,
+            ]);
+
+            if(!$fuelRefillResponse['flag']) {
+                throw new TMException("CustomError", $truckResponse['errorCode']);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with("message","Fuel refill expense data saved. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+        } catch (Exception $e) {
+            //roll back in case of exceptions
+            DB::rollback();
+
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
+        }
+        return redirect(route('dashboard'))->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

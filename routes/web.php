@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/certificates', 'TruckController@certificates')->name('trucks.certificates');
     Route::get('/certificates/renew/{truckId}', 'ExpenseController@certEdit')->name('expense.certificate.renew');
     Route::post('/certificates/renew', 'ExpenseController@certUpdate')->name('expense.certificate.renew.action');
-    Route::get('/fuel/refill/{truckId}', 'ExpenseController@fuelRefillEdit')->name('expense.fuel.refill');
+    Route::get('/fuel/refill', 'ExpenseController@fuelRefillEdit')->name('expense.fuel.refill');
     Route::post('/fuel/refill', 'ExpenseController@fuelRefillUpdate')->name('expense.fuel.refill.action');
 
 	Route::resources([
@@ -61,7 +61,9 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         //last purchase via ajax
         Route::get('/last/purchase', 'PurchaseController@getLastTransaction')->name('purchase.last');
         //last sale via ajax
-        Route::get('last/sale', 'SaleController@getLastTransaction')->name('sale.last');
+        Route::get('/last/sale', 'SaleController@getLastTransaction')->name('sale.last');
+        //last fuel refill via ajax
+        Route::get('/last/fuel-refill', 'TruckController@getLastFuelRefill')->name('fuel-refill.last');
     });
 });
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Repositories\TruckRepository;
 use App\Repositories\AccountRepository;
 use App\Http\Requests\TruckRegistrationRequest;
+use App\Repositories\FuelRefillRepository;
 use Carbon\Carbon;
 use Auth;
 use DB;
@@ -249,5 +250,46 @@ class TruckController extends Controller
         return view('trucks.certificates', [
             'trucks' => $this->truckRepo->getTrucks($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true),
         ]);
+    }
+
+    /**
+     * Return the last record of fuel filling
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getLastFuelRefill(Request $request, FuelRefillRepository $fuelRefillRepo)
+    {
+        $whereParams = [];
+        $lastFuelRefillReading = null;
+
+        $whereParams = [
+            'truck_id' => [
+                'paramName'     => 'truck_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('truck_id'),
+            ]
+        ];
+
+        try {
+            $truck = $this->truckRepo->getTruck($request->get('truck_id'), [], false);
+            //num = 2 because num=1 won't sort
+            $lastFuelRefills = $fuelRefillRepo->getFuelRefills(
+                $whereParams, [], [], ['by' => 'refill_date', 'order' => 'desc', 'num' => 2], ['key' => null, 'value' => null], [], true
+            );
+
+            if(!empty($lastFuelRefills) && $lastFuelRefills->count() > 0) {
+                $lastFuelRefillReading = $lastFuelRefills->first()->odometer_reading;
+            }
+        } catch (\Exception $e) {
+            return [
+                'flag'  => false,
+            ];
+        }
+
+        return [
+            'flag' => true,
+            'lastFuelRefillReading' => $lastFuelRefillReading
+        ];
     }
 }

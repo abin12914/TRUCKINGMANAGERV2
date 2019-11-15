@@ -239,7 +239,7 @@ function driverByTruck() {
                 truck_id : truckId
             },
             success: function(result) {
-                if(result && result.flag == 'true') {
+                if(result && result.flag) {
                     $('#driver_id').val(result.employee_id);
                     $('#driver_id').trigger('change');
                 } else {

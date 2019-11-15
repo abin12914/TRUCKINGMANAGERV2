@@ -45,7 +45,7 @@
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                         <label for="service_id" class="control-label">Service/Expense : </label>
                                         {{-- adding services select component --}}
-                                        @component('components.selects.services', ['selectedServiceId' => old('service_id', $params['service_id']['paramValue']), 'selectName' => 'service_id', 'tabindex' => 3])
+                                        @component('components.selects.services', ['selectedServiceId' => old('service_id', $params['service_id']['paramValue']), 'disableSpecialServices' => false, 'selectName' => 'service_id', 'tabindex' => 3])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'service_id'])

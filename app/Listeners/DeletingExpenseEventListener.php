@@ -27,6 +27,10 @@ class DeletingExpenseEventListener
     public function handle(DeletingExpenseEvent $event)
     {
         $transaction = $event->expense->transaction;
+        $fuelRefill  = $event->expense->fuelRefill;
+        if(!empty($fuelRefill)) {
+            $event->expense->isForceDeleting() ? $fuelRefill->forceDelete() : $fuelRefill->delete();
+        }
         $event->expense->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
     }
 }

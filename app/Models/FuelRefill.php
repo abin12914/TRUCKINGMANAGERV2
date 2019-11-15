@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Torzer\Awesome\Landlord\BelongsToTenants;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Events\DeletingExpenseEvent;
 
-class Expense extends Model
+class FuelRefill extends Model
 {
-	//landlord
+    //landlord
     use BelongsToTenants;
     //soft delete
     use SoftDeletes;
@@ -26,16 +25,7 @@ class Expense extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
-
-    /**
-     * The event map for the model.
-     *
-     * @var array
-     */
-    protected $dispatchesEvents = [
-        'deleting' => DeletingExpenseEvent::class,
-    ];
+    protected $dates = ['deleted_at', 'refill_date'];
 
     /**
      * Scope a query to only include active expense records.
@@ -59,24 +49,8 @@ class Expense extends Model
     /**
      * Get the transaction details associated with the expense
      */
-    public function transaction()
+    public function expense()
     {
-        return $this->belongsTo('App\Models\Transaction','transaction_id');
-    }
-
-    /**
-     * Get the service details associated with the expense
-     */
-    public function service()
-    {
-        return $this->belongsTo('App\Models\Service','service_id')->withTrashed();
-    }
-
-    /**
-     * Get the fuelrefill record associated with the expense.
-     */
-    public function fuelRefill()
-    {
-        return $this->hasOne('App\Models\FuelRefill', 'expense_id');
+        return $this->belongsTo('App\Models\Expense','expense_id');
     }
 }
