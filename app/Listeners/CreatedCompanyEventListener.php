@@ -6,20 +6,23 @@ use App\Events\CreatedCompanyEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Account;
+use App\Models\CompanySettings;
 use App\Repositories\AccountRepository;
+use App\Repositories\CompanySettingsRepository;
 
 class CreatedCompanyEventListener implements ShouldQueue
 {
-    protected $accountRepo;
+    protected $accountRepo, $companySettingsRepo;
 
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct(AccountRepository $accountRepo)
+    public function __construct(AccountRepository $accountRepo, CompanySettingsRepository $companySettingsRepo)
     {
         $this->accountRepo = $accountRepo;
+        $this->companySettingsRepo = $companySettingsRepo;
     }
 
     /**
@@ -57,5 +60,27 @@ class CreatedCompanyEventListener implements ShouldQueue
         }
 
         $account = Account::insert($inputArray);
+
+        //check whether company already have any settings
+        $settingsWhereParams = [
+            'settings' => [
+                'paramName'     => 'company_id',
+                'paramOperator' => '=',
+                'paramValue'    => $event->company->id,
+            ]
+        ];
+
+        $settings = $this->companySettingsRepo->getCompanySettings($settingsWhereParams);
+
+        //check if settings already exist
+        if($settings->count() > 0) {
+            //settings already exist do nothing and return
+            return;
+        }
+
+        $baseSettings = config('constants.baseSettings');
+        $baseSettings['company_id'] = $event->company->id;
+
+        $companySettings = CompanySettings::insert($baseSettings);
     }
 }

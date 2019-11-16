@@ -4,10 +4,11 @@ namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
 use Auth;
+use App\Repositories\CompanySettingsRepository;
 
 class AllViewComposer
 {
-    protected $loggedUser = [];
+    protected $loggedUser = [], $settings = [];
 
     /**
      * Create a new profile composer.
@@ -15,10 +16,14 @@ class AllViewComposer
      * @param  UserRepository  $users
      * @return void
      */
-    public function __construct()
+    public function __construct(CompanySettingsRepository $settingsRepo)
     {
-        if(Auth::check()) {
-            $this->loggedUser = Auth::user();
+        try {
+            if(Auth::check()) {
+                $this->loggedUser = Auth::user();
+                $this->settings   = $settingsRepo->getCompanySettings([])->first();
+            }
+        } catch (Exception $e) {
         }
     }
 
@@ -30,6 +35,6 @@ class AllViewComposer
      */
     public function compose(View $view)
     {
-        $view->with('loggedUser', $this->loggedUser);
+        $view->with(['loggedUser' => $this->loggedUser, 'settings' => $this->settings]);
     }
 }

@@ -39,9 +39,14 @@ $(function () {
         autoclose: true,
     });
 
-    //setting current date as selected
-    if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
-        $('.datepicker_reg').datepicker('setDate', 'now');
+    if(typeof defaultDate !== 'undefined') {
+        //setting user setting date as selected
+        $('.datepicker_reg').datepicker('setDate', defaultDate);
+    } else {
+        //setting current date as selected
+        if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
+            $('.datepicker_reg').datepicker('setDate', 'now');
+        }
     }
 
     //default value setting in account registering
@@ -175,6 +180,48 @@ $(function () {
                 $(this).parents('form:first').submit();
             }
         })
+    });
+
+    // right sidebar menu default date change event
+    $('body').on("change", "#rsb_default_date", function () {
+        var value = $(this).val();
+
+        $.ajax({
+            url: "/company/settings",
+            method: "post",
+            data:{
+                'default_date' : value,
+            },
+            success: function(result) {
+                if(result && result.flag) {
+                    console.log("settings update : Success");
+                }
+            },
+            error: function(error) {
+                console.log("settings update : Error");
+            }
+        });
+    });
+
+    // right sidebar menu driver auto selection flag click event
+    $('body').on("change", "#rsb_driver_auto_selection", function () {
+        var value = $(this).is(":checked") ? 1 : null;
+
+        $.ajax({
+            url: "/company/settings",
+            method: "post",
+            data:{
+                'driver_auto_selection' : value,
+            },
+            success: function(result) {
+                if(result && result.flag) {
+                    console.log("settings update : Success");
+                }
+            },
+            error: function(error) {
+                console.log("settings update : Error");
+            }
+        });
     });
 });
 

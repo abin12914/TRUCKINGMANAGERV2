@@ -197,4 +197,9 @@ return [
             'company_id'        => 0,
         ]
     ],
+    'baseSettings' => [
+        'company_id'    => 0,
+        'default_date'  => null,
+        'status'        => 1
+    ],
 ];

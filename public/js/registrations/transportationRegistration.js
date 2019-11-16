@@ -239,7 +239,7 @@ function changeMessage() {
 function driverByTruck() {
     var truckId = $('#truck_id').val();
 
-    if(truckId) {
+    if(truckId && 1 == 0) {
         $.ajax({
             url: "/last/transportation", //"/transportation/driver",
             method: "get",

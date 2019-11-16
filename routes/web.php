@@ -64,6 +64,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         Route::get('/last/sale', 'SaleController@getLastTransaction')->name('sale.last');
         //last fuel refill via ajax
         Route::get('/last/fuel-refill', 'TruckController@getLastFuelRefill')->name('fuel-refill.last');
+        //update company settings
+        Route::post('/company/settings', 'HomeController@updateSettings')->name('company.settings.update');
     });
 });
 
