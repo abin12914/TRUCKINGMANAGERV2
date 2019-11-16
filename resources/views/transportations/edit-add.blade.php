@@ -51,7 +51,7 @@
                                 <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="14">Clear</button>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-4 ol-xs-4">
-                                <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary submit-button ' : 'warning update_button ' }} btn-block btn-flat" tabindex="13">
+                                <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary ' : 'warning ' }} btn-block btn-flat" tabindex="13">
                                     {{ empty($transportation) ? 'Add' : 'Update' }}
                                 </button>
                             </div>

@@ -139,11 +139,20 @@ class SupplyTransportationController extends Controller
         $purchase           = null;
         $sale               = null;
 
+        //values for description
+        $truckRegNumber  = $request->get("truck_reg_number");
+        $sourceName      = strtok($request->get("source_name"), ',');
+        $destinationName = strtok($request->get("destination_name"), ',');
+        $materialName    = strtok($request->get("material_name"), '/');
+        $noOfTrip        = $request->get('no_of_trip');
+        $tripDetails     = $truckRegNumber. " : ". $sourceName. " - ". $destinationName. " [". $noOfTrip. " Trip(s)]";
+        $purchaseDetail  = $truckRegNumber. " : ". $sourceName. " - ". $materialName. " [". $noOfTrip. " Trip(s)]";
+        $saleDetail      = $truckRegNumber. " : ". $destinationName. " - ". $materialName. " [". $noOfTrip. " Trip(s)]";
+
         $transportationDate = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
         $purchaseDate       = Carbon::createFromFormat('d-m-Y', $request->get('purchase_date'))->format('Y-m-d');
         $saleDate           = Carbon::createFromFormat('d-m-Y', $request->get('sale_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
-        $description        = $request->get('description');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -206,7 +215,7 @@ class SupplyTransportationController extends Controller
                 'debit_account_id'  => $request->get('contractor_account_id'), // debit the contractor
                 'credit_account_id' => $transportationRentAccountId, // credit the transportation rent account
                 'amount'            => $request->get('total_rent'),
-                'particulars'       => ("Transportation Rent of ". $request->get('no_of_trip'). " trip. ". $description),
+                'particulars'       => ("Transportation Rent of ". $tripDetails),
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($transportation) ? $transportation->transaction_id : null));
@@ -226,7 +235,7 @@ class SupplyTransportationController extends Controller
                 'measurement'       => $request->get('rent_measurement'),
                 'rent_rate'         => $request->get('rent_rate'),
                 'trip_rent'         => $request->get('trip_rent'),
-                'no_of_trip'        => $request->get('no_of_trip'),
+                'no_of_trip'        => $noOfTrip,
                 'total_rent'        => $request->get('total_rent'),
                 'status'            => 1,
             ], $id);
@@ -243,7 +252,7 @@ class SupplyTransportationController extends Controller
                 'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
                 'credit_account_id' => $driver->account_id, // credit the driver account
                 'amount'            => $request->get('driver_total_wage'),
-                'particulars'       => "Wage of ". $request->get('no_of_trip'). ' trips.',
+                'particulars'       => "Wage generated for ". $tripDetails,
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($driverWage) ? $driverWage->transaction_id : null));
@@ -260,7 +269,7 @@ class SupplyTransportationController extends Controller
                 'to_date'           => $transportationDate,
                 'transportation_id' => $transportationResponse['transportation']->id,
                 'wage_amount'       => $request->get('driver_wage'),
-                'no_of_trip'        => $request->get('no_of_trip'),
+                'no_of_trip'        => $noOfTrip,
                 'total_wage_amount' => $request->get('driver_total_wage'),
                 'status'            => 1,
             ], (!empty($driverWage) ? $driverWage->id : null));
@@ -277,7 +286,7 @@ class SupplyTransportationController extends Controller
                 'debit_account_id'  => $purchaseAccountId, // debit the purchase account
                 'credit_account_id' => $request->get('supplier_account_id'), // credit the driver account
                 'amount'            => $request->get('purchase_total_bill'),
-                'particulars'       => "Purchase : ". $request->get('no_of_trip'). ' trips.',
+                'particulars'       => "Purchase : ". $purchaseDetail,
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($purchase) ? $purchase->transaction_id : null));
@@ -309,10 +318,10 @@ class SupplyTransportationController extends Controller
             //save sale to transaction to table
             $saleTransactionResponse = $transactionRepo->saveTransaction([
                 'transaction_date'  => $saleDate,
-                'debit_account_id'  => $request->get('supplier_account_id'), // debit the driver account
+                'debit_account_id'  => $request->get('customer_account_id'), // debit the driver account
                 'credit_account_id' => $saleAccountId, // credit the sale account
                 'amount'            => $request->get('sale_total_bill'),
-                'particulars'       => "Sale : ". $request->get('no_of_trip'). ' trips.',
+                'particulars'       => "Sale : ". $saleDetail,
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($sale) ? $sale->transaction_id : null));
@@ -420,7 +429,7 @@ class SupplyTransportationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(
-        TransportationRegistrationRequest $request,
+        SupplyRegistrationRequest $request,
         TransportationRepository $transportationRepo,
         TransactionRepository $transactionRepo,
         AccountRepository $accountRepo,

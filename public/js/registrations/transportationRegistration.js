@@ -42,6 +42,12 @@ $(function () {
         contractorBySite();
     });
 
+    //setting name of material
+    $('body').on("change", "#material_id", function() {
+        var materialName = $('#material_id option:selected').text();
+        $('#material_name').val(materialName);
+    });
+
     //setting last rent type for selected truck+sites+contractor
     $('body').on("change", "#contractor_account_id", function() {
         rentDetailByCombo();

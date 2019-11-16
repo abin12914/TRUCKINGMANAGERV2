@@ -143,7 +143,6 @@ class TransportationController extends Controller
 
         $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
-        $description        = $request->get('description');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -191,7 +190,7 @@ class TransportationController extends Controller
                 'debit_account_id'  => $request->get('contractor_account_id'), // debit the contractor
                 'credit_account_id' => $transportationRentAccountId, // credit the transportation rent account
                 'amount'            => $request->get('total_rent'),
-                'particulars'       => ("Transportation Rent of ". $tripDetails. " / ". $description),
+                'particulars'       => ("Transportation Rent of ". $tripDetails),
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($transportation) ? $transportation->transaction_id : null));

@@ -115,7 +115,7 @@
                                             <a href="#purchase_tab" data-toggle="tab" class="arrows">
                                                 <button type="button" class="btn btn-default" tabindex="-1">Prev</button>
                                             </a>
-                                            <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary submit-button ' : 'warning update_button ' }} pull-right" tabindex="7">
+                                            <button type="button" id="save_button" class="btn btn-{{ empty($transportation) ? 'primary ' : 'warning ' }} pull-right" tabindex="7">
                                                 {{ empty($transportation) ? 'Add' : 'Update' }}
                                             </button>
                                         </div>
