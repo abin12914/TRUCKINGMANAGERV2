@@ -94,7 +94,10 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <h6 class="text-center">Account Statement</h6>
+                            <h3>
+                                Account Statement of {{ $account->account_name }}
+                                [ {{ ($params['from_date']['paramValue'] ?? 'start'). " - ". ($params['to_date']['paramValue'] ?? 'end') }} ]
+                            </h3>
                             <table class="table table-responsive table-bordered table-hover">
                                 <thead>
                                     <tr>
