@@ -161,8 +161,7 @@
                                                 <td>{{ $transportation->transaction->transaction_date->format('d-m-Y') }}</td>
                                                 <td>{{ $transportation->truck->reg_number }}</td>
                                                 <td>{{ $transportation->transaction->debitAccount->account_name }}</td>
-                                                <td>{{ $transportation->source->name }}</td>
-                                                <td>{{ $transportation->destination->name }}</td>
+                                                <td>{{ $transportation->source->name }} - {{ $transportation->destination->name }}</td>
                                                 <td class="no-print">{{ $transportation->material->name }}</td>
                                                 <td>{{ $transportation->no_of_trip }}</td>
                                                 <td class="no-print">

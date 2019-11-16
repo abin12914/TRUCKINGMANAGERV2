@@ -91,7 +91,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview {{ Request::is('expenses/*') || Request::is('expenses')? 'active' : '' }}">
+            <li class="treeview {{ Request::is('expenses/*') || Request::is('expenses') || Request::is('fuel/refill') || Request::is('certificates') ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-wrench"></i>
                     <span>Services & Expences</span>
@@ -108,6 +108,16 @@
                     <li class="{{ Request::is('expenses')? 'active' : '' }}">
                         <a href="{{ route('expenses.index') }}">
                             <i class="fa fa-circle-o text-aqua"></i> List
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('certificates')? 'active' : '' }}">
+                        <a href="{{route('trucks.certificates') }}">
+                            <i class="fa fa-circle-o text-red"></i> Certificates
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('fuel/refill')? 'active' : '' }}">
+                        <a href="{{route('expense.fuel.refill') }}">
+                            <i class="fa fa-circle-o text-blue"></i> Fuel Refill
                         </a>
                     </li>
                 </ul>
