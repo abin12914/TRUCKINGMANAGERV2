@@ -32,7 +32,7 @@
         <div class="col-md-6">
             <label for="sale_quantity" class="control-label"><b style="color: red;">* </b> Measurement/Quantity : </label>
             <input type="text" class="form-control decimal_number_only" name="sale_quantity" id="sale_quantity" placeholder="Measurement/Quantity"
-                value="{{ old('sale_quantity', (!empty($transportation) ? $transportation->sale->quantity : null)) }} {{ old('sale_measure_type', (!empty($transportation) ? $transportation->sale->measure_type : null)) == 3 ? "readonly" : "" }}" tabindex="4">
+                value="{{ old('sale_quantity', (!empty($transportation) ? $transportation->sale->quantity : null)) }}" {{ old('sale_measure_type', (!empty($transportation) ? $transportation->sale->measure_type : null)) == 3 ? "readonly" : "" }}" tabindex="4">
                 {{-- adding error_message p tag component --}}
                 @component('components.paragraph.error_message', ['fieldName' => 'sale_quantity'])
                 @endcomponent

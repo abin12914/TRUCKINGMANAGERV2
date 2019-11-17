@@ -101,7 +101,7 @@ class ReportController extends Controller
                 ]
             ];
 
-            $transactions = $transactionRepo->getTransactions($whereParams, array_merge($debitParam, $creditParam), [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecords], [], [], null, true);
+            $transactions = $transactionRepo->getTransactions($whereParams, array_merge($debitParam, $creditParam), [], ['by' => 'transaction_date', 'order' => 'asc', 'num' => $noOfRecords], [], [], null, true);
             if($transactions->lastPage() || $transactions->lastPage() == 1) {
                 $subTotalDebit  = $transactionRepo->getTransactions($whereParams, $debitParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
                 $subTotalCredit = $transactionRepo->getTransactions($whereParams, $creditParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
