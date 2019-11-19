@@ -135,6 +135,8 @@ class ReportController extends Controller
      */
     public function creditStatement(CreditStatementRequest $request, AccountRepository $accountRepo)
     {
+        $totalDebit  = 0;
+        $totalCredit = 0;
         $accountWhereParam  = [];
         $withParams         = ['debitTransactionsSum', 'creditTransactionsSum'];
 
@@ -166,15 +168,24 @@ class ReportController extends Controller
         ];
 
         try {
-            if(!empty($request->get('relation_type'))) {
-                $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
+            //if(!empty($request->get('relation_type'))) {
+                $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
 
                 foreach ($accounts as $key => $account) {
                     $debitSum  = ($account->debitTransactionsSum->count() > 0 ? $account->debitTransactionsSum[0]->debit_sum : 0);
                     $creditSum = ($account->creditTransactionsSum->count() > 0 ? $account->creditTransactionsSum[0]->credit_sum : 0);
-                    $account->creditAmount = $debitSum - $creditSum;
+                    if($debitSum - $creditSum != 0) {
+                        $account->creditAmount = $debitSum - $creditSum;
+                        if($account->creditAmount > 0) {
+                            $totalDebit += $account->creditAmount;
+                        } else {
+                            $totalCredit += $account->creditAmount * (-1);
+                        }
+                    } else {
+                        $accounts->forget($key);
+                    }
                 }
-            }
+            //}
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
@@ -186,7 +197,7 @@ class ReportController extends Controller
         $params['relation_type']['paramValue'] = $request->get('relation_type');
 
         return view('reports.credit-statement',
-            compact('accounts', 'params')
+            compact('accounts', 'params', 'totalDebit', 'totalCredit')
         );
     }
 

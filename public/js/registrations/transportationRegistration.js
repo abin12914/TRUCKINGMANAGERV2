@@ -1,4 +1,7 @@
 $(function () {
+    //set name values of selected options- useful when editing
+    setNameValues();
+
     //if editing activate siblings disabiling
     if($('#source_id').val() != 'undefined') {
         var sourceId      = $('#source_id').val();
@@ -10,15 +13,15 @@ $(function () {
 
     //setting last employee for selected truck
     $('body').on("change", "#truck_id", function() {
-        var truckRegNumber = $('#truck_id option:selected').text();
-        $('#truck_reg_number').val(truckRegNumber);
+        //set selected truck reg-number
+        setNameValues();
         driverByTruck();
     });
 
     //disabiling same value selection in 2 sites
     $('body').on("change", "#source_id", function() {
-        var sourceName = $('#source_id option:selected').text();
-        $('#source_name').val(sourceName);
+        //set name of selected source
+        setNameValues();
 
         var fieldValue = $('#source_id').val();
 
@@ -30,8 +33,8 @@ $(function () {
 
     //disabiling same value selection in 2 sites
     $('body').on("change", "#destination_id", function() {
-        var destinationName = $('#destination_id option:selected').text();
-        $('#destination_name').val(destinationName);
+        //set name of selected destination
+        setNameValues();
 
         var fieldValue = $('#destination_id').val();
 
@@ -44,8 +47,8 @@ $(function () {
 
     //setting name of material
     $('body').on("change", "#material_id", function() {
-        var materialName = $('#material_id option:selected').text();
-        $('#material_name').val(materialName);
+        //set name of selected material
+        setNameValues();
     });
 
     //setting last rent type for selected truck+sites+contractor
@@ -126,6 +129,40 @@ $(function () {
     });
 });
 
+//setting name params
+function setNameValues() {
+    if($('#truck_id').val()) {
+        //set reg-number of selected truck
+        var truckRegNumber = $('#truck_id option:selected').text();
+        $('#truck_reg_number').val(truckRegNumber);
+    } else {
+        $('#truck_reg_number').val('');
+    }
+
+    if($('#source_id').val()) {
+        //set source name of selected source
+        var sourceName = $('#source_id option:selected').text();
+        $('#source_name').val(sourceName);
+    } else {
+        $('#source_name').val('');
+    }
+
+    if($('#destination_id').val()) {
+        //set destination name of selected destination
+        var destinationName = $('#destination_id option:selected').text();
+        $('#destination_name').val(destinationName);
+    } else {
+        $('#destination_name').val('');
+    }
+
+    if($('#material_id').val()) {
+        //set material name of selected material
+        var materialName = $('#material_id option:selected').text();
+        $('#material_name').val(materialName);
+    } else {
+        $('#material_name').val('');
+    }
+}
 //disable siblings's elements
 function disableSiblings(element, fieldValue) {
     if(fieldValue && fieldValue != 'undefined')

@@ -101,7 +101,7 @@
                                                     <td>-</td>
                                                 @else
                                                     <td>-</td>
-                                                    <td>{{ $account->creditAmount != 0 ? ($account->creditAmount * (-1)) : '-' }}</td>
+                                                    <td>{{ $account->creditAmount * (-1) }}</td>
                                                 @endif
                                                 <td class="no-print">
                                                     <a href="{{ route('reports.account-statement', ['account_id' => $account->id]) }}">
@@ -111,6 +111,13 @@
                                             </tr>
                                         @endforeach
                                     @endif
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-red">{{ $totalDebit }}</td>
+                                        <td class="text-red">{{ $totalCredit }}</td>
+                                        <td class="no-print"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

@@ -42,16 +42,6 @@ class TransportationController extends Controller
         $toDate     = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : "";
 
         $whereParams = [
-            'from_date' => [
-                'paramName'     => 'date',
-                'paramOperator' => '>=',
-                'paramValue'    => $fromDate,
-            ],
-            'to_date' => [
-                'paramName'     => 'date',
-                'paramOperator' => '<=',
-                'paramValue'    => $toDate,
-            ],
             'truck_id' => [
                 'paramName'     => 'truck_id',
                 'paramOperator' => '=',
@@ -75,6 +65,18 @@ class TransportationController extends Controller
         ];
 
         $relationalParams = [
+            'from_date' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'transaction_date',
+                'paramOperator' => '>=',
+                'paramValue'    => $fromDate,
+            ],
+            'to_date' => [
+                'relation'      => 'transaction',
+                'paramName'     => 'transaction_date',
+                'paramOperator' => '<=',
+                'paramValue'    => $toDate,
+            ],
             'contractor_account_id' => [
                 'relation'      => 'transaction',
                 'paramName'     => 'debit_account_id',
@@ -94,8 +96,8 @@ class TransportationController extends Controller
         );
 
         //params passing for auto selection
-        $whereParams['from_date']['paramValue'] = $request->get('from_date');
-        $whereParams['to_date']['paramValue']   = $request->get('to_date');
+        $relationalParams['from_date']['paramValue'] = $request->get('from_date');
+        $relationalParams['to_date']['paramValue']   = $request->get('to_date');
         $params = array_merge($whereParams, $relationalParams);
 
         return view('transportations.list', [

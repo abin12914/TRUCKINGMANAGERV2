@@ -39,12 +39,12 @@ $(function () {
         autoclose: true,
     });
 
-    if(typeof defaultDate !== 'undefined') {
-        //setting user setting date as selected
-        $('.datepicker_reg').datepicker('setDate', defaultDate);
-    } else {
-        //setting current date as selected
-        if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
+    if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
+        if(typeof defaultDate !== 'undefined') {
+            //setting user setting date as selected
+            $('.datepicker_reg').datepicker('setDate', defaultDate);
+        } else {
+            //setting current date as selected
             $('.datepicker_reg').datepicker('setDate', 'now');
         }
     }

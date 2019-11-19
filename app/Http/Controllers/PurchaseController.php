@@ -116,12 +116,12 @@ class PurchaseController extends Controller
                 'paramValue'    => $request->get('source_id'),
             ];
         }
-        if(!empty($request->get('destination_id'))) {
-            $relationalParams['destination_id'] = [
+        if(!empty($request->get('material_id'))) {
+            $relationalParams['material_id'] = [
                 'relation'      => 'transportation',
-                'paramName'     => 'destination_id',
+                'paramName'     => 'material_id',
                 'paramOperator' => '=',
-                'paramValue'    => $request->get('destination_id'),
+                'paramValue'    => $request->get('material_id'),
             ];
         }
 

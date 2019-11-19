@@ -108,14 +108,6 @@ class SaleController extends Controller
                 'paramValue'    => $request->get('truck_id'),
             ];
         }
-        if(!empty($request->get('source_id'))) {
-            $relationalParams['source_id'] = [
-                'relation'      => 'transportation',
-                'paramName'     => 'source_id',
-                'paramOperator' => '=',
-                'paramValue'    => $request->get('source_id'),
-            ];
-        }
         if(!empty($request->get('destination_id'))) {
             $relationalParams['destination_id'] = [
                 'relation'      => 'transportation',
@@ -124,7 +116,14 @@ class SaleController extends Controller
                 'paramValue'    => $request->get('destination_id'),
             ];
         }
-
+        if(!empty($request->get('material_id'))) {
+            $relationalParams['material_id'] = [
+                'relation'      => 'transportation',
+                'paramName'     => 'material_id',
+                'paramOperator' => '=',
+                'paramValue'    => $request->get('material_id'),
+            ];
+        }
         if(!empty($request->get('customer_account_id'))) {
             $relationalParams['customer_account_id'] = [
                 'relation'      => 'transaction',
