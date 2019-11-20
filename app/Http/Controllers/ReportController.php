@@ -168,7 +168,7 @@ class ReportController extends Controller
         ];
 
         try {
-            //if(!empty($request->get('relation_type'))) {
+            if(!empty($request->get('relation_type'))) {
                 $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
 
                 foreach ($accounts as $key => $account) {
@@ -185,7 +185,7 @@ class ReportController extends Controller
                         $accounts->forget($key);
                     }
                 }
-            //}
+            }
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
