@@ -92,7 +92,7 @@ class TransportationController extends Controller
         ];
 
         $transportations = $this->transportationRepo->getTransportations(
-            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecords], ['key' => null, 'value' => null], ['employeeWages.employee.account'], true
+            $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecords], [], ['transaction', 'truck', 'source', 'destination', 'material'], true
         );
 
         //params passing for auto selection
@@ -162,7 +162,7 @@ class TransportationController extends Controller
                 ]
             ];
             //confirming transportation rent account && employee wage account exist-ency.
-            $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
             $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
             $employeeWageAccountId       = $baseAccounts->firstWhere('account_name', 'Employee-Wage')->id;
 
@@ -178,7 +178,7 @@ class TransportationController extends Controller
                     'paramValue'    => $driverId,
                 ]
             ];
-            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //if editing
             if(!empty($id)) {
@@ -203,18 +203,19 @@ class TransportationController extends Controller
 
             //save to transportation table
             $transportationResponse = $this->transportationRepo->saveTransportation([
-                'transaction_id'    => $transactionResponse['transaction']->id,
-                'truck_id'          => $request->get('truck_id'),
-                'source_id'         => $request->get('source_id'),
-                'destination_id'    => $request->get('destination_id'),
-                'material_id'       => $request->get('material_id'),
-                'rent_type'         => $request->get('rent_type'),
-                'measurement'       => $request->get('rent_measurement'),
-                'rent_rate'         => $request->get('rent_rate'),
-                'trip_rent'         => $request->get('trip_rent'),
-                'no_of_trip'        => $noOfTrip,
-                'total_rent'        => $request->get('total_rent'),
-                'status'            => 1,
+                'transportation_date'   => $transactionDate,
+                'transaction_id'        => $transactionResponse['transaction']->id,
+                'truck_id'              => $request->get('truck_id'),
+                'source_id'             => $request->get('source_id'),
+                'destination_id'        => $request->get('destination_id'),
+                'material_id'           => $request->get('material_id'),
+                'rent_type'             => $request->get('rent_type'),
+                'measurement'           => $request->get('rent_measurement'),
+                'rent_rate'             => $request->get('rent_rate'),
+                'trip_rent'             => $request->get('trip_rent'),
+                'no_of_trip'            => $noOfTrip,
+                'total_rent'            => $request->get('total_rent'),
+                'status'                => 1,
             ], $id);
 
             if(!$transportationResponse['flag']) {
@@ -315,7 +316,7 @@ class TransportationController extends Controller
         $transportation = [];
 
         try {
-            $transportation = $this->transportationRepo->getTransportation($id, [], false);
+            $transportation = $this->transportationRepo->getTransportation($id, ['purchse', 'employeeWages'], false);
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
@@ -426,7 +427,9 @@ class TransportationController extends Controller
         }
 
         try {
-            $transportation = $this->transportationRepo->getTransportations($whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], ['key' => null, 'value' => null], ['transaction', 'employeeWages'], true);
+            $transportation = $this->transportationRepo->getTransportations(
+                $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], [], ['transaction', 'employeeWages'], true
+            );
 
             if(!empty($transportation)) {
                 return [

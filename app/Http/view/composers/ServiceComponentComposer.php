@@ -19,7 +19,7 @@ class ServiceComponentComposer
     public function __construct(ServiceRepository $serviceRepo)
     {
         try {
-            $this->services = $serviceRepo->getServices([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $this->services = $serviceRepo->getServices([], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true);
         } catch (Exception $e) {
 
         }

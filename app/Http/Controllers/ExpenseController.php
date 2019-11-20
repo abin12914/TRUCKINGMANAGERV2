@@ -77,14 +77,20 @@ class ExpenseController extends Controller
             ],
         ];
 
-        $expenses = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
-        $totalExpense = $this->expenseRepo->getExpenses($whereParams, [], $relationalParams, [], ['key' => 'sum', 'value' => 'amount'], [], true);
+        $expenses = $this->expenseRepo->getExpenses(
+            $whereParams, [], $relationalParams, ['by' => 'expense_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
+        );
+
+        if($expenses->lastPage() == $expenses->currentPage()) {
+            $totalExpense = $this->expenseRepo->getExpenses(
+                $whereParams, [], $relationalParams, [], ['key' => 'sum', 'value' => 'amount'], [], true
+            );
+        }
 
         //params passing for auto selection
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
         $relationalParams['to_date']['paramValue']   = $request->get('to_date');
 
-        //getExpenses($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('expenses.list', [
             'expenses'     => $expenses,
             'totalExpense' => $totalExpense,
@@ -132,7 +138,7 @@ class ExpenseController extends Controller
                 ]
             ];
             //confirming expense account exist-ency.
-            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
             if(!empty($id)) {
                 $expense = $this->expenseRepo->getExpense($id, [], false);
 
@@ -160,6 +166,7 @@ class ExpenseController extends Controller
 
             //save to expense table
             $expenseResponse = $this->expenseRepo->saveExpense([
+                'expense_date'      => $transactionDate,
                 'transaction_id'    => $transactionResponse['transaction']->id,
                 'truck_id'          => $request->get('truck_id'),
                 'service_id'        => $request->get('service_id'),
@@ -349,7 +356,7 @@ class ExpenseController extends Controller
                 ]
             ];
             //confirming expense account exist-ency.
-            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             $serviceWhere = [
                 'service_type'  => [
@@ -358,7 +365,7 @@ class ExpenseController extends Controller
                     'paramValue'    => 'Certificate Renewal'
                 ]
             ];
-            $serviceType = $serviceRepo->getServices($serviceWhere, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $serviceType = $serviceRepo->getServices($serviceWhere, [], [], ['by' => 'name', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //save expense transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([
@@ -450,7 +457,7 @@ class ExpenseController extends Controller
                 ]
             ];
             //confirming expense account exist-ency.
-            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $expenseAccount = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             $serviceWhere = [
                 'service_type'  => [
@@ -459,7 +466,7 @@ class ExpenseController extends Controller
                     'paramValue'    => 'Fuel Refill'
                 ]
             ];
-            $serviceType = $serviceRepo->getServices($serviceWhere, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $serviceType = $serviceRepo->getServices($serviceWhere, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //save expense transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([

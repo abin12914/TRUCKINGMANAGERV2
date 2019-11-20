@@ -72,6 +72,13 @@ class Repository
 
     protected function getFilter($query, $orderBy)
     {
+        if(!isset($orderBy['by'])) {
+            $orderBy['by'] = 'id';
+        }
+        if(!isset($orderBy['order'])) {
+            $orderBy['order'] = 'asc';
+        }
+
         if(!empty($orderBy['num'])) {
             if($orderBy['num'] == 1) {
                 $query = $query->firstOrFail();
@@ -85,10 +92,12 @@ class Repository
         return $query;
     }
 
-    protected function aggregatesSwitch($query, $aggregates=['key' => null, 'value' => null]) {
+    protected function aggregatesSwitch($query, $aggregates=['key' => null, 'value' => null])
+    {
         if(!isset($aggregates['key'])) {
-            return false;
+            return 0;
         }
+
         switch (strtolower($aggregates['key'])) {
             case 'count':
                 $query = $query->count();
@@ -97,7 +106,7 @@ class Repository
                 $query = $query->sum($aggregates['value']);
                 break;
             default:
-                $query = null;
+                $query = 0;
                 break;
         }
          return $query;

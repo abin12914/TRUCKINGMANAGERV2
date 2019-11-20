@@ -92,7 +92,7 @@ class SupplyTransportationController extends Controller
         ];
 
         $transportations = $transportationRepo->getSupplyTransportations(
-            $whereParams, [], $relationalParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account'], true
+            $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material'], true
         );
 
         //params passing for auto selection
@@ -182,7 +182,7 @@ class SupplyTransportationController extends Controller
                 ],
             ];
             //confirming transportation rent account, employee wage, purchse and sale account exist-ency.
-            $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
             if($baseAccounts->count() < 4)
             {
                 throw new TMException("CustomError", 1);
@@ -199,7 +199,7 @@ class SupplyTransportationController extends Controller
                     'paramValue'    => $driverId,
                 ]
             ];
-            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //if editing
             if(!empty($id)) {
@@ -228,18 +228,19 @@ class SupplyTransportationController extends Controller
 
             //save to transportation table
             $transportationResponse = $transportationRepo->saveTransportation([
-                'transaction_id'    => $transactionResponse['transaction']->id,
-                'truck_id'          => $request->get('truck_id'),
-                'source_id'         => $request->get('source_id'),
-                'destination_id'    => $request->get('destination_id'),
-                'material_id'       => $request->get('material_id'),
-                'rent_type'         => $request->get('rent_type'),
-                'measurement'       => $request->get('rent_measurement'),
-                'rent_rate'         => $request->get('rent_rate'),
-                'trip_rent'         => $request->get('trip_rent'),
-                'no_of_trip'        => $noOfTrip,
-                'total_rent'        => $request->get('total_rent'),
-                'status'            => 1,
+                'transportation_date'   => $transportationDate,
+                'transaction_id'        => $transactionResponse['transaction']->id,
+                'truck_id'              => $request->get('truck_id'),
+                'source_id'             => $request->get('source_id'),
+                'destination_id'        => $request->get('destination_id'),
+                'material_id'           => $request->get('material_id'),
+                'rent_type'             => $request->get('rent_type'),
+                'measurement'           => $request->get('rent_measurement'),
+                'rent_rate'             => $request->get('rent_rate'),
+                'trip_rent'             => $request->get('trip_rent'),
+                'no_of_trip'            => $noOfTrip,
+                'total_rent'            => $request->get('total_rent'),
+                'status'                => 1,
             ], $id);
 
             if(!$transportationResponse['flag']) {
@@ -299,6 +300,7 @@ class SupplyTransportationController extends Controller
 
             //save to purchase table
             $purchaseResponse = $purchaseRepo->savePurchase([
+                'purchase_date'     => $purchaseDate,
                 'transaction_id'    => $purchaseTransactionResponse['transaction']->id,
                 'transportation_id' => $transportationResponse['transportation']->id,
                 'measure_type'      => $request->get('purchase_measure_type'),
@@ -334,6 +336,7 @@ class SupplyTransportationController extends Controller
 
             //save to sale table
             $saleResponse = $saleRepo->saveSale([
+                'sale_date'         => $saleDate,
                 'transaction_id'    => $saleTransactionResponse['transaction']->id,
                 'transportation_id' => $transportationResponse['transportation']->id,
                 'measure_type'      => $request->get('sale_measure_type'),
@@ -387,7 +390,9 @@ class SupplyTransportationController extends Controller
         $transportation = [];
 
         try {
-            $transportation = $transportationRepo->getSupplyTransportation($id, ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account'], false);
+            $transportation = $transportationRepo->getSupplyTransportation(
+                $id, ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account', 'purchase.transaction.creditAccount', 'sale.transaction.debitAccount'], false
+            );
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 

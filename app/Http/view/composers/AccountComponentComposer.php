@@ -32,7 +32,7 @@ class AccountComponentComposer
         ];
 
         try {
-            $this->accounts = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $this->accounts = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true);
         } catch (Exception $e) {
         }
     }

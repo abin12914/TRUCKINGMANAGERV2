@@ -27,7 +27,7 @@ class CompanySettingsRepository extends Repository
 
             $companySettings = parent::whereFilter($companySettings, $whereParams);
 
-            return parent::getFilter($companySettings, ['by' => 'id', 'order' => 'asc', 'num' => null]);
+            return parent::getFilter($companySettings, ['by' => 'id', 'order' => 'asc', 'num' => 1]);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 

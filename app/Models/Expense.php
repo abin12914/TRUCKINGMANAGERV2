@@ -26,7 +26,7 @@ class Expense extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'expense_date'];
 
     /**
      * The event map for the model.

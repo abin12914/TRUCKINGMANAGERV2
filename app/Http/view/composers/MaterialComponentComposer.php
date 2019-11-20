@@ -19,7 +19,7 @@ class MaterialComponentComposer
     public function __construct(MaterialRepository $materialRepo)
     {
         try {
-            $this->materials = $materialRepo->getMaterials([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $this->materials = $materialRepo->getMaterials([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
         } catch (Exception $e) {
         }
     }

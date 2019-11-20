@@ -48,7 +48,7 @@ class SiteController extends Controller
         ];
 
         return view('sites.list', [
-            'sites'       => $this->siteRepo->getSites($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
+            'sites'       => $this->siteRepo->getSites($whereParams, [], [], ['by' => 'name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
             'params'      => $whereParams,
             'noOfRecords' => $noOfRecordsPerPage,
         ]);

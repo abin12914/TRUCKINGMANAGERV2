@@ -134,7 +134,7 @@ class SaleController extends Controller
         }
 
         try {
-            $sale = $this->saleRepo->getSales([], [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $sale = $this->saleRepo->getSales([], [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], [], [], true);
 
             if(!empty($sale)) {
                 return [

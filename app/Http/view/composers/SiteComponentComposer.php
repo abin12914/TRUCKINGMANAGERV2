@@ -19,7 +19,7 @@ class SiteComponentComposer
     public function __construct(SiteRepository $siteRepo)
     {
         try {
-            $this->sites = $siteRepo->getSites([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $this->sites = $siteRepo->getSites([], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true);
         } catch (Exception $e) {
         }
     }

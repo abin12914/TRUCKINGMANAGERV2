@@ -21,7 +21,7 @@ class AllViewComposer
         try {
             if(Auth::check()) {
                 $this->loggedUser = Auth::user();
-                $this->settings   = $settingsRepo->getCompanySettings([])->first();
+                $this->settings   = $settingsRepo->getCompanySettings([]);
             }
         } catch (Exception $e) {
         }

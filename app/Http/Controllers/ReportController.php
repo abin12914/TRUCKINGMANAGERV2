@@ -82,7 +82,7 @@ class ReportController extends Controller
         }
 
         try {
-            $account = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $account = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
             $accountId = $accountId ?? $account->id; //setting default to cash if no account is selected
 
             $debitParam = [
@@ -102,14 +102,14 @@ class ReportController extends Controller
             ];
 
             $transactions = $transactionRepo->getTransactions($whereParams, array_merge($debitParam, $creditParam), [], ['by' => 'transaction_date', 'order' => 'asc', 'num' => $noOfRecords], [], [], null, true);
-            if($transactions->lastPage() || $transactions->lastPage() == 1) {
-                $subTotalDebit  = $transactionRepo->getTransactions($whereParams, $debitParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
-                $subTotalCredit = $transactionRepo->getTransactions($whereParams, $creditParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
+            if($transactions->lastPage() == $transactions->currentPage()) {
+                $subTotalDebit  = $transactionRepo->getTransactions($whereParams, $debitParam, [], [], ['key' => 'sum', 'value' => 'amount'], [], null, true);
+                $subTotalCredit = $transactionRepo->getTransactions($whereParams, $creditParam, [], [], ['key' => 'sum', 'value' => 'amount'], [], null, true);
 
                 //old balance values
                 if(!empty($fromDate)) {
-                    $obDebit    = $transactionRepo->getTransactions($obWhereParams, $debitParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
-                    $obCredit   = $transactionRepo->getTransactions($obWhereParams, $creditParam, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'sum', 'value' => 'amount'], [], null, true);
+                    $obDebit    = $transactionRepo->getTransactions($obWhereParams, $debitParam, [], [], ['key' => 'sum', 'value' => 'amount'], [], null, true);
+                    $obCredit   = $transactionRepo->getTransactions($obWhereParams, $creditParam, [], [], ['key' => 'sum', 'value' => 'amount'], [], null, true);
                 }
             }
         } catch (\Exception $e) {
@@ -169,7 +169,7 @@ class ReportController extends Controller
 
         try {
             if(!empty($request->get('relation_type'))) {
-                $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], $withParams, true);
+                $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], $withParams, true);
 
                 foreach ($accounts as $key => $account) {
                     $debitSum  = ($account->debitTransactionsSum->count() > 0 ? $account->debitTransactionsSum[0]->debit_sum : 0);

@@ -135,7 +135,7 @@ class PurchaseController extends Controller
         }
 
         try {
-            $purchase = $this->purchaseRepo->getPurchases([], [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], ['key' => null, 'value' => null], [], true);
+            $purchase = $this->purchaseRepo->getPurchases([], [], $relationalParams, ['by' => 'id', 'order' => 'desc', 'num' => 1], [], [], true);
 
             if(!empty($purchase)) {
                 return [

@@ -275,7 +275,7 @@ class TruckController extends Controller
             $truck = $this->truckRepo->getTruck($request->get('truck_id'), [], false);
             //num = 2 because num=1 won't sort
             $lastFuelRefills = $fuelRefillRepo->getFuelRefills(
-                $whereParams, [], [], ['by' => 'refill_date', 'order' => 'desc', 'num' => 2], ['key' => null, 'value' => null], [], true
+                $whereParams, [], [], ['by' => 'refill_date', 'order' => 'desc', 'num' => 2], [], [], true
             );
 
             if(!empty($lastFuelRefills) && $lastFuelRefills->count() > 0) {

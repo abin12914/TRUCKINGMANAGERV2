@@ -42,11 +42,11 @@ class VoucherRepository extends Repository
             $vouchers = parent::relationalFilter($vouchers, $relationalParams);
 
             $vouchers = parent::relationalOrFilter($vouchers, $relationalOrParams);
-//dd(str_replace_array('?', $vouchers->getBindings(), $vouchers->toSql()));
+
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($vouchers, $aggregates) : parent::getFilter($vouchers, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

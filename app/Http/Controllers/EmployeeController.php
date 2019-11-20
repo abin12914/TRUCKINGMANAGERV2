@@ -49,7 +49,7 @@ class EmployeeController extends Controller
         ];
 
         return view('employees.list', [
-                'employees'     => $this->employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+                'employees'     => $this->employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
                 'params'        => $whereParams,
                 'noOfRecords'   => $noOfRecordsPerPage,
             ]);
@@ -99,7 +99,7 @@ class EmployeeController extends Controller
                 ]
             ];
             //confirming opening balance existency.
-            $openingBalanceAccountId = $accountRepo->getAccounts($whereParams,$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => 1], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)->id;
+            $openingBalanceAccountId = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true)->id;
 
             if(!empty($id)) {
                 $employee = $this->employeeRepo->getEmployee($id, ['account'], false);

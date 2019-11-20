@@ -69,9 +69,8 @@ class AccountController extends Controller
         //remove %% from sending back to result
         $params['search_by_name']['paramValue'] = $request->get('search_by_name');
 
-        //getAccounts($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $aggregates=['key' => null, 'value' => null], $withParams=[],$activeFlag=true)
         return view('accounts.list', [
-            'accounts'      => $this->accountRepo->getAccounts($whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], ['key' => null, 'value' => null], [], true),
+            'accounts'      => $this->accountRepo->getAccounts($whereParams, $orWhereParams, [], ['by' => 'account_name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
             'params'        => array_merge($whereParams,$params),
             'noOfRecords'   => $noOfRecordsPerPage,
         ]);
@@ -117,7 +116,7 @@ class AccountController extends Controller
                 ]
             ];
             //confirming opening balance existency.
-            $openingBalanceAccountId = $this->accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], ['key' => null, 'value' => null], [], true)->id;
+            $openingBalanceAccountId = $this->accountRepo->getAccounts($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true)->id;
 
             if(!empty($id)) {
                 $account = $this->accountRepo->getAccount($id, [], false);
@@ -134,7 +133,6 @@ class AccountController extends Controller
                     ];
                 }
 
-                //getTransactions($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$relation,$activeFlag=true)
                 $openingTransactionId = $transactionRepo->getTransactions($searchTransaction, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], null, false)->id;
             }
 

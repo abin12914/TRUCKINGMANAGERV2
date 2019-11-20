@@ -103,14 +103,14 @@ class VoucherController extends Controller
             ]
         ];
 
-        //getVouchers($whereParams=[],$orWhereParams=[],$relationalParams=[],$relationalOrParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null],$aggregates=['key' => null, 'value' => null],$withParams=[],$activeFlag=true)
-        $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
+        $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'voucher_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
 
-        $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
-
-        if(!empty($allVouchers)) {
-            $totalDebitAmount   = $allVouchers->where('transaction_type', 1)->sum('amount');
-            $totalCreditAmount  = $allVouchers->where('transaction_type', 2)->sum('amount');
+        if($vouchers->lastPage() == $vouchers->currentPage()) {
+            $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
+            if(!empty($allVouchers)) {
+                $totalDebitAmount   = $allVouchers->where('transaction_type', 1)->sum('amount');
+                $totalCreditAmount  = $allVouchers->where('transaction_type', 2)->sum('amount');
+            }
         }
 
         //params passing for auto selection
@@ -119,7 +119,6 @@ class VoucherController extends Controller
         $whereParams['account_id']['paramValue']        = $request->get('account_id');
         $whereParams['transaction_type']['paramValue']  = $request->get('transaction_type');
 
-        //getVouchers($whereParams=[],$orWhereParams=[],$relationalParams=[],$orderBy=['by' => 'id', 'order' => 'asc', 'num' => null], $withParams=[],$activeFlag=true)
         return view('vouchers.list', [
             'vouchers'          => $vouchers,
             'totalDebitAmount'  => $totalDebitAmount,
@@ -176,7 +175,7 @@ class VoucherController extends Controller
             ];
 
             //confirming account exist-ency.
-            $baseAccounts   = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [],true);
+            $baseAccounts   = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [],true);
             $cashAccount    = $baseAccounts->firstWhere('account_name', '=', 'Cash');
             $clientAccount  = $baseAccounts->firstWhere('id', '=', $accountId);
 
@@ -218,6 +217,7 @@ class VoucherController extends Controller
 
             //save to voucher table
             $voucherResponse = $this->voucherRepo->saveVoucher([
+                'voucher_date'      => $transactionDate,
                 'transaction_id'    => $transactionResponse['transaction']->id,
                 'transaction_type'  => $transactionType,
                 'amount'            => $request->get('amount'),

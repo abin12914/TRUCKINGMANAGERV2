@@ -19,7 +19,7 @@ class TruckComponentComposer
     public function __construct(TruckRepository $truckRepo)
     {
         try {
-            $this->trucks = $truckRepo->getTrucks([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => null, 'value' => null], [], true);
+            $this->trucks = $truckRepo->getTrucks([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
         } catch (Exception $e) {
         }
     }
