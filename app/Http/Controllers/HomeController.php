@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
+    public $errorHead = null;
+
     /**
      * Create a new controller instance.
      *
@@ -16,6 +18,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth')->except('index');
+        $this->errorHead = config('settings.controller_code.HomeController');
     }
 
     /**

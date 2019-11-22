@@ -115,7 +115,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
 
-            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
 
         //params passing for auto selection
@@ -163,7 +163,7 @@ class ReportController extends Controller
             'type' => [
                 'paramName'     => 'type',
                 'paramOperator' => '=',
-                'paramValue'    => 3, //personal accounts
+                'paramValue'    => array_search('Personal', config('constants.accountTypes')), //personal account=3
             ]
         ];
 
@@ -189,7 +189,7 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
 
-            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+            return redirect(route('dashboard'))->with("message","An unexpected error occured! Please try after sometime. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
 
         //params passing for auto selection
@@ -220,36 +220,36 @@ class ReportController extends Controller
             $toDate     = Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d');
 
             try {
-                    $truck = $truckRepo->getTruck($request->get('truck_id'), [], true);
-                    $transactions = $transactionRepo->getTransactionReport($fromDate, $toDate, $request->get('truck_id'));
+                $truck = $truckRepo->getTruck($request->get('truck_id'), [], true);
+                $transactions = $transactionRepo->getTransactionReport($fromDate, $toDate, $request->get('truck_id'));
 
-                    foreach ($transactions as $key => $transaction) {
-                        //if rent transaction
-                        if(!empty($transaction->transportation)) {
-                            $transportationRentAmount += $transaction->amount;
-                        }
-                        //if employee wage transaction
-                        if(!empty($transaction->employeeWage)) {
-                            $employeeWageAmount += $transaction->amount;
-                        }
-                        //if purchase transaction
-                        if($transaction->purchase) {
-                            $purchaseAmount += $transaction->amount;
-                        }
-                        //if sale transaction
-                        if($transaction->sale) {
-                            $saleAmount += $transaction->amount;
-                        }
-                        //if expense transaction
-                        if(!empty($transaction->expense)) {
-                            $expenseAmount += $transaction->amount;
-                        }
+                foreach ($transactions as $key => $transaction) {
+                    //if rent transaction
+                    if(!empty($transaction->transportation)) {
+                        $transportationRentAmount += $transaction->amount;
                     }
+                    //if employee wage transaction
+                    if(!empty($transaction->employeeWage)) {
+                        $employeeWageAmount += $transaction->amount;
+                    }
+                    //if purchase transaction
+                    if($transaction->purchase) {
+                        $purchaseAmount += $transaction->amount;
+                    }
+                    //if sale transaction
+                    if($transaction->sale) {
+                        $saleAmount += $transaction->amount;
+                    }
+                    //if expense transaction
+                    if(!empty($transaction->expense)) {
+                        $expenseAmount += $transaction->amount;
+                    }
+                }
             } catch (\Exception $e) {
                 $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
                 return redirect(route('dashboard'))
-                    ->with("message","An unexpected error occured! Please try after sometime. Error Code : ". $this->errorHead. "/". $errorCode)
+                    ->with("message","An unexpected error occured! Please try after sometime. #". $this->errorHead. "/". $errorCode)
                     ->with("alert-class", "error");
             }
         }

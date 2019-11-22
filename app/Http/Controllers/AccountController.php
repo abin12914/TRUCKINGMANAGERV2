@@ -32,7 +32,8 @@ class AccountController extends Controller
      */
     public function index(AccountFilterRequest $request)
     {
-
+        $errorCode = 0;
+        $accounts = [];
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
         $whereParams = [
@@ -49,7 +50,7 @@ class AccountController extends Controller
             'type' => [
                 'paramName'     => 'type',
                 'paramOperator' => '=',
-                'paramValue'    => 3,//personal account
+                'paramValue'    => array_search('Personal', config('constants.accountTypes')), //personal account=3
             ],
         ];
 
@@ -68,9 +69,20 @@ class AccountController extends Controller
 
         //remove %% from sending back to result
         $params['search_by_name']['paramValue'] = $request->get('search_by_name');
+        try {
+
+            $accounts = $this->accountRepo->getAccounts(
+                $whereParams, $orWhereParams, [], ['by' => 'account_name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the accounts list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
 
         return view('accounts.list', [
-            'accounts'      => $this->accountRepo->getAccounts($whereParams, $orWhereParams, [], ['by' => 'account_name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
+            'accounts'      => $accounts,
             'params'        => array_merge($whereParams,$params),
             'noOfRecords'   => $noOfRecordsPerPage,
         ]);
@@ -101,9 +113,9 @@ class AccountController extends Controller
         $account              = null;
         $openingTransactionId = null;
 
-        $financialStatus    = $request->get('financial_status');
-        $openingBalance     = $request->get('opening_balance');
-        $name               = $request->get('name');
+        $financialStatus = $request->get('financial_status');
+        $openingBalance  = $request->get('opening_balance');
+        $name            = $request->get('name');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -140,7 +152,7 @@ class AccountController extends Controller
             $accountResponse   = $this->accountRepo->saveAccount([
                 'account_name'      => $request->get('account_name'),
                 'description'       => $request->get('description'),
-                'type'              => 3, //personal account type
+                'type'              => array_search('Personal', config('constants.accountTypes')), //personal account=3
                 'relation'          => $request->get('relation_type'),
                 'financial_status'  => $financialStatus,
                 'opening_balance'   => $openingBalance,
@@ -193,12 +205,12 @@ class AccountController extends Controller
                     'account' => $accountResponse['account'],
                 ];
             }
-            return redirect(route('accounts.show', $accountResponse['account']->id))->with("message","Account details saved successfully. Reference Number : ". $accountResponse['account']->id)->with("alert-class", "success");
+            return redirect(route('accounts.show', $accountResponse['account']->id))->with("message","Account details saved successfully. #". $accountResponse['account']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -207,7 +219,7 @@ class AccountController extends Controller
             ];
         }
 
-        return redirect()->back()->with("message","Failed to save the account details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the account details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -224,7 +236,7 @@ class AccountController extends Controller
         try {
             $account = $this->accountRepo->getAccount($id, [], false);
         } catch (Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing model not found exception when no model is fetched
             throw new ModelNotFoundException("Account", $errorCode);
@@ -249,14 +261,12 @@ class AccountController extends Controller
         try {
             $account = $this->accountRepo->getAccount($id, [], false);
         } catch (Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Account", $errorCode);
         }
 
-        return view('accounts.edit-add', [
-            'account' => $account
-        ]);
+        return view('accounts.edit-add', compact('account'));
     }
 
     /**
@@ -274,10 +284,10 @@ class AccountController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('accounts.show', $updateResponse['account']->id))->with("message","Account details updated successfully. Updated Record Number : ". $updateResponse['account']->id)->with("alert-class", "success");
+            return redirect(route('accounts.show', $updateResponse['account']->id))->with("message","Account details updated successfully. #". $updateResponse['account']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the account details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the account details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**

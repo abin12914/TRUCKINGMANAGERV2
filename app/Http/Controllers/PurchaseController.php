@@ -13,7 +13,7 @@ class PurchaseController extends Controller
     public function __construct(PurchaseRepository $purchaseRepo)
     {
         $this->purchaseRepo = $purchaseRepo;
-        $this->errorHead   = config('settings.controller_code.PurchaseController');
+        $this->errorHead    = config('settings.controller_code.PurchaseController');
     }
 
     /**

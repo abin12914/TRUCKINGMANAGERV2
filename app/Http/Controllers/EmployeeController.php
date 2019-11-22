@@ -33,6 +33,8 @@ class EmployeeController extends Controller
      */
     public function index(EmployeeFilterRequest $request)
     {
+        $errorCode = 0;
+        $employees = [];
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
         $whereParams = [
@@ -48,8 +50,19 @@ class EmployeeController extends Controller
             ]
         ];
 
+        try {
+            $employees = $this->employeeRepo->getEmployees(
+                $whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the employee list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
+
         return view('employees.list', [
-                'employees'     => $this->employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
+                'employees'     => $employees,
                 'params'        => $whereParams,
                 'noOfRecords'   => $noOfRecordsPerPage,
             ]);
@@ -123,8 +136,8 @@ class EmployeeController extends Controller
             $accountResponse = $accountRepo->saveAccount([
                 'account_name'      => $request->get('account_name'),
                 'description'       => $request->get('description'),
-                'type'              => 3, //personal account
-                'relation'          => 1, //employee relation type is 1
+                'type'              => array_search('Personal', config('constants.accountTypes')), //personal account=3
+                'relation'          => array_search('Employee', config('constants.accountRelations')),//employee relation type is 1
                 'financial_status'  => $financialStatus,
                 'opening_balance'   => $openingBalance,
                 'name'              => $name,
@@ -188,21 +201,21 @@ class EmployeeController extends Controller
                 ];
             }
 
-            return redirect(route('employees.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. Reference Number : ". $employeeResponse['employee']->id)->with("alert-class", "success");
+            return redirect(route('employees.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. #". $employeeResponse['employee']->id)->with("alert-class", "success");
         } catch (Exception $e) {dd($e);
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
-                'flag'          => false,
-                'errorCode'    => $errorCode
+                'flag'      => false,
+                'errorCode' => $errorCode
             ];
         }
 
-        return redirect()->back()->with("message","Failed to save the employee details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the employee details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -219,12 +232,12 @@ class EmployeeController extends Controller
         try {
             $employee = $this->employeeRepo->getEmployee($id, [], false);
         } catch (Exception $e) {
-           $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+           $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Employee", $errorCode);
         }
 
-        return view('employees.details', ['employee'  => $employee]);
+        return view('employees.details', compact('employee'));
     }
 
     /**
@@ -241,14 +254,12 @@ class EmployeeController extends Controller
         try {
             $employee = $this->employeeRepo->getEmployee($id);
         } catch (Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Employee", $errorCode);
         }
 
-        return view('employees.edit-add', [
-            'employee'  => $employee
-        ]);
+        return view('employees.edit-add', compact('employee'));
     }
 
     /**
@@ -267,10 +278,10 @@ class EmployeeController extends Controller
         $updateResponse = $this->store($request, $accountRepo, $transactionRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('employees.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. Updated Record Number : ". $updateResponse['employee']->id)->with("alert-class", "success");
+            return redirect(route('employees.show', $updateResponse['employee']->id))->with("message","Employee details updated successfully. #". $updateResponse['employee']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the employee details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the employee details.#". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**

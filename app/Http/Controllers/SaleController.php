@@ -12,8 +12,8 @@ class SaleController extends Controller
 
     public function __construct(SaleRepository $saleRepo)
     {
-        $this->saleRepo = $saleRepo;
-        $this->errorHead   = config('settings.controller_code.SaleController');
+        $this->saleRepo  = $saleRepo;
+        $this->errorHead = config('settings.controller_code.SaleController');
     }
 
     /**

@@ -21,8 +21,8 @@ class TruckController extends Controller
 
     public function __construct(TruckRepository $truckRepo)
     {
-        $this->truckRepo    = $truckRepo;
-        $this->errorHead    = config('settings.controller_code.TruckController');
+        $this->truckRepo = $truckRepo;
+        $this->errorHead = config('settings.controller_code.TruckController');
     }
 
     /**
@@ -32,6 +32,8 @@ class TruckController extends Controller
      */
     public function index(Request $request)
     {
+        $errorCode = 0;
+
         $whereParams = [
             'truck_type_id' => [
                 'paramName'     => 'truck_type_id',
@@ -50,8 +52,18 @@ class TruckController extends Controller
             ]
         ];
 
+        try {
+            $trucks = $this->truckRepo->getTrucks(
+                $whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the truck list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
         return view('trucks.list', [
-            'trucks' => $this->truckRepo->getTrucks($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true),
+            'trucks' => $trucks,
             'params' => $whereParams,
         ]);
     }
@@ -74,7 +86,7 @@ class TruckController extends Controller
      */
     public function store(TruckRegistrationRequest $request, $id=null)
     {
-        $errorCode          = 0;
+        $errorCode = 0;
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -116,12 +128,12 @@ class TruckController extends Controller
                 ];
             }
 
-            return redirect(route('trucks.index'))->with("message","Truck details saved successfully. Reference Number : ". $truckResponse['truck']->id)->with("alert-class", "success");
+            return redirect(route('trucks.index'))->with("message","Truck details saved successfully. #". $truckResponse['truck']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -129,7 +141,7 @@ class TruckController extends Controller
                 'errorCode' => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the truck details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the truck details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -146,15 +158,13 @@ class TruckController extends Controller
         try {
             $truck = $this->truckRepo->getTruck($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Truck", $errorCode);
         }
 
-        return view('trucks.details', [
-            'truck' => $truck,
-        ]);
+        return view('trucks.details', compact('truck'));
     }
 
     /**
@@ -171,15 +181,13 @@ class TruckController extends Controller
         try {
             $truck = $this->truckRepo->getTruck($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Truck", $errorCode);
         }
 
-        return view('trucks.edit-add', [
-            'truck' => $truck,
-        ]);
+        return view('trucks.edit-add', compact('truck'));
     }
 
     /**
@@ -194,10 +202,10 @@ class TruckController extends Controller
         $updateResponse = $this->store($request, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('trucks.index'))->with("message","Trucks details updated successfully. Updated Record Number : ". $updateResponse['truck']->id)->with("alert-class", "success");
+            return redirect(route('trucks.index'))->with("message","Trucks details updated successfully. #". $updateResponse['truck']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the truck details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the truck details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -225,10 +233,10 @@ class TruckController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the truck details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the truck details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -247,9 +255,17 @@ class TruckController extends Controller
             ]
         ];
 
-        return view('trucks.certificates', [
-            'trucks' => $this->truckRepo->getTrucks($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true),
-        ]);
+        try {
+            $trucks = $this->truckRepo->getTrucks(
+                $whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 25], [], [], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the truck list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
+        return view('trucks.certificates', compact('trucks'));
     }
 
     /**

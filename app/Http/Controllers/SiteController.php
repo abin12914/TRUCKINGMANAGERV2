@@ -21,8 +21,8 @@ class SiteController extends Controller
 
     public function __construct(SiteRepository $siteRepo)
     {
-        $this->siteRepo     = $siteRepo;
-        $this->errorHead    = config('settings.controller_code.SiteController');
+        $this->siteRepo  = $siteRepo;
+        $this->errorHead = config('settings.controller_code.SiteController');
     }
 
     /**
@@ -32,6 +32,7 @@ class SiteController extends Controller
      */
     public function index(SiteFilterRequest $request)
     {
+        $errorCode = 0;
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
 
         $whereParams = [
@@ -47,8 +48,19 @@ class SiteController extends Controller
             ]
         ];
 
+        try {
+            $sites = $this->siteRepo->getSites(
+                $whereParams, [], [], ['by' => 'name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the accounts list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
+
         return view('sites.list', [
-            'sites'       => $this->siteRepo->getSites($whereParams, [], [], ['by' => 'name', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true),
+            'sites'       => $sites,
             'params'      => $whereParams,
             'noOfRecords' => $noOfRecordsPerPage,
         ]);
@@ -74,13 +86,11 @@ class SiteController extends Controller
         SiteRegistrationRequest $request,
         $id=null
     ) {
-        $errorCode          = 0;
+        $errorCode = 0;
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $user = Auth::user();
-
             //save site to table
             $siteResponse   = $this->siteRepo->saveSite([
                 'name'       => $request->get('name'),
@@ -103,12 +113,12 @@ class SiteController extends Controller
                 ];
             }
 
-            return redirect(route('sites.index'))->with("message","Site details saved successfully. Reference Number : ". $siteResponse['site']->id)->with("alert-class", "success");
+            return redirect(route('sites.index'))->with("message","Site details saved successfully. #". $siteResponse['site']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -116,7 +126,7 @@ class SiteController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the site details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the site details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -133,15 +143,13 @@ class SiteController extends Controller
         try {
             $site = $this->siteRepo->getSite($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Site", $errorCode);
         }
 
-        return view('sites.details', [
-            'site' => $site,
-        ]);
+        return view('sites.details', compact('site'));
     }
 
     /**
@@ -158,15 +166,12 @@ class SiteController extends Controller
         try {
             $site = $this->siteRepo->getSite($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Site", $errorCode);
         }
 
-        return view('sites.edit-add', [
-            'site'      => $site,
-            'siteTypes' => config('constants.siteTypes')
-        ]);
+        return view('sites.edit-add', compact('site'));
     }
 
     /**
@@ -183,10 +188,10 @@ class SiteController extends Controller
         $updateResponse = $this->store($request, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('sites.index'))->with("message","Sites details updated successfully. Updated Record Number : ". $updateResponse['site']->id)->with("alert-class", "success");
+            return redirect(route('sites.index'))->with("message","Sites details updated successfully. #". $updateResponse['site']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the site details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the site details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -214,9 +219,9 @@ class SiteController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the site details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the site details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

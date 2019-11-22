@@ -33,6 +33,7 @@ class VoucherController extends Controller
      */
     public function index(VoucherFilterRequest $request)
     {
+        $errorCode          = 0;
         $whereParams        = [];
         $totalDebitAmount   = 0;
         $totalCreditAmount  = 0;
@@ -103,14 +104,20 @@ class VoucherController extends Controller
             ]
         ];
 
-        $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'voucher_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
+        try {
+            $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'voucher_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
 
-        if($vouchers->lastPage() == $vouchers->currentPage()) {
-            $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
-            if(!empty($allVouchers)) {
-                $totalDebitAmount   = $allVouchers->where('transaction_type', 1)->sum('amount');
-                $totalCreditAmount  = $allVouchers->where('transaction_type', 2)->sum('amount');
+            if($vouchers->lastPage() == $vouchers->currentPage()) {
+                $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
+                if(!empty($allVouchers)) {
+                    $totalDebitAmount   = $allVouchers->where('transaction_type', 1)->sum('amount');
+                    $totalCreditAmount  = $allVouchers->where('transaction_type', 2)->sum('amount');
+                }
             }
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the voucher list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
 
         //params passing for auto selection
@@ -181,7 +188,7 @@ class VoucherController extends Controller
 
             if($baseAccounts->count() < 2 || empty($cashAccount) || empty($clientAccount))
             {
-                throw new TMException("CustomError", 1);
+                throw new TMException("CustomError", 500);
             }
 
             if(!empty($id)) {
@@ -237,12 +244,12 @@ class VoucherController extends Controller
                 ];
             }
 
-            return redirect(route('vouchers.index'))->with("message","Voucher details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('vouchers.index'))->with("message","Voucher details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -250,7 +257,7 @@ class VoucherController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the voucher details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the voucher details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -266,15 +273,13 @@ class VoucherController extends Controller
         try {
             $voucher = $this->voucherRepo->getVoucher($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Voucher", $errorCode);
         }
 
-        return view('vouchers.details', [
-            'voucher' => $voucher,
-        ]);
+        return view('vouchers.details', compact('voucher'));
     }
 
     /**
@@ -290,14 +295,12 @@ class VoucherController extends Controller
         try {
             $voucher = $this->voucherRepo->getVoucher($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Voucher", $errorCode);
         }
 
-        return view('vouchers.edit-add', [
-            'voucher' => $voucher,
-        ]);
+        return view('vouchers.edit-add', compact('voucher'));
     }
 
     /**
@@ -316,10 +319,10 @@ class VoucherController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $accountRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('vouchers.index'))->with("message","Vouchers details updated successfully. Updated Record Number : ". $updateResponse['voucher']->id)->with("alert-class", "success");
+            return redirect(route('vouchers.index'))->with("message","Vouchers details updated successfully. #". $updateResponse['voucher']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the vouchers details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the vouchers details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -347,9 +350,9 @@ class VoucherController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the voucher details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the voucher details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

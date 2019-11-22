@@ -21,11 +21,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class TransportationController extends Controller
 {
     protected $transportationRepo;
-    public $errorHead = null, $driverWageType = 1; // employee wage type = 1 => Per Trip [%]
+    public $errorHead = null, $driverWageType;
 
     public function __construct(TransportationRepository $transportationRepo)
     {
         $this->transportationRepo = $transportationRepo;
+        $this->driverWageType     = array_search('Per Trip [%]', config('constants.wageTypes')); //driver bata wage type
         $this->errorHead          = config('settings.controller_code.TransportationController');
     }
 
@@ -36,6 +37,7 @@ class TransportationController extends Controller
      */
     public function index(TransportationFilterRequest $request)
     {
+        $errorCode   = 0;
         $noOfRecords = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
         $fromDate   = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : "";
@@ -91,9 +93,15 @@ class TransportationController extends Controller
             ],
         ];
 
-        $transportations = $this->transportationRepo->getTransportations(
-            $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecords], [], ['transaction', 'truck', 'source', 'destination', 'material'], true
-        );
+        try {
+            $transportations = $this->transportationRepo->getTransportations(
+                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecords], [], ['transaction', 'truck', 'source', 'destination', 'material'], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the transportation list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
 
         //params passing for auto selection
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
@@ -143,24 +151,33 @@ class TransportationController extends Controller
         $noOfTrip        = $request->get('no_of_trip');
         $tripDetails     = $truckRegNumber. " : ". $sourceName. " - ". $destinationName. " [". $noOfTrip. " Trip(s)]";
 
-        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
-        $driverId           = $request->get('driver_id');
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
+        $driverId        = $request->get('driver_id');
+
+        $orWhereParams = [
+            'transportation_rent' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Transportation-Rent",
+            ],
+            'employee_wage' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Employee-Wage",
+            ]
+        ];
+
+        $whereParams = [
+            'driver_id' => [
+                'paramName'     => 'id',
+                'paramOperator' => '=',
+                'paramValue'    => $driverId,
+            ]
+        ];
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $orWhereParams = [
-                'transportation_rent' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Transportation-Rent",
-                ],
-                'employee_wage' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Employee-Wage",
-                ]
-            ];
             //confirming transportation rent account && employee wage account exist-ency.
             $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
             $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
@@ -168,16 +185,9 @@ class TransportationController extends Controller
 
             if($baseAccounts->count() < 2 || empty($transportationRentAccountId) || empty($employeeWageAccountId))
             {
-                throw new TMException("CustomError", 1);
+                throw new TMException("CustomError", 500);
             }
 
-            $whereParams = [
-                'driver_id' => [
-                    'paramName'     => 'id',
-                    'paramOperator' => '=',
-                    'paramValue'    => $driverId,
-                ]
-            ];
             $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //if editing
@@ -258,17 +268,17 @@ class TransportationController extends Controller
 
             if(!empty($id)) {
                 return [
-                    'flag'    => true,
+                    'flag' => true,
                     'transportation' => $transportationResponse['transportation']
                 ];
             }
 
-            return redirect(route('transportations.index'))->with("message","Transportation details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('transportations.index'))->with("message","Transportation details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -276,7 +286,7 @@ class TransportationController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the transportation details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the transportation details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -293,15 +303,13 @@ class TransportationController extends Controller
         try {
             $transportation = $this->transportationRepo->getTransportation($id, ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account'], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
         }
 
-        return view('transportations.details', [
-            'transportation' => $transportation,
-        ]);
+        return view('transportations.details', compact('transportation'));
     }
 
     /**
@@ -316,9 +324,9 @@ class TransportationController extends Controller
         $transportation = [];
 
         try {
-            $transportation = $this->transportationRepo->getTransportation($id, ['purchse', 'employeeWages'], false);
+            $transportation = $this->transportationRepo->getTransportation($id, ['purchase', 'employeeWages'], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
@@ -349,10 +357,10 @@ class TransportationController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $accountRepo, $employeeWageRepo, $employeeRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('transportations.index'))->with("message","Transportations details updated successfully. Updated Record Number : ". $updateResponse['transportation']->id)->with("alert-class", "success");
+            return redirect(route('transportations.index'))->with("message","Transportations details updated successfully. #". $updateResponse['transportation']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the transportation details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the transportation details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -380,10 +388,10 @@ class TransportationController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the transportation details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the transportation details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -392,8 +400,9 @@ class TransportationController extends Controller
      */
     public function getLastTransaction(TransportationAjaxRequests $request)
     {
-        $whereParams = [];
-        $relationalParams = [];
+        $whereParams            = [];
+        $relationalParams       = [];
+        $weighmentBasedRentType = array_search('Tare Weight Based Rent', config('constants.rentTypes')); //weigh based rent
 
         if(!empty($request->get('truck_id'))) {
             $whereParams['truck_id'] = [
@@ -437,7 +446,7 @@ class TransportationController extends Controller
                     'contractor_account_id' => $transportation->transaction->debit_account_id,
                     'employee_id'           => $transportation->employeeWages->firstWhere('wage_type', $this->driverWageType)->employee_id,
                     'rent_type'             => $transportation->rent_type,
-                    'rent_measurement'      => ($transportation->rent_type == 2 ? null : $transportation->measurement),
+                    'rent_measurement'      => ($transportation->rent_type == $weighmentBasedRentType ? null : $transportation->measurement),
                     'rent_rate'             => $transportation->rent_rate,
                     'material_id'           => $transportation->material_id,
                 ];

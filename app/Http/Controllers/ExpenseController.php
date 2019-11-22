@@ -38,6 +38,8 @@ class ExpenseController extends Controller
      */
     public function index(ExpenseFilterRequest $request)
     {
+        $errorCode = 0;
+        $totalExpense = 0;
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
         $fromDate    = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
@@ -77,15 +79,22 @@ class ExpenseController extends Controller
             ],
         ];
 
-        $expenses = $this->expenseRepo->getExpenses(
-            $whereParams, [], $relationalParams, ['by' => 'expense_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
-        );
-
-        if($expenses->lastPage() == $expenses->currentPage()) {
-            $totalExpense = $this->expenseRepo->getExpenses(
-                $whereParams, [], $relationalParams, [], ['key' => 'sum', 'value' => 'amount'], [], true
+        try {
+            $expenses = $this->expenseRepo->getExpenses(
+                $whereParams, [], $relationalParams, ['by' => 'expense_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true
             );
+
+            if($expenses->lastPage() == $expenses->currentPage()) {
+                $totalExpense = $this->expenseRepo->getExpenses(
+                    $whereParams, [], $relationalParams, [], ['key' => 'sum', 'value' => 'amount'], [], true
+                );
+            }
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the expense list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
         }
+
 
         //params passing for auto selection
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
@@ -124,8 +133,8 @@ class ExpenseController extends Controller
         $errorCode = 0;
         $expense   = null;
 
-        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
-        $totalBill          = $request->get('amount');
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $totalBill       = $request->get('amount');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -188,12 +197,12 @@ class ExpenseController extends Controller
                 ];
             }
 
-            return redirect(route('expenses.index'))->with("message","Expense details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('expenses.index'))->with("message","Expense details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -201,7 +210,7 @@ class ExpenseController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the expense details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -217,15 +226,13 @@ class ExpenseController extends Controller
         try {
             $expense = $this->expenseRepo->getExpense($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Expense", $errorCode);
         }
 
-        return view('expenses.details', [
-            'expense' => $expense,
-        ]);
+        return view('expenses.details', compact('expense'));
     }
 
     /**
@@ -241,14 +248,12 @@ class ExpenseController extends Controller
         try {
             $expense = $this->expenseRepo->getExpense($id, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Expense", $errorCode);
         }
 
-        return view('expenses.edit-add', [
-            'expense' => $expense,
-        ]);
+        return view('expenses.edit-add', compact('expense'));
     }
 
     /**
@@ -267,10 +272,10 @@ class ExpenseController extends Controller
         $updateResponse = $this->store($request, $transactionRepo, $accountRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('expenses.index'))->with("message","Expenses details updated successfully. Updated Record Number : ". $updateResponse['expense']->id)->with("alert-class", "success");
+            return redirect(route('expenses.index'))->with("message","Expenses details updated successfully. #". $updateResponse['expense']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the expenses details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the expenses details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -298,10 +303,10 @@ class ExpenseController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the expense details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -317,14 +322,12 @@ class ExpenseController extends Controller
         try {
             $truck = $truckRepo->getTruck($truckId, [], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Truck", $errorCode);
         }
 
-        return view('expenses.certificates.renew', [
-            'truck' => $truck,
-        ]);
+        return view('expenses.certificates.renew', compact('truck'));
     }
 
     /**
@@ -342,8 +345,8 @@ class ExpenseController extends Controller
     ) {
         $errorCode = 0;
 
-        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
-        $totalBill          = $request->get('amount');
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $totalBill       = $request->get('amount');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -384,6 +387,7 @@ class ExpenseController extends Controller
 
             //save to expense table
             $expenseResponse = $this->expenseRepo->saveExpense([
+                'expense_date'      => $transactionDate,
                 'transaction_id'    => $transactionResponse['transaction']->id,
                 'truck_id'          => $request->get('truck_id'),
                 'service_id'        => $serviceType->id,
@@ -407,14 +411,14 @@ class ExpenseController extends Controller
 
             DB::commit();
 
-            return redirect(route('dashboard'))->with("message","Certificate data updated. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('trucks.certificates'))->with("message","Certificate data updated. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 7);
         }
-        return redirect()->back()->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the expense details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -443,8 +447,8 @@ class ExpenseController extends Controller
     ) {
         $errorCode = 0;
 
-        $transactionDate    = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
-        $totalBill          = $request->get('amount');
+        $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
+        $totalBill       = $request->get('amount');
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -485,6 +489,7 @@ class ExpenseController extends Controller
 
             //save to expense table
             $expenseResponse = $this->expenseRepo->saveExpense([
+                'expense_date'      => $transactionDate,
                 'transaction_id'    => $transactionResponse['transaction']->id,
                 'truck_id'          => $request->get('truck_id'),
                 'service_id'        => $serviceType->id,
@@ -514,13 +519,13 @@ class ExpenseController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with("message","Fuel refill expense data saved. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect()->back()->with("message","Fuel refill expense data saved. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 6);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 8);
         }
-        return redirect(route('dashboard'))->with("message","Failed to save the expense details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect(route('dashboard'))->with("message","Failed to save the expense details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

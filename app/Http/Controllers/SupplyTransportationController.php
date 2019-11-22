@@ -22,11 +22,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SupplyTransportationController extends Controller
 {
-    public $errorHead = null, $driverWageType = 1; //array_search('Per Trip [%]', config('constants.wageTypes'));;
+    public $errorHead = null, $driverWageType;
 
     public function __construct()
     {
-        $this->errorHead   = config('settings.controller_code.SupplyTransportationController');
+        $this->errorHead      = config('settings.controller_code.SupplyTransportationController');
+        $this->driverWageType = array_search('Per Trip [%]', config('constants.wageTypes')); //driver bata wage type
     }
 
     /**
@@ -36,10 +37,11 @@ class SupplyTransportationController extends Controller
      */
     public function index(TransportationFilterRequest $request, SupplyTransportationRepository $transportationRepo)
     {
+        $errorCode          = 0;
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
-        $fromDate   = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : "";
-        $toDate     = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : "";
+        $fromDate = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : "";
+        $toDate   = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : "";
 
         $whereParams = [
             'truck_id' => [
@@ -91,9 +93,16 @@ class SupplyTransportationController extends Controller
             ],
         ];
 
-        $transportations = $transportationRepo->getSupplyTransportations(
-            $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material'], true
-        );
+        try {
+            $transportations = $transportationRepo->getSupplyTransportations(
+                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material'], true
+            );
+        } catch (\Exception $e) {
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+
+            return redirect(route('dashboard'))->with("message","Failed to get the supply list. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        }
+
 
         //params passing for auto selection
         $relationalParams['from_date']['paramValue'] = $request->get('from_date');
@@ -156,49 +165,51 @@ class SupplyTransportationController extends Controller
         $saleDate           = Carbon::createFromFormat('d-m-Y', $request->get('sale_date'))->format('Y-m-d');
         $driverId           = $request->get('driver_id');
 
+        $orWhereParams = [
+            'transportation_rent' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Transportation-Rent",
+            ],
+            'employee_wage' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Employee-Wage",
+            ],
+            'purchase' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Purchases",
+            ],
+            'sale' => [
+                'paramName'     => 'account_name',
+                'paramOperator' => '=',
+                'paramValue'    => "Sales",
+            ],
+        ];
+
+        $whereParams = [
+            'driver_id' => [
+                'paramName'     => 'id',
+                'paramOperator' => '=',
+                'paramValue'    => $driverId,
+            ]
+        ];
+
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $orWhereParams = [
-                'transportation_rent' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Transportation-Rent",
-                ],
-                'employee_wage' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Employee-Wage",
-                ],
-                'purchase' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Purchases",
-                ],
-                'sale' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Sales",
-                ],
-            ];
             //confirming transportation rent account, employee wage, purchse and sale account exist-ency.
             $baseAccounts = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
             if($baseAccounts->count() < 4)
             {
-                throw new TMException("CustomError", 1);
+                throw new TMException("CustomError", 500);
             }
             $transportationRentAccountId = $baseAccounts->firstWhere('account_name', 'Transportation-Rent')->id;
             $employeeWageAccountId       = $baseAccounts->firstWhere('account_name', 'Employee-Wage')->id;
             $purchaseAccountId           = $baseAccounts->firstWhere('account_name', 'Purchases')->id;
             $saleAccountId               = $baseAccounts->firstWhere('account_name', 'Sales')->id;
 
-            $whereParams = [
-                'driver_id' => [
-                    'paramName'     => 'id',
-                    'paramOperator' => '=',
-                    'paramValue'    => $driverId,
-                ]
-            ];
             $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
 
             //if editing
@@ -362,12 +373,12 @@ class SupplyTransportationController extends Controller
                 ];
             }
 
-            return redirect(route('supply.index'))->with("message","Supply details saved successfully. Reference Number : ". $transactionResponse['transaction']->id)->with("alert-class", "success");
+            return redirect(route('supply.index'))->with("message","Supply details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
         } catch (Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
             return [
@@ -375,7 +386,7 @@ class SupplyTransportationController extends Controller
                 'errorCode'    => $errorCode
             ];
         }
-        return redirect()->back()->with("message","Failed to save the supply details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to save the supply details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 
     /**
@@ -394,7 +405,7 @@ class SupplyTransportationController extends Controller
                 $id, ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'employeeWages.employee.account', 'purchase.transaction.creditAccount', 'sale.transaction.debitAccount'], false
             );
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
@@ -419,7 +430,7 @@ class SupplyTransportationController extends Controller
         try {
             $transportation = $transportationRepo->getTransportation($id, ['employeeWages', 'purchase.transaction', 'sale.transaction'], false);
         } catch (\Exception $e) {
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
 
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Transportation", $errorCode);
@@ -449,10 +460,10 @@ class SupplyTransportationController extends Controller
         $updateResponse = $this->store($request, $transportationRepo, $transactionRepo, $accountRepo, $employeeWageRepo, $employeeRepo, $purchaseRepo, $saleRepo, $id);
 
         if($updateResponse['flag']) {
-            return redirect(route('supply.index'))->with("message","Supply details updated successfully. Updated Record Number : ". $updateResponse['transportation']->id)->with("alert-class", "success");
+            return redirect(route('supply.index'))->with("message","Supply details updated successfully. #". $updateResponse['transportation']->id)->with("alert-class", "success");
         }
 
-        return redirect()->back()->with("message","Failed to update the supply details. Error Code : ". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to update the supply details. #". $this->errorHead. "/". $updateResponse['errorCode'])->with("alert-class", "error");
     }
 
     /**
@@ -508,9 +519,9 @@ class SupplyTransportationController extends Controller
             //roll back in case of exceptions
             DB::rollback();
 
-            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 5);
         }
 
-        return redirect()->back()->with("message","Failed to delete the supply details. Error Code : ". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
+        return redirect()->back()->with("message","Failed to delete the supply details. #". $this->errorHead. "/". $errorCode)->with("alert-class", "error");
     }
 }

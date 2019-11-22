@@ -3,7 +3,7 @@
 //never think of changing values in production, ever!!
 return [
     'accountRelations' => [
-        1 => 'Employees',
+        1 => 'Employee',
         2 => 'Supplier',
         3 => 'Customer',
         4 => 'Contractor',
