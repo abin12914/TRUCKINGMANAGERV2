@@ -19,7 +19,9 @@ class EmployeeComponentComposer
     public function __construct(EmployeeRepository $employeeRepo)
     {
         try {
-            $this->employees = $employeeRepo->getEmployees([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
+            $this->employees = $employeeRepo->getEmployees(
+                [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
+            );
         } catch (Exception $e) {
         }
     }

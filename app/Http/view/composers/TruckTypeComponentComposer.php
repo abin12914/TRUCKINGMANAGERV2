@@ -36,8 +36,8 @@ class TruckTypeComponentComposer
     public function compose(View $view)
     {
         $view->with([
-            'truckTypesCombo'   => $this->truckTypes,
-            'truckBodyTypes'    => $this->truckBodyTypes
+            'truckTypesCombo' => $this->truckTypes,
+            'truckBodyTypes'  => $this->truckBodyTypes
         ]);
     }
 }

@@ -7,19 +7,8 @@ use Exception;
 
 class RentTypeComponentComposer
 {
-    /**
-     * The user repository implementation.
-     *
-     * @var UserRepository
-     */
     protected $rentTypes = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct()
     {
         try {

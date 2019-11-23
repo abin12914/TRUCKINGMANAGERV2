@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeletingEmployeeWageEventListener
 {
+    protected $listnerCode;
+
     /**
      * Create the event listener.
      *
@@ -15,7 +17,7 @@ class DeletingEmployeeWageEventListener
      */
     public function __construct()
     {
-        //
+        $this->listnerCode = config('settings.listener_code.DeletingEmployeeWageEventListener');
     }
 
     /**
@@ -26,7 +28,12 @@ class DeletingEmployeeWageEventListener
      */
     public function handle(DeletingEmployeeWageEvent $event)
     {
-        $transaction = $event->employeeWage->transaction;
-        $event->employeeWage->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        try {
+            $transaction = $event->employeeWage->transaction;
+            $event->employeeWage->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        } catch (\Exception $e) {
+            throw new TMException("CustomError", $this->listnerCode);
+        }
+
     }
 }

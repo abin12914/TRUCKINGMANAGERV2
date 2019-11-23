@@ -52,4 +52,12 @@ class Company extends Model
     {
         return $this->hasMany('App\Models\User', 'company_id')->withTrashed();
     }
+
+    /**
+     * Get the settings details related to the company
+     */
+    public function companySettings()
+    {
+        return $this->belongsTo('App\Models\CompanySettings');
+    }
 }

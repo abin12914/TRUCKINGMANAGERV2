@@ -12,7 +12,7 @@ use App\Repositories\CompanySettingsRepository;
 
 class CreatedCompanyEventListener implements ShouldQueue
 {
-    protected $accountRepo, $companySettingsRepo;
+    protected $accountRepo, $companySettingsRepo, $listnerCode;
 
     /**
      * Create the event listener.
@@ -23,6 +23,7 @@ class CreatedCompanyEventListener implements ShouldQueue
     {
         $this->accountRepo = $accountRepo;
         $this->companySettingsRepo = $companySettingsRepo;
+        $this->listnerCode = config('settings.listener_code.CreatedCompanyEventListener');
     }
 
     /**
@@ -33,7 +34,11 @@ class CreatedCompanyEventListener implements ShouldQueue
      */
     public function handle(CreatedCompanyEvent $event)
     {
-        //check whether company already have any accounts
+        //company have no accounts -> create new basic accounts
+        $accountConstants = config('constants.accountConstants');
+        $baseSettings     = config('constants.baseSettings');
+        $inputArray       = [];
+
         $whereParams = [
             'relation_type' => [
                 'paramName'     => 'company_id',
@@ -42,26 +47,6 @@ class CreatedCompanyEventListener implements ShouldQueue
             ]
         ];
 
-        $companyAccountsCount = $this->accountRepo->getAccounts($whereParams,[],[],['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'count', 'value' => null], [],true);
-
-        //check if accounts already exist
-        if($companyAccountsCount > 0) {
-            //base accounts already exist do nothing and return
-            return;
-        }
-
-        //company have no accounts -> create new basic accounts
-        $accountConstants   = config('constants.accountConstants');
-        $inputArray         = [];
-
-        foreach ($accountConstants as $key => $value) {
-            $value['company_id'] = $event->company->id;
-            $inputArray[] = $value;
-        }
-
-        $account = Account::insert($inputArray);
-
-        //check whether company already have any settings
         $settingsWhereParams = [
             'settings' => [
                 'paramName'     => 'company_id',
@@ -70,17 +55,40 @@ class CreatedCompanyEventListener implements ShouldQueue
             ]
         ];
 
-        $settings = $this->companySettingsRepo->getCompanySettings($settingsWhereParams);
+        try {
+            //check whether company already have any accounts
+            $companyAccountsCount = $this->accountRepo->getAccounts($whereParams,[],[],['by' => 'id', 'order' => 'asc', 'num' => null], ['key' => 'count', 'value' => null], [],true);
 
-        //check if settings already exist
-        if($settings->count() > 0) {
-            //settings already exist do nothing and return
-            return;
+            //check if accounts already exist
+            if($companyAccountsCount > 0) {
+                //base accounts already exist do nothing and return
+                return;
+            }
+
+            //add base accounts to newly created company
+            foreach ($accountConstants as $key => $value) {
+                $value['company_id'] = $event->company->id;
+                $inputArray[] = $value;
+            }
+
+            $account = Account::insert($inputArray);
+
+            /////////////////////////////////////////////////
+
+            //check whether company already have any settings
+            $settings = $this->companySettingsRepo->getCompanySettings($settingsWhereParams);
+
+            //check if settings already exist
+            if($settings->count() > 0) {
+                //settings already exist do nothing and return
+                return;
+            }
+
+            //add company default settings to newly created company
+            $baseSettings['company_id'] = $event->company->id;
+            $companySettings = CompanySettings::insert($baseSettings);
+        } catch (\Exception $e) {
+            throw new TMException("CustomError", $this->listnerCode);
         }
-
-        $baseSettings = config('constants.baseSettings');
-        $baseSettings['company_id'] = $event->company->id;
-
-        $companySettings = CompanySettings::insert($baseSettings);
     }
 }

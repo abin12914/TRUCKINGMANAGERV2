@@ -8,31 +8,22 @@ use Exception;
 
 class AccountComponentComposer
 {
-    /**
-     * The user repository implementation.
-     *
-     * @var UserRepository
-     */
     protected $accounts = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct(AccountRepository $accountRepo)
     {
         $whereParams = [
             [
                 'paramName'     => 'type',
                 'paramOperator' => '!=',
-                'paramValue'    => 2,
+                'paramValue'    => array_search('Nominal', config('constants.accountTypes')), //nominal account=2,
             ]
         ];
 
         try {
-            $this->accounts = $accountRepo->getAccounts($whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true);
+            $this->accounts = $accountRepo->getAccounts(
+                $whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true
+            );
         } catch (Exception $e) {
         }
     }

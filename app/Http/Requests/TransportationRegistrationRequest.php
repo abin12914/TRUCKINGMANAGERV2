@@ -125,7 +125,7 @@ class TransportationRegistrationRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if (!$this->checkCalculations() || !$this->hasNameValues()) {
-                $validator->errors()->add('calculations', 'Something went wrong!&emsp; Please try again after reloading the page');
+                $validator->errors()->add('calculations', 'Something went wrong! Please try again after reloading the page');
             }
         });
     }

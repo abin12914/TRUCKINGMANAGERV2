@@ -10,12 +10,6 @@ class AllViewComposer
 {
     protected $loggedUser = [], $settings = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct(CompanySettingsRepository $settingsRepo)
     {
         try {

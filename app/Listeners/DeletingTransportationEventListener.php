@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeletingTransportationEventListener
 {
+    protected $listnerCode;
+
     /**
      * Create the event listener.
      *
@@ -15,7 +17,7 @@ class DeletingTransportationEventListener
      */
     public function __construct()
     {
-        //
+        $this->listnerCode = config('settings.listener_code.DeletingTransportationEventListener');
     }
 
     /**
@@ -26,7 +28,11 @@ class DeletingTransportationEventListener
      */
     public function handle(DeletingTransportationEvent $event)
     {
-        $transaction = $event->transportation->transaction;
-        $event->transportation->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        try {
+            $transaction = $event->transportation->transaction;
+            $event->transportation->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        } catch (\Exception $e) {
+            throw new TMException("CustomError", $this->listnerCode);
+        }
     }
 }

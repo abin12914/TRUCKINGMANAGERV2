@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeletingVoucherEventListener
 {
+    protected $listnerCode;
+
     /**
      * Create the event listener.
      *
@@ -15,7 +17,7 @@ class DeletingVoucherEventListener
      */
     public function __construct()
     {
-        //
+        $this->listnerCode = config('settings.listener_code.DeletingVoucherEventListener');
     }
 
     /**
@@ -26,7 +28,11 @@ class DeletingVoucherEventListener
      */
     public function handle(DeletingVoucherEvent $event)
     {
-        $transaction = $event->voucher->transaction;
-        $event->voucher->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        try {
+            $transaction = $event->voucher->transaction;
+            $event->voucher->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        } catch (\Exception $e) {
+            throw new TMException("CustomError", $this->listnerCode);
+        }
     }
 }

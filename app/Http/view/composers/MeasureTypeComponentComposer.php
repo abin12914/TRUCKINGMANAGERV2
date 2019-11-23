@@ -9,10 +9,6 @@ class MeasureTypeComponentComposer
 {
     protected $measureTypes = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     */
     public function __construct()
     {
         try {

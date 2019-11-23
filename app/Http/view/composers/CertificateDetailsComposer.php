@@ -11,12 +11,6 @@ class CertificateDetailsComposer
 {
     protected $expiredCertTrucks = [], $criticalCertTrucks = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct(TruckRepository $truckRepo)
     {
         $thresholdDate = Carbon::now()->addDays(15);
@@ -57,25 +51,29 @@ class CertificateDetailsComposer
             ],
         ];
 
-        $trucks = $truckRepo->getTrucks(
-            $whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
-        );
+        try {
+            $trucks = $truckRepo->getTrucks(
+                $whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
+            );
 
-        $this->expiredCertTrucks = $trucks->filter(function ($truck, $key) {
-            return $truck->isCertExpired('insurance_upto')
-             || $truck->isCertExpired('tax_upto')
-             || $truck->isCertExpired('fitness_upto')
-             || $truck->isCertExpired('permit_upto')
-             || $truck->isCertExpired('pollution_upto');
-        });
+            $this->expiredCertTrucks = $trucks->filter(function ($truck, $key) {
+                return $truck->isCertExpired('insurance_upto')
+                 || $truck->isCertExpired('tax_upto')
+                 || $truck->isCertExpired('fitness_upto')
+                 || $truck->isCertExpired('permit_upto')
+                 || $truck->isCertExpired('pollution_upto');
+            });
 
-        $this->criticalCertTrucks = $trucks->filter(function ($truck, $key) {
-            return ($truck->isCertCritical('insurance_upto')
-             || $truck->isCertCritical('tax_upto')
-             || $truck->isCertCritical('fitness_upto')
-             || $truck->isCertCritical('permit_upto')
-             || $truck->isCertCritical('pollution_upto'));
-        });
+            $this->criticalCertTrucks = $trucks->filter(function ($truck, $key) {
+                return ($truck->isCertCritical('insurance_upto')
+                 || $truck->isCertCritical('tax_upto')
+                 || $truck->isCertCritical('fitness_upto')
+                 || $truck->isCertCritical('permit_upto')
+                 || $truck->isCertCritical('pollution_upto'));
+            });
+        } catch (\Exception $e) {
+
+        }
     }
 
     /**

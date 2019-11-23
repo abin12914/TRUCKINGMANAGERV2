@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\TruckRepository;
 use App\Repositories\AccountRepository;
+use App\Http\Requests\TruckFilterRequest;
 use App\Http\Requests\TruckRegistrationRequest;
 use App\Repositories\FuelRefillRepository;
 use Carbon\Carbon;
@@ -30,7 +31,7 @@ class TruckController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(TruckFilterRequest $request)
     {
         $errorCode = 0;
 

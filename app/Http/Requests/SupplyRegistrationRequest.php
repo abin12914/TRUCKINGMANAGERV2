@@ -56,7 +56,7 @@ class SupplyRegistrationRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if (!$this->checkTransportationCalculations() || !$this->checkPurchaseCalculations() || !$this->checkSaleCalculations()) {
-                $validator->errors()->add('calculations', 'Something went wrong with the calculations!&emsp; Please try again after reloading the page');
+                $validator->errors()->add('calculations', 'Something went wrong with the calculations! Please try again after reloading the page');
             }
         });
     }

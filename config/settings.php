@@ -37,6 +37,16 @@ return [
         'TruckTypeRepository'           => 2600,
         'VoucherRepository'             => 2700,
     ],
+    'composer_code' => [],
+    'listener_code' =>  [
+        'CreatedCompanyEventListener'         => 5000,
+        'DeletingEmployeeWageEventListener'   => 5100,
+        'DeletingExpenseEventListener'        => 5200,
+        'DeletingPurchaseEventListener'       => 5300,
+        'DeletingSaleEventListener'           => 5400,
+        'DeletingTransportationEventListener' => 5500,
+        'DeletingVoucherEventListener'        => 5600
+    ],
     'no_of_record_per_page' => env('NO_OF_RECORD_PER_PAGE', 25),
     'print_head_flag'       => env('PRINT_HEAD_FLAG', true),
 ];

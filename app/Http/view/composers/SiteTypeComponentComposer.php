@@ -7,19 +7,8 @@ use Exception;
 
 class SiteTypeComponentComposer
 {
-    /**
-     * The user repository implementation.
-     *
-     * @var UserRepository
-     */
     protected $siteTypes = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct()
     {
         try {

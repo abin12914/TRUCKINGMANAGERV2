@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeletingExpenseEventListener
 {
+    protected $listnerCode;
+
     /**
      * Create the event listener.
      *
@@ -15,7 +17,7 @@ class DeletingExpenseEventListener
      */
     public function __construct()
     {
-        //
+        $this->listnerCode = config('settings.listener_code.DeletingExpenseEventListener');
     }
 
     /**
@@ -26,11 +28,15 @@ class DeletingExpenseEventListener
      */
     public function handle(DeletingExpenseEvent $event)
     {
-        $transaction = $event->expense->transaction;
-        $fuelRefill  = $event->expense->fuelRefill;
-        if(!empty($fuelRefill)) {
-            $event->expense->isForceDeleting() ? $fuelRefill->forceDelete() : $fuelRefill->delete();
+        try {
+            $transaction = $event->expense->transaction;
+            $fuelRefill  = $event->expense->fuelRefill;
+            if(!empty($fuelRefill)) {
+                $event->expense->isForceDeleting() ? $fuelRefill->forceDelete() : $fuelRefill->delete();
+            }
+            $event->expense->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
+        } catch (\Exception $e) {
+            throw new TMException("CustomError", $this->listnerCode);
         }
-        $event->expense->isForceDeleting() ? $transaction->forceDelete() : $transaction->delete();
     }
 }

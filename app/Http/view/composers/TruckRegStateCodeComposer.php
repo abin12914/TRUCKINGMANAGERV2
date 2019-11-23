@@ -7,19 +7,8 @@ use Exception;
 
 class TruckRegStateCodeComposer
 {
-    /**
-     * The user repository implementation.
-     *
-     * @var UserRepository
-     */
     protected $stateCodes = [];
 
-    /**
-     * Create a new profile composer.
-     *
-     * @param  UserRepository  $users
-     * @return void
-     */
     public function __construct()
     {
         try {
