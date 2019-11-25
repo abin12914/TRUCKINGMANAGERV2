@@ -58,20 +58,14 @@ class ServiceRepository extends Repository
         $service = [];
 
         try {
-            if(empty($withParams)) {
-                $service = Service::query();
-            } else {
-                $service = Service::with($withParams);
-            }
-            
-            if($activeFlag) {
-                $service = $service->active();
-            }
+            $service = empty($withParams) ? Service::query() : Service::with($withParams);
+
+            $service = $activeFlag ? $service->active() : $service;
 
             $service = $service->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -82,8 +76,6 @@ class ServiceRepository extends Repository
      * Action for saving services.
      */
     public function saveService($inputArray=[], $id=null)
-    {
-        $saveFlag   = false;
 
         try {
             //find record with id or create new if none exist
@@ -101,7 +93,7 @@ class ServiceRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [
@@ -112,22 +104,20 @@ class ServiceRepository extends Repository
 
     public function deleteService($id, $forceFlag=false)
     {
-        $deleteFlag = false;
-
         try {
             $service = $this->getService($id, [], false);
 
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $service->forceDelete() : $service->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

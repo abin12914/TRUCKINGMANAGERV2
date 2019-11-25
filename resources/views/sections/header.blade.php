@@ -62,14 +62,14 @@
             <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <img src="{{ !empty($loggedUser) ? Voyager::image($loggedUser->avatar, '/images/default_user.jpg') : '/images/default_user.jpg' }}" class="user-image" alt="User Image">
-                    <span class="hidden-xs">{{ $loggedUser->name }}</span>
+                    <span class="hidden-xs">{{ !empty($loggedUser) ? $loggedUser->name : '' }}</span>
                 </a>
                 <ul class="dropdown-menu">
                     <!-- User image -->
                     <li class="user-header">
                         <img src="{{ !empty($loggedUser) ? Voyager::image($loggedUser->avatar, '/images/default_user.jpg') : '/images/default_user.jpg' }}" class="img-circle" alt="User Image">
                         <p>
-                            {{ $loggedUser->name }}
+                            {{ !empty($loggedUser) ? $loggedUser->name : '' }}
                         </p>
                     </li>
 

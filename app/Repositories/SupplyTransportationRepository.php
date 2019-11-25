@@ -61,23 +61,17 @@ class SupplyTransportationRepository extends Repository
         $transportation = [];
 
         try {
-            if(empty($withParams)) {
-                $transportation = Transportation::query();
-            } else {
-                $transportation = Transportation::with($withParams);
-            }
+            $transportation = empty($withParams) ? Transportation::query() : Transportation::with($withParams);
 
             //transportations which has reated sale and purchase are supply
             $transportation = $transportation->has('purchase')->has('sale');
 
-            if($activeFlag) {
-                $transportation = $transportation->active();
-            }
+            $transportation = $activeFlag ? $transportation->active() : $transportation;
 
             $transportation = $transportation->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

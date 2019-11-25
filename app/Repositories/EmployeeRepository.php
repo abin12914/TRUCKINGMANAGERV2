@@ -59,15 +59,9 @@ class EmployeeRepository extends Repository
         $employee = [];
 
         try {
-            if(empty($withParams)) {
-                $employee = Employee::query();
-            } else {
-                $employee = Employee::with($withParams);
-            }
+            $employee = empty($withParams) ? Employee::query() : Employee::with($withParams);
 
-            if($activeFlag) {
-                $employee = $employee->active();
-            }
+            $employee = $activeFlag ? $employee->active() : $employee;
 
             $employee = $employee->findOrFail($id);
         } catch (Exception $e) {
@@ -111,8 +105,6 @@ class EmployeeRepository extends Repository
 
     public function deleteEmployee($id, $forceFlag=false)
     {
-        $deleteFlag = false;
-
         try {
             //get employee record
             $employee = $this->getEmployee($id, [], false);

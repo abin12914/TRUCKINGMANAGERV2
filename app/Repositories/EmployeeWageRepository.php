@@ -58,15 +58,9 @@ class EmployeeWageRepository extends Repository
         $employeeWage = [];
 
         try {
-            if(empty($withParams)) {
-                $employeeWage = EmployeeWage::query();
-            } else {
-                $employeeWage = EmployeeWage::with($withParams);
-            }
+            $employeeWage = empty($withParams) ? EmployeeWage::query() : EmployeeWage::with($withParams);
 
-            if($activeFlag) {
-                $employeeWage = $employeeWage->active();
-            }
+            $employeeWage = $activeFlag ? $employeeWage->active() : $employeeWage;
 
             $employeeWage = $employeeWage->findOrFail($id);
         } catch (Exception $e) {

@@ -8,7 +8,7 @@ use Exception;
 
 class SiteComponentComposer
 {
-    protected $sites = [];
+    protected $siteRepo, $sites = [];
 
     /**
      * Create a new sites partial composer.
@@ -18,10 +18,7 @@ class SiteComponentComposer
      */
     public function __construct(SiteRepository $siteRepo)
     {
-        try {
-            $this->sites = $siteRepo->getSites([], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true);
-        } catch (Exception $e) {
-        }
+        $this->siteRepo = $siteRepo;
     }
 
     /**
@@ -32,6 +29,13 @@ class SiteComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->sites = $this->siteRepo->getSites(
+                [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+        }
+
         $view->with('sitesCombo', $this->sites);
     }
 }

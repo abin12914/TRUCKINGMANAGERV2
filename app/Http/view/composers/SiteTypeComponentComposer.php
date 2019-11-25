@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class SiteTypeComponentComposer
 {
@@ -11,10 +10,7 @@ class SiteTypeComponentComposer
 
     public function __construct()
     {
-        try {
-            $this->siteTypes = config('constants.siteTypes');
-        } catch (Exception $e) {
-        }
+        $this->siteTypes = config('constants.siteTypes');
     }
 
     /**

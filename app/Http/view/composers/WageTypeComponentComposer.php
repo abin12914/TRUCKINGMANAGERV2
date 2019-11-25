@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class WageTypeComponentComposer
 {
@@ -11,10 +10,7 @@ class WageTypeComponentComposer
 
     public function __construct()
     {
-        try {
-            $this->wageTypes = config('constants.wageTypes');
-        } catch (Exception $e) {
-        }
+        $this->wageTypes = config('constants.wageTypes');
     }
 
     /**

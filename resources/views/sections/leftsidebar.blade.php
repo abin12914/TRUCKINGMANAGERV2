@@ -8,7 +8,7 @@
         <div class="pull-left info">
             @if(!empty($loggedUser))
                 <p>{{ $loggedUser->name }}</p>
-                <a href="{{ route('user.profile.edit') }}"><i class="fa  fa-hand-o-right"></i> View Profile</a>
+                <a href="{{ route('company.settings.edit') }}"><i class="fa  fa-gear"></i> Settings</a>
             @else
                 <p>Login</p>
                 <a href="{{ route('login') }}"><i class="fa  fa-hand-o-right"></i> To continue</a>

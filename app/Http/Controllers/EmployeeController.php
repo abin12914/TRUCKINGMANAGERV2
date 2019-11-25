@@ -23,7 +23,7 @@ class EmployeeController extends Controller
     public function __construct(EmployeeRepository $employeeRepo)
     {
         $this->employeeRepo = $employeeRepo;
-        $this->errorHead   = config('settings.controllerCode.EmployeeController');
+        $this->errorHead   = config('settings.controller_code.EmployeeController');
     }
 
     /**

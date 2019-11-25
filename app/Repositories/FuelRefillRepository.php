@@ -58,15 +58,9 @@ class FuelRefillRepository extends Repository
         $fuelRefill = [];
 
         try {
-            if(empty($withParams)) {
-                $fuelRefill = FuelRefill::query();
-            } else {
-                $fuelRefill = FuelRefill::with($withParams);
-            }
+            $fuelRefill = empty($withParams) ? FuelRefill::query() : FuelRefill::with($withParams);
 
-            if($activeFlag) {
-                $fuelRefill = $fuelRefill->active();
-            }
+            $fuelRefill = $activeFlag ? $fuelRefill->active() : $fuelRefill;
 
             $fuelRefill = $fuelRefill->findOrFail($id);
         } catch (Exception $e) {

@@ -8,24 +8,11 @@ use Exception;
 
 class AccountComponentComposer
 {
-    protected $accounts = [];
+    protected $accountRepo, $accounts = [];
 
     public function __construct(AccountRepository $accountRepo)
     {
-        $whereParams = [
-            [
-                'paramName'     => 'type',
-                'paramOperator' => '!=',
-                'paramValue'    => array_search('Nominal', config('constants.accountTypes')), //nominal account=2,
-            ]
-        ];
-
-        try {
-            $this->accounts = $accountRepo->getAccounts(
-                $whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true
-            );
-        } catch (Exception $e) {
-        }
+        $this->accountRepo = $accountRepo;
     }
 
     /**
@@ -36,6 +23,21 @@ class AccountComponentComposer
      */
     public function compose(View $view)
     {
+        $whereParams = [
+            [
+                'paramName'     => 'type',
+                'paramOperator' => '!=',
+                'paramValue'    => array_search('Nominal', config('constants.accountTypes')), //nominal account=2,
+            ]
+        ];
+
+        try {
+            $this->accounts = $this->accountRepo->getAccounts(
+                $whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+        }
+
         $view->with('accountsCombo', $this->accounts);
     }
 }

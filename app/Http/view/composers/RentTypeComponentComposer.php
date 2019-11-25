@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class RentTypeComponentComposer
 {
@@ -11,10 +10,7 @@ class RentTypeComponentComposer
 
     public function __construct()
     {
-        try {
-            $this->rentTypes = config('constants.rentTypes');
-        } catch (Exception $e) {
-        }
+        $this->rentTypes = config('constants.rentTypes');
     }
 
     /**

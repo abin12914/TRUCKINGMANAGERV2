@@ -8,7 +8,7 @@ use Exception;
 
 class ServiceComponentComposer
 {
-    protected $services = [];
+    protected $serviceRepo, $services = [];
 
     /**
      * Create a new services partial composer.
@@ -18,11 +18,7 @@ class ServiceComponentComposer
      */
     public function __construct(ServiceRepository $serviceRepo)
     {
-        try {
-            $this->services = $serviceRepo->getServices([], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true);
-        } catch (Exception $e) {
-
-        }
+        $this->serviceRepo = $serviceRepo;
     }
 
     /**
@@ -33,6 +29,13 @@ class ServiceComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->services = $this->serviceRepo->getServices(
+                [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+
+        }
         $view->with('servicesCombo', $this->services);
     }
 }

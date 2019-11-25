@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Transaction;
-use Auth;
 use Exception;
 use App\Exceptions\TMException;
 
@@ -64,15 +63,9 @@ class TransactionRepository extends Repository
         $transaction = [];
 
         try {
-            if(empty($withParams)) {
-                $transaction = Transaction::query();
-            } else {
-                $transaction = Transaction::with($withParams);
-            }
+            $transaction = empty($withParams) ? Transaction::query() : Transaction::with($withParams);
 
-            if($activeFlag) {
-                $transaction = $transaction->active();
-            }
+            $transaction = $activeFlag ? $transaction->active() : $transaction;
 
             $transaction = $transaction->findOrFail($id);
         } catch (Exception $e) {

@@ -8,7 +8,7 @@ use Exception;
 
 class TruckComponentComposer
 {
-    protected $trucks = [];
+    protected $truckRepo, $trucks = [];
 
     /**
      * Create a new trucks partial composer.
@@ -18,10 +18,7 @@ class TruckComponentComposer
      */
     public function __construct(TruckRepository $truckRepo)
     {
-        try {
-            $this->trucks = $truckRepo->getTrucks([], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
-        } catch (Exception $e) {
-        }
+        $this->truckRepo = $truckRepo;
     }
 
     /**
@@ -32,6 +29,13 @@ class TruckComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->trucks = $this->truckRepo->getTrucks(
+                [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+        }
+
         $view->with('trucksCombo', $this->trucks);
     }
 }

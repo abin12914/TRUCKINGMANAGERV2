@@ -43,7 +43,7 @@ class MaterialRepository extends Repository
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($materials, $aggregates): parent::getFilter($materials, $orderBy));
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -58,15 +58,9 @@ dd($e);
         $material = [];
 
         try {
-            if(empty($withParams)) {
-                $material = Material::query();
-            } else {
-                $material = Material::with($withParams);
-            }
+            $material = empty($withParams) ? Material::query() : Material::with($withParams);
 
-            if($activeFlag) {
-                $material = $material->active();
-            }
+            $material = $activeFlag ? $material->active() : $material;
 
             $material = $material->findOrFail($id);
         } catch (Exception $e) {
@@ -83,8 +77,6 @@ dd($e);
      */
     public function saveMaterial($inputArray=[], $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $material = Material::findOrNew($id);
@@ -112,8 +104,6 @@ dd($e);
 
     public function deleteMaterial($id, $forceFlag=false)
     {
-        $deleteFlag = false;
-
         try {
             $material = $this->getMaterial($id, [], false);
 

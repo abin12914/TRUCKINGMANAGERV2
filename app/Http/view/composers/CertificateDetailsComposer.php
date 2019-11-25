@@ -9,9 +9,20 @@ use Exception;
 
 class CertificateDetailsComposer
 {
-    protected $expiredCertTrucks = [], $criticalCertTrucks = [];
+    protected $truckRepo, $expiredCertTrucks = [], $criticalCertTrucks = [];
 
     public function __construct(TruckRepository $truckRepo)
+    {
+        $this->truckRepo = $truckRepo;
+    }
+
+    /**
+     * Bind data to the view.
+     *
+     * @param  View  $view
+     * @return void
+     */
+    public function compose(View $view)
     {
         $thresholdDate = Carbon::now()->addDays(15);
 
@@ -52,7 +63,7 @@ class CertificateDetailsComposer
         ];
 
         try {
-            $trucks = $truckRepo->getTrucks(
+            $trucks = $this->truckRepo->getTrucks(
                 $whereParams, $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
             );
 
@@ -74,16 +85,7 @@ class CertificateDetailsComposer
         } catch (\Exception $e) {
 
         }
-    }
 
-    /**
-     * Bind data to the view.
-     *
-     * @param  View  $view
-     * @return void
-     */
-    public function compose(View $view)
-    {
         $view->with([
             'criticalCertTrucks' => $this->criticalCertTrucks,
             'expiredCertTrucks'  => $this->expiredCertTrucks

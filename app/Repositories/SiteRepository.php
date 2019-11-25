@@ -58,15 +58,9 @@ class SiteRepository extends Repository
         $site = [];
 
         try {
-            if(empty($withParams)) {
-                $site = Site::query();
-            } else {
-                $site = Site::with($withParams);
-            }
+            $site = empty($withParams) ? Site::query() : Site::with($withParams);
 
-            if($activeFlag) {
-                $site = $site->active();
-            }
+            $site = $activeFlag ? $site->active() : $site;
 
             $site = $site->findOrFail($id);
         } catch (Exception $e) {
@@ -87,8 +81,6 @@ class SiteRepository extends Repository
      */
     public function saveSite($inputArray, $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $site = Site::findOrNew($id);

@@ -59,15 +59,9 @@ class AccountRepository extends Repository
         $account = [];
 
         try {
-            if(empty($withParams)) {
-                $account = Account::query();
-            } else {
-                $account = Account::with($withParams);
-            }
+            $account = empty($withParams) ? Account::query() : Account::with($withParams);
 
-            if($activeFlag) {
-                $account = $account->active();
-            }
+            $account = $activeFlag ? $account->active() : $account;
 
             $account = $account->findOrFail($id);
         } catch (Exception $e) {

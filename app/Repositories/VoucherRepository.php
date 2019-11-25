@@ -61,15 +61,9 @@ class VoucherRepository extends Repository
         $voucher = [];
 
         try {
-            if(empty($withParams)) {
-                $voucher = Voucher::query();
-            } else {
-                $voucher = Voucher::with($withParams);
-            }
+            $voucher = empty($withParams) ? Voucher::query() : Voucher::with($withParams);
 
-            if($activeFlag) {
-                $voucher = $voucher->active();
-            }
+            $voucher = $activeFlag ? $voucher->active() : $voucher;
 
             $voucher = $voucher->findOrFail($id);
         } catch (Exception $e) {

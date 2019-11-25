@@ -8,17 +8,11 @@ use App\Repositories\CompanySettingsRepository;
 
 class AllViewComposer
 {
-    protected $loggedUser = [], $settings = [];
+    protected $settingsRepo, $loggedUser = [], $settings = [];
 
     public function __construct(CompanySettingsRepository $settingsRepo)
     {
-        try {
-            if(Auth::check()) {
-                $this->loggedUser = Auth::user();
-                $this->settings   = $settingsRepo->getCompanySettings([]);
-            }
-        } catch (Exception $e) {
-        }
+        $this->settingsRepo = $settingsRepo;
     }
 
     /**
@@ -29,6 +23,14 @@ class AllViewComposer
      */
     public function compose(View $view)
     {
+        try {
+            if(Auth::check()) {
+                $this->loggedUser = Auth::user();
+                $this->settings   = $this->settingsRepo->getCompanySettings([]);
+            }
+        } catch (Exception $e) {
+        }
+
         $view->with(['loggedUser' => $this->loggedUser, 'settings' => $this->settings]);
     }
 }

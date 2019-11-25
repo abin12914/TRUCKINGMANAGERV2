@@ -58,20 +58,14 @@ class TruckTypeRepository extends Repository
         $truckType = [];
 
         try {
-            if(empty($withParams)) {
-                $truckType = TruckType::query();
-            } else {
-                $truckType = TruckType::with($withParams);
-            }
-            
-            if($activeFlag) {
-                $truckType = $truckType->active();
-            }
+            $truckType = empty($withParams) ? TruckType::query() : TruckType::with($withParams);
+
+            $truckType = $activeFlag ? $truckType->active() : $truckType;
 
             $truckType = $truckType->findOrFail($id);
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 
@@ -83,8 +77,6 @@ class TruckTypeRepository extends Repository
      */
     public function saveTruckType($inputArray=[], $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $truckType = TruckType::findOrNew($id);
@@ -101,7 +93,7 @@ class TruckTypeRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [
@@ -112,22 +104,20 @@ class TruckTypeRepository extends Repository
 
     public function deleteTruckType($id, $forceFlag=false)
     {
-        $deleteFlag = false;
-
         try {
             $truckType = $this->getTruckType($id, [], false);
 
             //force delete or soft delete
             //related records will be deleted by deleting event handlers
             $forceFlag ? $truckType->forceDelete() : $truckType->delete();
-            
+
             return [
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
-            
+
             throw new TMException("CustomError", $this->errorCode);
         }
 

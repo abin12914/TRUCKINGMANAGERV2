@@ -18,7 +18,7 @@ class ReportController extends Controller
 
     public function __construct()
     {
-        $this->errorHead = config('settings.controllerCode.ReportController');
+        $this->errorHead = config('settings.controller_code.ReportController');
     }
 
     /**

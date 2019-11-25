@@ -58,15 +58,9 @@ class TransportationRepository extends Repository
         $transportation = [];
 
         try {
-            if(empty($withParams)) {
-                $transportation = Transportation::query();
-            } else {
-                $transportation = Transportation::with($withParams);
-            }
+            $transportation = empty($withParams) ? Transportation::query() : Transportation::with($withParams);
 
-            if($activeFlag) {
-                $transportation = $transportation->active();
-            }
+            $transportation = $activeFlag ? $transportation->active() : $transportation;
 
             $transportation = $transportation->findOrFail($id);
         } catch (Exception $e) {

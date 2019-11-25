@@ -40,12 +40,12 @@ $(function () {
     });
 
     if($('.datepicker_reg').val() == 'undefined' || $('.datepicker_reg').val() == '') {
-        if(typeof defaultDate !== 'undefined') {
+        if(typeof defaultDate !== 'undefined' && defaultDate != '') {
             //setting user setting date as selected
             $('.datepicker_reg').datepicker('setDate', defaultDate);
         } else {
             //setting current date as selected
-            $('.datepicker_reg').datepicker('setDate', 'now');
+            $('.datepicker_reg:not(#default_date, #rsb_default_date)').datepicker('setDate', 'now');
         }
     }
 
@@ -188,30 +188,9 @@ $(function () {
 
         $.ajax({
             url: "/company/settings",
-            method: "post",
+            method: "put",
             data:{
                 'default_date' : value,
-            },
-            success: function(result) {
-                if(result && result.flag) {
-                    console.log("settings update : Success");
-                }
-            },
-            error: function(error) {
-                console.log("settings update : Error");
-            }
-        });
-    });
-
-    // right sidebar menu driver auto selection flag click event
-    $('body').on("change", "#rsb_driver_auto_selection", function () {
-        var value = $(this).is(":checked") ? 1 : null;
-
-        $.ajax({
-            url: "/company/settings",
-            method: "post",
-            data:{
-                'driver_auto_selection' : value,
             },
             success: function(result) {
                 if(result && result.flag) {

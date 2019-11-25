@@ -8,7 +8,7 @@ use Exception;
 
 class TruckTypeComponentComposer
 {
-    protected $truckTypes = [], $truckBodyTypes = [];
+    protected $truckTypeRepo, $truckTypes = [], $truckBodyTypes = [];
 
     /**
      * Create a new truckTypes partial composer.
@@ -18,13 +18,8 @@ class TruckTypeComponentComposer
      */
     public function __construct(TruckTypeRepository $truckTypeRepo)
     {
-        try {
-            $this->truckTypes = $truckTypeRepo->getTruckTypes([], [],  [], ['by' => 'generic_quantity', 'order' => 'asc', 'num' => null], [], [], true);
-
-            $this->truckBodyTypes = config('constants.truckBodyTypes');
-        } catch (Exception $e) {
-
-        }
+        $this->truckTypeRepo  = $truckTypeRepo;
+        $this->truckBodyTypes = config('constants.truckBodyTypes');
     }
 
     /**
@@ -35,6 +30,15 @@ class TruckTypeComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->truckTypes = $this->truckTypeRepo->getTruckTypes(
+                [], [],  [], ['by' => 'generic_quantity', 'order' => 'asc', 'num' => null], [], [], true
+            );
+
+        } catch (Exception $e) {
+
+        }
+
         $view->with([
             'truckTypesCombo' => $this->truckTypes,
             'truckBodyTypes'  => $this->truckBodyTypes

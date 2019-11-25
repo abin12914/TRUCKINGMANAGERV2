@@ -98,6 +98,16 @@ class SaleController extends Controller
      */
     public function getLastTransaction(Request $request)
     {
+        //caling base class fn for getting comapnysettings
+        parent::companySettings();
+        
+        if($this->companySettings->sale_auto_selection != 1) {
+            return [
+                'flag' => 'false',
+                'cause'=> 'sale-auto/settings/off'
+            ];
+        }
+
         $relationalParams = [];
 
         if(!empty($request->get('truck_id'))) {

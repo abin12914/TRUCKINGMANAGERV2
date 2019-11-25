@@ -42,8 +42,6 @@ class CompanySettingsRepository extends Repository
      */
     public function saveCompanySettings($inputArray=[], $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $companySettings = CompanySettings::findOrNew($id);
@@ -55,7 +53,7 @@ class CompanySettingsRepository extends Repository
             $companySettings->save();
 
             return [
-                'flag'    => true,
+                'flag' => true,
                 'companySettings' => $companySettings,
             ];
         } catch (Exception $e) {

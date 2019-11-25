@@ -58,15 +58,9 @@ class TruckRepository extends Repository
         $truck = [];
 
         try {
-            if(empty($withParams)) {
-                $truck = Truck::query();
-            } else {
-                $truck = Truck::with($withParams);
-            }
+            $truck = empty($withParams) ? Truck::query() : Truck::with($withParams);
 
-            if($activeFlag) {
-                $truck = $truck->active();
-            }
+            $truck = $activeFlag ? $truck->active() : $truck;
 
             $truck = $truck->findOrFail($id);
         } catch (Exception $e) {
@@ -87,8 +81,6 @@ class TruckRepository extends Repository
      */
     public function saveTruck($inputArray, $id=null)
     {
-        $saveFlag   = false;
-
         try {
             //find record with id or create new if none exist
             $truck = Truck::findOrNew($id);
@@ -105,7 +97,7 @@ class TruckRepository extends Repository
             ];
         } catch (Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
-dd($e);
+
             throw new TMException("CustomError", $this->errorCode);
         }
         return [

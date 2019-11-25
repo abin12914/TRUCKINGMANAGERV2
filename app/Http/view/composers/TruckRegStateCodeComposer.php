@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class TruckRegStateCodeComposer
 {
@@ -11,10 +10,8 @@ class TruckRegStateCodeComposer
 
     public function __construct()
     {
-        try {
-            $this->stateCodes = config('constants.stateCodes');
-        } catch (Exception $e) {
-        }
+
+        $this->stateCodes = config('constants.stateCodes');
     }
 
     /**

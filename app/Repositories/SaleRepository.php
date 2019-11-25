@@ -58,15 +58,9 @@ class SaleRepository extends Repository
         $sale = [];
 
         try {
-            if(empty($withParams)) {
-                $sale = Sale::query();
-            } else {
-                $sale = Sale::with($withParams);
-            }
+            $sale = empty($withParams) ? Sale::query() : Sale::with($withParams);
 
-            if($activeFlag) {
-                $sale = $sale->active();
-            }
+            $sale = $activeFlag ? $sale->active() : $sale;
 
             $sale = $sale->findOrFail($id);
         } catch (Exception $e) {

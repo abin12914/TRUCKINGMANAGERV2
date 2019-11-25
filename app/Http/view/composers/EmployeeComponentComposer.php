@@ -8,7 +8,7 @@ use Exception;
 
 class EmployeeComponentComposer
 {
-    protected $employees = [];
+    protected $employeeRepo, $employees = [];
 
     /**
      * Create a new employees partial composer.
@@ -18,12 +18,7 @@ class EmployeeComponentComposer
      */
     public function __construct(EmployeeRepository $employeeRepo)
     {
-        try {
-            $this->employees = $employeeRepo->getEmployees(
-                [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
-            );
-        } catch (Exception $e) {
-        }
+        $this->employeeRepo = $employeeRepo;
     }
 
     /**
@@ -34,6 +29,13 @@ class EmployeeComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->employees = $this->employeeRepo->getEmployees(
+                [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+        }
+
         $view->with('employeesCombo', $this->employees);
     }
 }

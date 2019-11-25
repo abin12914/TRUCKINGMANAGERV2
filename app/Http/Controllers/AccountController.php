@@ -22,7 +22,7 @@ class AccountController extends Controller
     public function __construct(AccountRepository $accountRepo)
     {
         $this->accountRepo = $accountRepo;
-        $this->errorHead   = config('settings.controllerCode.AccountController');
+        $this->errorHead   = config('settings.controller_code.AccountController');
     }
 
     /**

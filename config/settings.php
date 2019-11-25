@@ -3,19 +3,20 @@
 return [
 
     'controller_code' =>  [
-        'AccountController'             => '01',
-        'EmployeeController'            => '02',
-        'ExpenseController'             => '03',
-        'HomeController'                => '04',
-        'PurchaseController'            => '05',
-        'ReportController'              => '06',
-        'SaleController'                => '07',
-        'SiteController'                => '08',
-        'SupplyTransportationController'=> '09',
-        'TransportationController'      => '10',
-        'TruckController'               => '11',
-        'UserController'                => '12',
-        'VoucherController'             => '13'
+        'Controller'                    => 1,
+        'AccountController'             => 2,
+        'EmployeeController'            => 3,
+        'ExpenseController'             => 4,
+        'HomeController'                => 5,
+        'PurchaseController'            => 6,
+        'ReportController'              => 7,
+        'SaleController'                => 8,
+        'SiteController'                => 9,
+        'SupplyTransportationController'=> 10,
+        'TransportationController'      => 11,
+        'TruckController'               => 12,
+        'UserController'                => 13,
+        'VoucherController'             => 14
     ],
     'repository_code' =>  [
         'AccountRepository'             => 1000,

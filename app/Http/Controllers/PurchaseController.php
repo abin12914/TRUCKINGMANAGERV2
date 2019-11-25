@@ -98,6 +98,16 @@ class PurchaseController extends Controller
      */
     public function getLastTransaction(Request $request)
     {
+        //caling base class fn for getting comapnysettings
+        parent::companySettings();
+        
+        if($this->companySettings->purchase_auto_selection != 1) {
+            return [
+                'flag' => 'false',
+                'cause'=> 'purchase-auto/settings/off'
+            ];
+        }
+
         $relationalParams = [];
 
         if(!empty($request->get('truck_id'))) {

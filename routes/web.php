@@ -10,13 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-//Route::redirect('/', '/login');
 Route::get('/', 'HomeController@index')->name('home');
-//temp
-// Route::get('/signout', function() {
-//     \Auth::logout();
-// })->name('signout');
 
 //voyager
 Route::group(['prefix' => 'admin'], function () {
@@ -31,6 +25,10 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 	Route::get('/profile/edit', 'UserController@profileEdit')->name('user.profile.edit');
     Route::post('/profile/update', 'UserController@profileUpdate')->name('user.profile.update');
+
+    //company settings
+    Route::get('/company/settings', 'CompanySettingsController@edit')->name('company.settings.edit');
+    Route::put('/company/settings', 'CompanySettingsController@update')->name('company.settings.update');
 
     Route::get('/certificates', 'TruckController@certificates')->name('trucks.certificates');
     Route::get('/certificates/renew/{truckId}', 'ExpenseController@certEdit')->name('expense.certificate.renew');
@@ -64,8 +62,6 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
         Route::get('/last/sale', 'SaleController@getLastTransaction')->name('sale.last');
         //last fuel refill via ajax
         Route::get('/last/fuel-refill', 'TruckController@getLastFuelRefill')->name('fuel-refill.last');
-        //update company settings
-        Route::post('/company/settings', 'HomeController@updateSettings')->name('company.settings.update');
     });
 });
 

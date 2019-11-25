@@ -4,11 +4,10 @@ namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
 use App\Repositories\MaterialRepository;
-use Exception;
 
 class MaterialComponentComposer
 {
-    protected $materials = [];
+    protected $materialRepo, $materials = [];
 
     /**
      * Create a new materials partial composer.
@@ -18,10 +17,7 @@ class MaterialComponentComposer
      */
     public function __construct(MaterialRepository $materialRepo)
     {
-        try {
-            $this->materials = $materialRepo->getMaterials([], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true);
-        } catch (Exception $e) {
-        }
+        $this->materialRepo = $materialRepo;
     }
 
     /**
@@ -32,6 +28,13 @@ class MaterialComponentComposer
      */
     public function compose(View $view)
     {
+        try {
+            $this->materials = $this->materialRepo->getMaterials(
+                [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
+            );
+        } catch (Exception $e) {
+        }
+
         $view->with('materialsCombo', $this->materials);
     }
 }

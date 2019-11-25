@@ -58,15 +58,9 @@ class ExpenseRepository extends Repository
         $expense = [];
 
         try {
-            if(empty($withParams)) {
-                $expense = Expense::query();
-            } else {
-                $expense = Expense::with($withParams);
-            }
+            $expense = empty($withParams) ? Expense::query() : Expense::with($withParams);
 
-            if($activeFlag) {
-                $expense = $expense->active();
-            }
+            $expense = $activeFlag ? $expense->active() : $expense;
 
             $expense = $expense->findOrFail($id);
         } catch (Exception $e) {

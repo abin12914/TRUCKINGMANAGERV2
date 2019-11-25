@@ -400,6 +400,33 @@ class TransportationController extends Controller
      */
     public function getLastTransaction(TransportationAjaxRequests $request)
     {
+        //caling base class fn for getting comapnysettings
+        parent::companySettings();
+
+        $requestType = $request->get('type');
+        $action = true;
+
+        switch ($requestType) {
+            case 'get-driver':
+                $action = ($this->companySettings->driver_auto_selection == 1);
+                break;
+            case 'get-contractor':
+                $action = ($this->companySettings->contractor_auto_selection == 1);
+                break;
+            case 'get-measures':
+                $action = ($this->companySettings->measurements_auto_selection == 1);
+                break;
+            default:
+                break;
+        }
+
+        if(!$action) {
+            return [
+                'flag'  => false,
+                'cause' => 'default/settings/off'
+            ];
+        }
+
         $whereParams            = [];
         $relationalParams       = [];
         $weighmentBasedRentType = array_search('Tare Weight Based Rent', config('constants.rentTypes')); //weigh based rent

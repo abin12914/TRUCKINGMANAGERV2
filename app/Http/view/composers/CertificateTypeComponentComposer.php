@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class CertificateTypeComponentComposer
 {
@@ -15,10 +14,7 @@ class CertificateTypeComponentComposer
      */
     public function __construct()
     {
-        try {
-            $this->certificateTypes = config('constants.certificateTypes');
-        } catch (Exception $e) {
-        }
+        $this->certificateTypes = config('constants.certificateTypes');
     }
 
     /**

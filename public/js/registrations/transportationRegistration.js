@@ -282,12 +282,13 @@ function changeMessage() {
 function driverByTruck() {
     var truckId = $('#truck_id').val();
 
-    if(truckId && 1 == 0) {
+    if(truckId) {
         $.ajax({
             url: "/last/transportation", //"/transportation/driver",
             method: "get",
             data: {
-                truck_id : truckId
+                truck_id : truckId,
+                type     : 'get-driver'
             },
             success: function(result) {
                 if(result && result.flag) {
@@ -319,7 +320,8 @@ function contractorBySite() {
             method: "get",
             data: {
                 source_id       : sourceId,
-                destination_id  : destinationId
+                destination_id  : destinationId,
+                type            : 'get-contractor'
             },
             success: function(result) {
                 if(result && result.flag) {
@@ -356,6 +358,7 @@ function rentDetailByCombo() {
                 source_id               : sourceId,
                 destination_id          : destinationId,
                 contractor_account_id   : contractorAccountId,
+                type                    : 'get-measures'
             },
             success: function(result) {
                 if(result && result.flag) {

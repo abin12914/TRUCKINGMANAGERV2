@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class MeasureTypeComponentComposer
 {
@@ -11,10 +10,7 @@ class MeasureTypeComponentComposer
 
     public function __construct()
     {
-        try {
-            $this->measureTypes = config('constants.measureTypes');
-        } catch (Exception $e) {
-        }
+        $this->measureTypes = config('constants.measureTypes');
     }
 
     /**

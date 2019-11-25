@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class AccountRelationComponentComposer
 {
@@ -22,10 +21,7 @@ class AccountRelationComponentComposer
      */
     public function __construct()
     {
-        try {
-            $this->accountRelations = config('constants.accountRelations');
-        } catch (Exception $e) {
-        }
+        $this->accountRelations = config('constants.accountRelations');
     }
 
     /**

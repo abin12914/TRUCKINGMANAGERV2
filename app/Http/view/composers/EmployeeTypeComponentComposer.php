@@ -3,7 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Exception;
 
 class EmployeeTypeComponentComposer
 {
@@ -11,10 +10,7 @@ class EmployeeTypeComponentComposer
 
     public function __construct()
     {
-        try {
-            $this->employeeTypes = config('constants.employeeTypes');
-        } catch (Exception $e) {
-        }
+        $this->employeeTypes = config('constants.employeeTypes');
     }
 
     /**

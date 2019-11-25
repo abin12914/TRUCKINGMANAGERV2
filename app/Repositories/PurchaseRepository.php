@@ -58,15 +58,9 @@ class PurchaseRepository extends Repository
         $purchase = [];
 
         try {
-            if(empty($withParams)) {
-                $purchase = Purchase::query();
-            } else {
-                $purchase = Purchase::with($withParams);
-            }
+            $purchase = empty($withParams) ? Purchase::query() : Purchase::with($withParams);
 
-            if($activeFlag) {
-                $purchase = $purchase->active();
-            }
+            $purchase = $activeFlag ? $purchase->active() : $purchase;
 
             $purchase = $purchase->findOrFail($id);
         } catch (Exception $e) {
