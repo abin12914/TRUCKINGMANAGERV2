@@ -109,4 +109,25 @@ class SaleRegistrationRequest extends FormRequest
 
         return (($quanty * $rate) == $tripBill && ($tripBill * $noOfTrip) == $totalBill);
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'customer_account_id.required'  => 'The customer field is required.',
+            'customer_account_id.exists'    => 'Invalid data.',
+            'sale_trip_bill.required'       => 'The trip bill field is required.',
+            'sale_trip_bill.numeric'        => 'Invalid data.',
+            'sale_trip_bill.max'            => 'The trip bill value is exceeded the maximum.',
+            'sale_trip_bill.min'            => 'The trip bill value is expected to a minimum.',
+            'sale_total_bill.required'      => 'The total bill field is required.',
+            'sale_total_bill.numeric'       => 'Invalid data.',
+            'sale_total_bill.max'           => 'The total bill value is exceeded the maximum.',
+            'sale_total_bill.min'           => 'The total bill value is expected to a minimum.',
+        ];
+    }
 }

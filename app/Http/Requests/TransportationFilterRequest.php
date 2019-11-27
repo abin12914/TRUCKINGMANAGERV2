@@ -68,4 +68,21 @@ class TransportationFilterRequest extends FormRequest
                                         ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'contractor_account_id.exists'  => 'Invalid data.',
+            'truck_id.exists'               => 'Invalid data.',
+            'source_id.exists'              => 'Invalid data.',
+            'destination_id.exists'         => 'Invalid data.',
+            'driver_id.exists'              => 'Invalid data.',
+            'material_id.exists'            => 'Invalid data.',
+        ];
+    }
 }

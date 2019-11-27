@@ -41,7 +41,7 @@ class MaterialRepository extends Repository
             $materials = parent::relationalFilter($materials, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($materials, $aggregates): parent::getFilter($materials, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class MaterialRepository extends Repository
             $material = $activeFlag ? $material->active() : $material;
 
             $material = $material->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -91,7 +91,7 @@ class MaterialRepository extends Repository
                 'flag'    => true,
                 'material' => $material,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -115,7 +115,7 @@ class MaterialRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

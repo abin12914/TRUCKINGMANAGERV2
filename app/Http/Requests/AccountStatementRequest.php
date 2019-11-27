@@ -49,4 +49,16 @@ class AccountStatementRequest extends FormRequest
                                 ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'account_id.exists' => 'Invalid data.',
+        ];
+    }
 }

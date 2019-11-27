@@ -130,7 +130,7 @@ class TruckController extends Controller
             }
 
             return redirect(route('trucks.index'))->with("message","Truck details saved successfully. #". $truckResponse['truck']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -230,7 +230,7 @@ class TruckController extends Controller
 
             DB::commit();
             return redirect(route('truck.index'))->with("message","Truck details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

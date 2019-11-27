@@ -202,7 +202,7 @@ class EmployeeController extends Controller
             }
 
             return redirect(route('employees.show', $employeeResponse['employee']->id))->with("message","Employee details saved successfully. #". $employeeResponse['employee']->id)->with("alert-class", "success");
-        } catch (Exception $e) {dd($e);
+        } catch (\Exception $e) {dd($e);
             //roll back in case of exceptions
             DB::rollback();
 
@@ -231,7 +231,7 @@ class EmployeeController extends Controller
 
         try {
             $employee = $this->employeeRepo->getEmployee($id, [], false);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
            $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Employee", $errorCode);
@@ -253,7 +253,7 @@ class EmployeeController extends Controller
 
         try {
             $employee = $this->employeeRepo->getEmployee($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Employee", $errorCode);

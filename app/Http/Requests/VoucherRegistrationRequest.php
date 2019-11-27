@@ -54,4 +54,17 @@ class VoucherRegistrationRequest extends FormRequest
                                     ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'account_id.required' => 'The relation field is required.'
+            'account_id.exists'   => 'Invalid data.'
+        ];
+    }
 }

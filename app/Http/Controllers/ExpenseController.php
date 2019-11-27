@@ -198,7 +198,7 @@ class ExpenseController extends Controller
             }
 
             return redirect(route('expenses.index'))->with("message","Expense details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -299,7 +299,7 @@ class ExpenseController extends Controller
 
             DB::commit();
             return redirect(route('expenses.index'))->with("message","Expense details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -412,7 +412,7 @@ class ExpenseController extends Controller
             DB::commit();
 
             return redirect(route('trucks.certificates'))->with("message","Certificate data updated. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -520,7 +520,7 @@ class ExpenseController extends Controller
             DB::commit();
 
             return redirect()->back()->with("message","Fuel refill expense data saved. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

@@ -33,7 +33,7 @@ class TruckComponentComposer
             $this->trucks = $this->truckRepo->getTrucks(
                 [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with('trucksCombo', $this->trucks);

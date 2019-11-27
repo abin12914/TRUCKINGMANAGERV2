@@ -46,7 +46,7 @@ class TransactionRepository extends Repository
             $transactions = (!empty($relation) ? $transactions->has($this->transactionRelations[$relation]['relationName']) : $transactions);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($transactions, $aggregates) : parent::getFilter($transactions, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -68,7 +68,7 @@ class TransactionRepository extends Repository
             $transaction = $activeFlag ? $transaction->active() : $transaction;
 
             $transaction = $transaction->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -96,7 +96,7 @@ class TransactionRepository extends Repository
                 'flag'        => true,
                 'transaction' => $transaction,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -121,7 +121,7 @@ class TransactionRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -162,7 +162,7 @@ class TransactionRepository extends Repository
                 $query->where('truck_id', '=', $truckId);
             });
             $transactions = $transactions->get();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 7);
 
             throw new TMException("CustomError", $this->errorCode);

@@ -33,7 +33,7 @@ class EmployeeComponentComposer
             $this->employees = $this->employeeRepo->getEmployees(
                 [], [],  [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with('employeesCombo', $this->employees);

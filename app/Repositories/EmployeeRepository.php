@@ -42,7 +42,7 @@ class EmployeeRepository extends Repository
 
             //if asking aggregates ? return result.
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($employees, $aggregates) : parent::getFilter($employees, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -64,7 +64,7 @@ class EmployeeRepository extends Repository
             $employee = $activeFlag ? $employee->active() : $employee;
 
             $employee = $employee->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -92,7 +92,7 @@ class EmployeeRepository extends Repository
                 'flag'     => true,
                 'employee' => $employee,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -117,7 +117,7 @@ class EmployeeRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

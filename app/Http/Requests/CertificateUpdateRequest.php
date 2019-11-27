@@ -65,4 +65,24 @@ class CertificateUpdateRequest extends FormRequest
                                     ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'truck_id.required'         => 'The truck field is required.',
+            'truck_id.exists'           => 'Invalid data.',
+            'account_id.required'       => 'The supplier field is required.',
+            'account_id.exists'         => 'Invalid data.',
+            'certificate_type.required' => 'The certificate field is required.',
+            'certificate_type.exists'   => 'Invalid data.',
+            'updated_date.required'     => 'The validity date field is required.',
+            'updated_date.date_format'  => 'Invalid date format.',
+            'updated_date.after'        => 'The validity date must be a date after today.',
+        ];
+    }
 }

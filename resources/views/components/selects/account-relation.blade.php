@@ -3,7 +3,7 @@
     @php
         if($registrationFlag){
             //employee -> [index = 1] excluding the relationtype 'employee'[index = 1] for account register/update
-            unset($accountRelations[1]);
+            unset($accountRelations[array_search('Employee', config('constants.accountRelations'))]);
         }
     @endphp
     @if(!empty($accountRelations) && (count($accountRelations) > 0))

@@ -32,7 +32,7 @@ class MaterialComponentComposer
             $this->materials = $this->materialRepo->getMaterials(
                 [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with('materialsCombo', $this->materials);

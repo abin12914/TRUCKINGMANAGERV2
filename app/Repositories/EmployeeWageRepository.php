@@ -41,7 +41,7 @@ class EmployeeWageRepository extends Repository
             $employeeWages = parent::relationalFilter($employeeWages, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($employeeWages, $aggregates) : parent::getFilter($employeeWages, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class EmployeeWageRepository extends Repository
             $employeeWage = $activeFlag ? $employeeWage->active() : $employeeWage;
 
             $employeeWage = $employeeWage->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -91,7 +91,7 @@ class EmployeeWageRepository extends Repository
                 'flag'    => true,
                 'employeeWage' => $employeeWage,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -115,7 +115,7 @@ class EmployeeWageRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Site '. empty($site) ? 'Add' : 'Edit')
+@section('title', 'Site '. (empty($site) ? 'Add' : 'Edit'))
 @section('content')
 <section class="content-header">
     <h1>

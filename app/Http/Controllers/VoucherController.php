@@ -245,7 +245,7 @@ class VoucherController extends Controller
             }
 
             return redirect(route('vouchers.index'))->with("message","Voucher details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -346,7 +346,7 @@ class VoucherController extends Controller
 
             DB::commit();
             return redirect(route('vouchers.index'))->with("message","Voucher details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

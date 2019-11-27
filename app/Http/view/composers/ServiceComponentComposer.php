@@ -33,7 +33,7 @@ class ServiceComponentComposer
             $this->services = $this->serviceRepo->getServices(
                 [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
         $view->with('servicesCombo', $this->services);

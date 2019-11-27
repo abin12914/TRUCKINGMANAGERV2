@@ -41,7 +41,7 @@ class SaleRepository extends Repository
             $sales = parent::relationalFilter($sales, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($sales, $aggregates) : parent::getFilter($sales, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class SaleRepository extends Repository
             $sale = $activeFlag ? $sale->active() : $sale;
 
             $sale = $sale->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -91,7 +91,7 @@ class SaleRepository extends Repository
                 'flag'    => true,
                 'sale' => $sale,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -116,7 +116,7 @@ class SaleRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

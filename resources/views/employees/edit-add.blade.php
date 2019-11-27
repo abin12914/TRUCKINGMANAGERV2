@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Employee '. empty($employee) ? 'Add' : 'Edit')
+@section('title', 'Employee '. (empty($employee) ? 'Add' : 'Edit'))
 @section('content')
 <section class="content-header">
     <h1>

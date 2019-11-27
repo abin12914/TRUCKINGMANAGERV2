@@ -109,4 +109,25 @@ class PurchaseRegistrationRequest extends FormRequest
 
         return (($quanty * $rate) == $tripBill && ($tripBill * $noOfTrip) == $totalBill);
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'supplier_account_id.required'  => 'The supplier field is required.',
+            'supplier_account_id.exists'    => 'Invalid data.',
+            'purchase_trip_bill.required'   => 'The trip bill field is required.',
+            'purchase_trip_bill.numeric'    => 'Invalid data.',
+            'purchase_trip_bill.max'        => 'The trip bill value is exceeded the maximum.',
+            'purchase_trip_bill.min'        => 'The trip bill value is expected to a minimum.',
+            'purchase_total_bill.required'  => 'The total bill field is required.',
+            'purchase_total_bill.numeric'   => 'Invalid data.',
+            'purchase_total_bill.max'       => 'The total bill value is exceeded the maximum.',
+            'purchase_total_bill.min'       => 'The total bill value is expected to a minimum.',
+        ];
+    }
 }

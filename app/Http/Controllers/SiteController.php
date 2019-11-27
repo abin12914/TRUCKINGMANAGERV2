@@ -114,7 +114,7 @@ class SiteController extends Controller
             }
 
             return redirect(route('sites.index'))->with("message","Site details saved successfully. #". $siteResponse['site']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -215,7 +215,7 @@ class SiteController extends Controller
 
             DB::commit();
             return redirect(route('sites.index'))->with("message","Site details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

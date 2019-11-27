@@ -45,4 +45,16 @@ class EmployeeFilterRequest extends FormRequest
                                 ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'employee_id.exists' => 'Invalid data.'
+        ];
+    }
 }

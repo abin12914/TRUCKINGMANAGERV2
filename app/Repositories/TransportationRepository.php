@@ -41,7 +41,7 @@ class TransportationRepository extends Repository
             $transportations = parent::relationalFilter($transportations, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($transportations, $aggregates) : parent::getFilter($transportations, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class TransportationRepository extends Repository
             $transportation = $activeFlag ? $transportation->active() : $transportation;
 
             $transportation = $transportation->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if($e->getMessage() == "CustomError") {
                 $this->errorCode = $e->getCode();
             } else {
@@ -95,7 +95,7 @@ class TransportationRepository extends Repository
                 'flag'    => true,
                 'transportation' => $transportation,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -119,7 +119,7 @@ class TransportationRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

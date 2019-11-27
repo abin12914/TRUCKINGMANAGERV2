@@ -41,7 +41,7 @@ class ServiceRepository extends Repository
             $services = parent::relationalFilter($services, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($services, $aggregates): parent::getFilter($services, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class ServiceRepository extends Repository
             $service = $activeFlag ? $service->active() : $service;
 
             $service = $service->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -76,7 +76,7 @@ class ServiceRepository extends Repository
      * Action for saving services.
      */
     public function saveService($inputArray=[], $id=null)
-
+    {
         try {
             //find record with id or create new if none exist
             $service = Service::findOrNew($id);
@@ -91,7 +91,7 @@ class ServiceRepository extends Repository
                 'flag'    => true,
                 'service' => $service,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -115,7 +115,7 @@ class ServiceRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

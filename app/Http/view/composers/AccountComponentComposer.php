@@ -35,7 +35,7 @@ class AccountComponentComposer
             $this->accounts = $this->accountRepo->getAccounts(
                 $whereParams, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with('accountsCombo', $this->accounts);

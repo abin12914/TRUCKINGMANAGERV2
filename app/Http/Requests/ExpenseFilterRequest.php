@@ -58,4 +58,18 @@ class ExpenseFilterRequest extends FormRequest
                                 ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'service_id.exists' => 'Invalid data.',
+            'account_id.exists' => 'Invalid data.',
+            'truck_id.exists'   => 'Invalid data.'
+        ];
+    }
 }

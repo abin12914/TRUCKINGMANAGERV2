@@ -44,7 +44,7 @@ class SupplyTransportationRepository extends Repository
             $transportations = parent::relationalFilter($transportations, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($transportations, $aggregates) : parent::getFilter($transportations, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -69,7 +69,7 @@ class SupplyTransportationRepository extends Repository
             $transportation = $activeFlag ? $transportation->active() : $transportation;
 
             $transportation = $transportation->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);

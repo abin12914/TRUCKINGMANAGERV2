@@ -44,7 +44,7 @@ class VoucherRepository extends Repository
             $vouchers = parent::relationalOrFilter($vouchers, $relationalOrParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($vouchers, $aggregates) : parent::getFilter($vouchers, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -66,7 +66,7 @@ class VoucherRepository extends Repository
             $voucher = $activeFlag ? $voucher->active() : $voucher;
 
             $voucher = $voucher->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 4);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -94,7 +94,7 @@ class VoucherRepository extends Repository
                 'flag'    => true,
                 'voucher' => $voucher,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -123,7 +123,7 @@ class VoucherRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

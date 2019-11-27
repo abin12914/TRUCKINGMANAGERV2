@@ -107,4 +107,35 @@ class TruckRegistrationRequest extends FormRequest
                                                 ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'reg_number.required_without'               => 'This field is required.',
+            'reg_number.max'                            => 'Invalid data.',
+            'reg_number.regex'                          => 'Invalid data.',
+            'reg_number.unique'                         => 'Invalid data.',
+            'reg_number_state_code.required_without'    => 'This field is required.',
+            'reg_number_state_code.in'                  => 'Invalid data.',
+            'reg_number_region_code.required_without'   => 'This field is required.',
+            'reg_number_region_code.max'                => 'Invalid data.',
+            'reg_number_region_code.min'                => 'Invalid data.',
+            'reg_number_region_code.in'                 => 'Invalid data.',
+            'reg_number_region_code.digits'             => 'Invalid data.',
+            'reg_number_region_code.nuemeric'           => 'Invalid data.',
+            'reg_number_unique_alphabet.max'            => 'Invalid data.',
+            'reg_number_unique_digit.required_without'  => 'This field is required.',
+            'reg_number_unique_digit.integer'           => 'Invalid data.',
+            'reg_number_unique_digit.min'               => 'Invalid data.',
+            'reg_number_unique_digit.max'               => 'Invalid data.',
+            'truck_type_id.required'                    => 'This field is required.',
+            'truck_type_id.integer'                     => 'Invalid data.',
+            'truck_type_id.exisits'                     => 'Invalid data.'
+        ];
+    }
 }

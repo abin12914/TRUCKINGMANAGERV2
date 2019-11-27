@@ -116,6 +116,30 @@ class TransportationRegistrationRequest extends FormRequest
     }
 
     /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'truck_id.required'             => 'The truck field is required.',
+            'truck_id.exists'               => 'Invalid data.',
+            'source_id.required'            => 'The source field is required.',
+            'source_id.exists'              => 'Invalid data.'
+            'destination_id.required'       => 'The destination field is required.',
+            'destination_id.different'      => 'The source and destination should not be same.'
+            'destination_id.exists'         => 'Invalid data.'
+            'contractor_account_id.required'=> 'The contractor field is required.',
+            'contractor_account_id.exists'  => 'Invalid data.'
+            'material_id.required'          => 'The material field is required.',
+            'material_id.exists'            => 'Invalid data.'
+            'driver_id.required'            => 'The driver field is required.',
+            'driver_id.exists'              => 'Invalid data.',
+        ];
+    }
+
+    /**
      * Configure the validator instance.
      *
      * @param  \Illuminate\Validation\Validator  $validator

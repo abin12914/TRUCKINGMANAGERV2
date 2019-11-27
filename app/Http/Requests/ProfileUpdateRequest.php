@@ -37,7 +37,7 @@ class ProfileUpdateRequest extends FormRequest
                                         'email',
                                         Rule::unique('users')->ignore(Auth::id()),
                                     ],
-            'currentPassword'   =>  [
+            'current_password'  =>  [
                                         'required',
                                     ],
             'password'          =>  [

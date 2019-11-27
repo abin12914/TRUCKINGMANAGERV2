@@ -77,11 +77,11 @@
                                 <h4 class="text-red">&emsp;&emsp;Authentication</h4>
                                 <hr>
                                 <div class="form-group">
-                                    <label for="currentPassword" class="col-md-3 control-label"><i class="text-red">* </i> Current Password : </label>
-                                    <div class="col-md-9 {{ !empty($errors->first('currentPassword')) ? 'has-error' : '' }}">
-                                        <input type="password" name="currentPassword" class="form-control" placeholder="Current password"  tabindex="6">
-                                        @if(!empty($errors->first('currentPassword')))
-                                            <p style="color: red;" >{{$errors->first('currentPassword')}}</p>
+                                    <label for="current_password" class="col-md-3 control-label"><i class="text-red">* </i> Current Password : </label>
+                                    <div class="col-md-9 {{ !empty($errors->first('current_password')) ? 'has-error' : '' }}">
+                                        <input type="password" name="current_password" class="form-control" placeholder="Current password"  tabindex="6">
+                                        @if(!empty($errors->first('current_password')))
+                                            <p style="color: red;" >{{$errors->first('current_password')}}</p>
                                         @endif
                                     </div>
                                 </div><br>

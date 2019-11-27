@@ -28,7 +28,7 @@ class AllViewComposer
                 $this->loggedUser = Auth::user();
                 $this->settings   = $this->settingsRepo->getCompanySettings([]);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with(['loggedUser' => $this->loggedUser, 'settings' => $this->settings]);

@@ -81,7 +81,7 @@ class Repository
 
         if(!empty($orderBy['num'])) {
             if($orderBy['num'] == 1) {
-                $query = $query->firstOrFail();
+                $query = $query->orderBy($orderBy['by'], $orderBy['order'])->firstOrFail();
             } else {
                 $query = $query->orderBy($orderBy['by'], $orderBy['order'])->paginate($orderBy['num']);
             }

@@ -274,7 +274,7 @@ class TransportationController extends Controller
             }
 
             return redirect(route('transportations.index'))->with("message","Transportation details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -384,7 +384,7 @@ class TransportationController extends Controller
 
             DB::commit();
             return redirect(route('transportations.index'))->with("message","Transportation details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -478,7 +478,7 @@ class TransportationController extends Controller
                     'material_id'           => $transportation->material_id,
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 

@@ -68,4 +68,19 @@ class FuelRefillUpdateRequest extends FormRequest
                                     ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'truck_id.required'     => 'The truck field is required.',
+            'truck_id.exists'       => 'Invalid data.',
+            'account_id.required'   => 'The supplier field is required.',
+            'account_id.exists'     => 'Invalid data.'
+        ];
+    }
 }

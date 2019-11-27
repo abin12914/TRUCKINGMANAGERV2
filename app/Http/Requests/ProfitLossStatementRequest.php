@@ -42,4 +42,19 @@ class ProfitLossStatementRequest extends FormRequest
                             ],
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'truck_id.required_with'  => 'The truck field is required when from date / to date is present.',
+            'from_date.required_with' => 'The from date field is required when to date / truck is present.',
+            'to_date.required_with'   => 'The to date field is required when from date / truck is present.',
+            'truck_id.exists'         => 'Invalid data.'
+        ];
+    }
 }

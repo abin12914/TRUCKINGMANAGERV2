@@ -35,7 +35,7 @@ class TruckTypeComponentComposer
                 [], [],  [], ['by' => 'generic_quantity', 'order' => 'asc', 'num' => null], [], [], true
             );
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 

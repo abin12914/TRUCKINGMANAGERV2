@@ -41,7 +41,7 @@ class FuelRefillRepository extends Repository
             $fuelRefills = parent::relationalFilter($fuelRefills, $relationalParams);
 
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($fuelRefills, $aggregates) : parent::getFilter($fuelRefills, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -63,7 +63,7 @@ class FuelRefillRepository extends Repository
             $fuelRefill = $activeFlag ? $fuelRefill->active() : $fuelRefill;
 
             $fuelRefill = $fuelRefill->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -91,7 +91,7 @@ class FuelRefillRepository extends Repository
                 'flag'    => true,
                 'fuelRefill' => $fuelRefill,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -116,7 +116,7 @@ class FuelRefillRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

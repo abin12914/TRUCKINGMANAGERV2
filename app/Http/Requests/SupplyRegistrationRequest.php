@@ -47,6 +47,29 @@ class SupplyRegistrationRequest extends FormRequest
     }
 
     /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        $transportationMessages = (new TransportationRegistrationRequest())->messages();
+        $purchaseMessages       = (new PurchaseRegistrationRequest())->messages();
+        $saleMessages           = (new SaleRegistrationRequest())->messages();
+        $supplyMessages         = [
+            'sale_no_of_trip.same'     => 'Invalid data.',
+            'purchase_no_of_trip.same' => 'Invalid data.',
+        ];
+
+        return array_merge(
+            $transportationMessages,
+            $purchaseMessages,
+            $saleMessages,
+            $supplyMessages
+        );
+    }
+
+    /**
      * Configure the validator instance.
      *
      * @param  \Illuminate\Validation\Validator  $validator

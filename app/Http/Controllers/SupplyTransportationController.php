@@ -374,7 +374,7 @@ class SupplyTransportationController extends Controller
             }
 
             return redirect(route('supply.index'))->with("message","Supply details saved successfully. #". $transactionResponse['transaction']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -515,7 +515,7 @@ class SupplyTransportationController extends Controller
 
             DB::commit();
             return redirect(route('supply.index'))->with("message","Supply details deleted successfully.")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

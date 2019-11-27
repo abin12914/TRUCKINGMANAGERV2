@@ -206,7 +206,7 @@ class AccountController extends Controller
                 ];
             }
             return redirect(route('accounts.show', $accountResponse['account']->id))->with("message","Account details saved successfully. #". $accountResponse['account']->id)->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 
@@ -235,7 +235,7 @@ class AccountController extends Controller
 
         try {
             $account = $this->accountRepo->getAccount($id, [], false);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 3);
 
             //throwing model not found exception when no model is fetched
@@ -260,7 +260,7 @@ class AccountController extends Controller
 
         try {
             $account = $this->accountRepo->getAccount($id, [], false);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
             //throwing methodnotfound exception when no model is fetched
             throw new ModelNotFoundException("Account", $errorCode);

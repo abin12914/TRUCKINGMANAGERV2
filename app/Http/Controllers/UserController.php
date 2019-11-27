@@ -51,7 +51,7 @@ class UserController extends Controller
             DB::commit();
 
             return redirect(route('user.profile.edit'))->with("message", "Profile Successfully Updated!")->with("alert-class", "success");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
 

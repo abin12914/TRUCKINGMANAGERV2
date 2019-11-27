@@ -42,7 +42,7 @@ class AccountRepository extends Repository
 
             //if asking aggregates ? return result.
             return (!empty($aggregates['key']) ? parent::aggregatesSwitch($accounts, $aggregates): parent::getFilter($accounts, $orderBy));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 1);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -64,7 +64,7 @@ class AccountRepository extends Repository
             $account = $activeFlag ? $account->active() : $account;
 
             $account = $account->findOrFail($id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 2);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -92,7 +92,7 @@ class AccountRepository extends Repository
                 'flag'    => true,
                 'account' => $account,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : $this->repositoryCode + 3);
 
             throw new TMException("CustomError", $this->errorCode);
@@ -116,7 +116,7 @@ class AccountRepository extends Repository
                 'flag'  => true,
                 'force' => $forceFlag,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->errorCode = (($e->getMessage() == "CustomError") ?  $e->getCode() : $this->repositoryCode + 5);
 
             throw new TMException("CustomError", $this->errorCode);

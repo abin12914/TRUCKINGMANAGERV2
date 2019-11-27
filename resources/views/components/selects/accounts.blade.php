@@ -2,7 +2,7 @@
     <option value="" {{ empty($selectedAccountId) ? 'selected' : '' }}>Select account</option>
     @if(!empty($accountsCombo) && (count($accountsCombo) > 0))
         @foreach($accountsCombo as $account)
-            @if(!$cashAccountFlag && $account->type != 3) {{-- type != 3 means not personal account --}}
+            @if(!$cashAccountFlag && $account->type != array_search('Personal', config('constants.accountTypes'))) {{-- type != 3 means not personal account --}}
                 @continue
             @endif
             @if($activeFlag && $account->status != 1)

@@ -33,7 +33,7 @@ class SiteComponentComposer
             $this->sites = $this->siteRepo->getSites(
                 [], [],  [], ['by' => 'name', 'order' => 'asc', 'num' => null], [], [], true
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $view->with('sitesCombo', $this->sites);

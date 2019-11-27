@@ -100,7 +100,7 @@ class SaleController extends Controller
     {
         //caling base class fn for getting comapnysettings
         parent::companySettings();
-        
+
         if($this->companySettings->sale_auto_selection != 1) {
             return [
                 'flag' => 'false',
@@ -154,7 +154,7 @@ class SaleController extends Controller
                     'rate'          => $sale->rate
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
 
