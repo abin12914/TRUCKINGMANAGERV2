@@ -15,7 +15,7 @@
 <!-- AdminLTE App -->
 <script src="/js/adminlte.min.js"></script>
 {{-- Custom JS --}}
-<script src="/js/main.js?rndstr={{ rand(1000,9999) }}"></script>
+<script src="/js/main.min.js"></script>
 
 <script>
   	$(document).ready(function () {

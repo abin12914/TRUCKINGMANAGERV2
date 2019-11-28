@@ -28,4 +28,4 @@
 <!-- AdminLTE Skins. -->
 <link rel="stylesheet" href="/css/skins/skin-green.min.css">
 {{-- custom css --}}
-<link rel="stylesheet" href="/css/main.css?rndstr={{ rand(1000,9999) }}">
+<link rel="stylesheet" href="/css/main.min.css">

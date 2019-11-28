@@ -71,5 +71,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script src="/js/registrations/transportationRegistration.js?rndstr={{ rand(1000,9999) }}"></script>
+    <script src="/js/registrations/transportationRegistration.min.js"></script>
 @endsection
