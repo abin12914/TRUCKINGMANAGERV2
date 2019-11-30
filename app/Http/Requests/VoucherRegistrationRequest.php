@@ -63,7 +63,7 @@ class VoucherRegistrationRequest extends FormRequest
     public function messages()
     {
         return [
-            'account_id.required' => 'The relation field is required.'
+            'account_id.required' => 'The relation field is required.',
             'account_id.exists'   => 'Invalid data.'
         ];
     }
