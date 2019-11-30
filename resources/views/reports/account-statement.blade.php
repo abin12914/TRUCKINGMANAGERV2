@@ -95,7 +95,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h3>
-                                Account Statement of {{ $account->account_name }}
+                                Account statement of {{ $account->account_name. ($account->type == 3 ? (" : ". $account->phone) : null) }}
                                 [ {{ ($params['from_date']['paramValue'] ?? 'start'). " - ". ($params['to_date']['paramValue'] ?? 'end') }} ]
                             </h3>
                             <table class="table table-responsive table-bordered table-hover">
