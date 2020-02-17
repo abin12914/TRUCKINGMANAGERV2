@@ -27,6 +27,7 @@
                 <form action="{{ route('expense.fuel.refill.action') }}" method="post" class="form-horizontal" autocomplete="off">
                     @csrf()
                     <input type="hidden" name="truck_id" value="{{ !empty($truck) ? $truck->id : null }}" />
+                    <input type="hidden" name="truck_reg_number" id="truck_reg_number" value="{{ !empty($truck) ? $truck->reg_number : null }}" />
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-1"></div>
@@ -69,14 +70,14 @@
                                         <label for="odometer_reading" class="control-label"><b style="color: red;">* </b> Odometer Reading: </label>
                                         <input type="text" class="form-control decimal_number_only" name="odometer_reading" id="odometer_reading" placeholder="Odometer Reading" value="{{ old('odometer_reading') }}" maxlength="15" tabindex="3">
                                         {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'description'])
+                                        @component('components.paragraph.error_message', ['fieldName' => 'odometer_reading'])
                                         @endcomponent
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                         <label for="last_odometer_reading" class="control-label"><b style="color: red;">* </b> Last Reading: </label>
-                                        <input type="text" class="form-control no_edit" name="last_odometer_reading" id="last_odometer_reading" placeholder="Last Odometer Reading" value="" maxlength="15" tabindex="-1" readonly>
+                                        <input type="text" class="form-control no_edit" name="last_odometer_reading" id="last_odometer_reading" placeholder="Last Odometer Reading" value="{{ old('last_odometer_reading') }}" maxlength="15" tabindex="-1" readonly>
                                         {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'description'])
+                                        @component('components.paragraph.error_message', ['fieldName' => 'last_odometer_reading'])
                                         @endcomponent
                                     </div>
                                 </div>
@@ -143,4 +144,5 @@
 @endsection
 @section('scripts')
     <script src="/js/registrations/fuelRefillRegistration.min.js"></script>
+    <script src="/js/registrations/expenseRegistration.js"></script>
 @endsection

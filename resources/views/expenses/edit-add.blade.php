@@ -29,6 +29,8 @@
                         @method('PUT')
                     @endif
                     @csrf()
+                    <input type="hidden" name="truck_reg_number" id="truck_reg_number" value="" />
+                    <input type="hidden" name="service_name" id="service_name" value="" />
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-1"></div>
@@ -115,4 +117,7 @@
     <!-- /.row (main row) -->
 </section>
 <!-- /.content -->
+@endsection
+@section('scripts')
+    <script src="/js/registrations/expenseRegistration.js"></script>
 @endsection

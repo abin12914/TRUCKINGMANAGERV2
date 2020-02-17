@@ -133,6 +133,9 @@ class ExpenseController extends Controller
         $errorCode = 0;
         $expense   = null;
 
+        //values for description
+        $truckRegNumber  = $request->get("truck_reg_number");
+        $serviceName     = $request->get("service_name");
         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $totalBill       = $request->get('amount');
 
@@ -164,7 +167,7 @@ class ExpenseController extends Controller
                 'debit_account_id'  => $expenseAccount->id, // debit the expense account
                 'credit_account_id' => $request->get('account_id'), // credit the supplier
                 'amount'            => $totalBill,
-                'particulars'       => $request->get('description')."[Purchase & Expense]",
+                'particulars'       => $request->get('description'). "[". $truckRegNumber. ": ". $serviceName. " Expense]",
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], (!empty($expense) ? $expense->transaction_id : null));
@@ -345,6 +348,8 @@ class ExpenseController extends Controller
     ) {
         $errorCode = 0;
 
+        //values for description
+        $truckRegNumber  = $request->get("truck_reg_number");
         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $totalBill       = $request->get('amount');
 
@@ -376,7 +381,7 @@ class ExpenseController extends Controller
                 'debit_account_id'  => $expenseAccount->id, // debit the expense account
                 'credit_account_id' => $request->get('account_id'), // credit the supplier
                 'amount'            => $totalBill,
-                'particulars'       => $request->get('description'). " : Certificate Renewal [Purchase & Expense]",
+                'particulars'       => $request->get('description'). "[". $truckRegNumber. ": Certificate Renewal Expense]",
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], null);
@@ -447,6 +452,8 @@ class ExpenseController extends Controller
     ) {
         $errorCode = 0;
 
+        //values for description
+        $truckRegNumber  = $request->get("truck_reg_number");
         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $totalBill       = $request->get('amount');
 
@@ -478,7 +485,7 @@ class ExpenseController extends Controller
                 'debit_account_id'  => $expenseAccount->id, // debit the expense account
                 'credit_account_id' => $request->get('account_id'), // credit the supplier
                 'amount'            => $totalBill,
-                'particulars'       => $request->get('description'). " : Fuel Refill [Purchase & Expense]",
+                'particulars'       => $request->get('description'). "[". $truckRegNumber. ": Fuel Refill Expense]",
                 'status'            => 1,
                 'created_by'        => Auth::id(),
             ], null);

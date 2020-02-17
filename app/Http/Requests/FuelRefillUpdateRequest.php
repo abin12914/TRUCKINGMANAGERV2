@@ -47,7 +47,8 @@ class FuelRefillUpdateRequest extends FormRequest
                                         'nullable',
                                         'numeric',
                                         'min:10',
-                                        'max:999999'
+                                        'max:9999999',
+                                        'gt:last_odometer_reading'
                                     ],
             'fuel_quantity'     =>  [
                                         'required',

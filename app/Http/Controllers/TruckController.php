@@ -291,13 +291,11 @@ class TruckController extends Controller
         try {
             $truck = $this->truckRepo->getTruck($request->get('truck_id'), [], false);
             //num = 2 because num=1 won't sort
-            $lastFuelRefills = $fuelRefillRepo->getFuelRefills(
-                $whereParams, [], [], ['by' => 'refill_date', 'order' => 'desc', 'num' => 2], [], [], true
+            $lastFuelRefill = $fuelRefillRepo->getFuelRefills(
+                $whereParams, [], [], ['by' => 'odometer_reading', 'order' => 'desc', 'num' => 1], [], [], true
             );
 
-            if(!empty($lastFuelRefills) && $lastFuelRefills->count() > 0) {
-                $lastFuelRefillReading = $lastFuelRefills->first()->odometer_reading;
-            }
+            $lastFuelRefillReading = $lastFuelRefill->odometer_reading;
         } catch (\Exception $e) {
             return [
                 'flag'  => false,

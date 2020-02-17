@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AccountStatementRequest;
 use App\Http\Requests\CreditStatementRequest;
 use App\Http\Requests\ProfitLossStatementRequest;
+use App\Http\Requests\MilageStatementRequest;
 use App\Repositories\TransactionRepository;
 use App\Repositories\AccountRepository;
 use App\Repositories\TruckRepository;
+use App\Repositories\FuelRefillRepository;
 use Carbon\Carbon;
 use Exception;
 
@@ -135,6 +137,9 @@ class ReportController extends Controller
      */
     public function creditStatement(CreditStatementRequest $request, AccountRepository $accountRepo)
     {
+        //caling base class fn for getting comapnysettings
+        parent::companySettings();
+
         $totalDebit  = 0;
         $totalCredit = 0;
         $accountWhereParam  = [];
@@ -167,6 +172,7 @@ class ReportController extends Controller
             ]
         ];
 
+
         try {
             if(!empty($request->get('relation_type'))) {
                 $accounts = $accountRepo->getAccounts($accountWhereParam, [], [], ['by' => 'account_name', 'order' => 'asc', 'num' => null], [], $withParams, true);
@@ -181,7 +187,7 @@ class ReportController extends Controller
                         } else {
                             $totalCredit += $account->creditAmount * (-1);
                         }
-                    } else {
+                    } elseif($this->companySettings->show_zero_accounts != 1) {
                         $accounts->forget($key);
                     }
                 }
@@ -261,6 +267,72 @@ class ReportController extends Controller
 
         return view('reports.profit-loss-statement',
             compact('truck', 'params', 'transportationRentAmount', 'employeeWageAmount', 'purchaseAmount', 'saleAmount', 'expenseAmount')
+        );
+    }
+
+    /**
+     * Display a milage of a truck.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function milageStatement(MilageStatementRequest $request, FuelRefillRepository $fuelRefillRepo, TruckRepository $truckRepo)
+    {
+        $truck = [];
+        $fuelRefillRecords = [];
+        $previousReading = null;
+
+        if(!empty($request->get('from_date')) && !empty($request->get('to_date')) && !empty($request->get('truck_id'))) {
+            //date format conversion
+            $fromDate   = Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d');
+            $toDate     = Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d');
+
+            $whereParams = [
+                'from_date' => [
+                    'paramName'     => 'refill_date',
+                    'paramOperator' => '>=',
+                    'paramValue'    => $fromDate,
+                ],
+                'to_date' => [
+                    'paramName'     => 'refill_date',
+                    'paramOperator' => '<=',
+                    'paramValue'    => $toDate,
+                ],
+                'truck_id' => [
+                    'paramName'     => 'truck_id',
+                    'paramOperator' => '=',
+                    'paramValue'    => $request->get('truck_id'),
+                ],
+            ];
+
+            try {
+                //$truck = $truckRepo->getTruck($request->get('truck_id'), [], true);
+                $fuelRefillRecords = $fuelRefillRepo->getFuelRefills($whereParams, [], [], ['by' => 'odometer_reading', 'order' => 'asc', 'num' => 31], ['key' => null, 'value' => null], [], true);
+
+                foreach ($fuelRefillRecords as $key => $fuelRefill) {
+                    if(!empty($fuelRefill->odometer_reading)) {
+                        if(!empty($previousReading)) {
+                            $kmTravelled = $fuelRefill->odometer_reading - $previousReading;
+                            $fuelRefill->milage = round($kmTravelled / $fuelRefill->fuel_quantity, 2);
+                        }
+                        $previousReading = $fuelRefill->odometer_reading;
+                    }
+                }
+            } catch (\Exception $e) {
+                $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 4);
+
+                return redirect(route('dashboard'))
+                    ->with("message","An unexpected error occured! Please try after sometime. #". $this->errorHead. "/". $errorCode)
+                    ->with("alert-class", "error");
+            }
+        }
+
+        //params passing for auto selection
+        $params['from_date']['paramValue']  = $request->get('from_date');
+        $params['to_date']['paramValue']    = $request->get('to_date');
+        $params['truck_id']['paramValue']   = $request->get('truck_id');
+
+        return view('reports.milage-statement',
+            compact('truck', 'params', 'fuelRefillRecords')
         );
     }
 }

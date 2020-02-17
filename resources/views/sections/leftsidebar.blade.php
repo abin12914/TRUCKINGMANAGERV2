@@ -39,12 +39,17 @@
                     </li>
                     <li class="{{ Request::is('reports/credit-statement')? 'active' : '' }}">
                         <a href="{{ route('reports.credit-statement') }}">
-                            <i class="fa fa-circle-o text-blue"></i> Credit Statement
+                            <i class="fa fa-circle-o text-orange"></i> Credit Statement
                         </a>
                     </li>
                     <li class="{{ Request::is('reports/profit-loss-statement')? 'active' : '' }}">
                         <a href="{{ route('reports.profit-loss-statement') }}">
-                            <i class="fa fa-circle-o text-orange"></i> Profit Losss Statement
+                            <i class="fa fa-circle-o text-blue"></i> Profit Losss Statement
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('reports.milage.statement') ? 'active' : '' }}">
+                        <a href="{{ route('reports.milage.statement') }}">
+                            <i class="fa fa-circle-o text-yellow"></i> Milage Statement
                         </a>
                     </li>
                 </ul>

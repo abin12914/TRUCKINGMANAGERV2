@@ -27,6 +27,7 @@
                 <form action="{{ route('expense.certificate.renew.action') }}" method="post" class="form-horizontal" autocomplete="off">
                     @csrf()
                     <input type="hidden" name="truck_id" value="{{ !empty($truck) ? $truck->id : null }}" />
+                    <input type="hidden" name="truck_reg_number" id="truck_reg_number" value="{{ !empty($truck) ? $truck->reg_number : null }}" />
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-1"></div>

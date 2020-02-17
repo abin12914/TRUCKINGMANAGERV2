@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
     Route::get('/reports/account-statement', 'ReportController@accountStatement')->name('reports.account-statement');
     Route::get('/reports/credit-statement', 'ReportController@creditStatement')->name('reports.credit-statement');
     Route::get('/reports/profit-loss-statement', 'ReportController@profitLossStatement')->name('reports.profit-loss-statement');
+    Route::get('/reports/mileage-statement', 'ReportController@milageStatement')->name('reports.milage.statement');
 
     //ajax urls
     Route::group(['middleware' => 'is.ajax'], function () {
