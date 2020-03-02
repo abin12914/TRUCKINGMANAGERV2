@@ -150,16 +150,18 @@ class TransactionRepository extends Repository
             );
 
             $transactions = $transactions->active()->whereBetween('transaction_date', [$fromDate, $toDate]);
-            $transactions = $transactions->whereHas('transportation', function ($query) use($truckId) {
-                $query->where('truck_id', '=', $truckId);
-            })->orWhereHas('employeeWage.transportation', function ($query) use($truckId) {
-                $query->where('truck_id', '=', $truckId);
-            })->orWhereHas('purchase.transportation', function ($query) use($truckId) {
-                $query->where('truck_id', '=', $truckId);
-            })->orWhereHas('sale.transportation', function ($query) use($truckId) {
-                $query->where('truck_id', '=', $truckId);
-            })->orWhereHas('expense', function ($query) use($truckId) {
-                $query->where('truck_id', '=', $truckId);
+            $transactions = $transactions->where(function($qry) use($truckId) {
+                $qry->whereHas('transportation', function ($query) use($truckId) {
+                    $query->where('truck_id', '=', $truckId);
+                })->orWhereHas('employeeWage.transportation', function ($query) use($truckId) {
+                    $query->where('truck_id', '=', $truckId);
+                })->orWhereHas('purchase.transportation', function ($query) use($truckId) {
+                    $query->where('truck_id', '=', $truckId);
+                })->orWhereHas('sale.transportation', function ($query) use($truckId) {
+                    $query->where('truck_id', '=', $truckId);
+                })->orWhereHas('expense', function ($query) use($truckId) {
+                    $query->where('truck_id', '=', $truckId);
+                });
             });
             $transactions = $transactions->get();
         } catch (\Exception $e) {
