@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Models\CompanySettings;
 use App\Repositories\AccountRepository;
 use App\Repositories\CompanySettingsRepository;
+use App\Exceptions\TMException;
 
 class CreatedCompanyEventListener implements ShouldQueue
 {
