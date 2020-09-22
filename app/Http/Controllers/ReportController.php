@@ -142,6 +142,7 @@ class ReportController extends Controller
 
         $totalDebit  = 0;
         $totalCredit = 0;
+        $accounts    = [];
         $accountWhereParam  = [];
         $withParams         = ['debitTransactionsSum', 'creditTransactionsSum'];
 
