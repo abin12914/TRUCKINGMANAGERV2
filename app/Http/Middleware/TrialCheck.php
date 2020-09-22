@@ -17,7 +17,8 @@ class TrialCheck
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::check() &&
+        if($request->getMethod() == "POST"&&
+            Auth::check() &&
             Auth::user()->company->subscription_plan != 0 &&
             Carbon::now() > (Auth::user()->company->created_at->addDays(7))
         ) {

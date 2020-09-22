@@ -1,14 +1,14 @@
 @extends('layouts.app')
-@section('title', 'Excavator List')
+@section('title', 'Site List')
 @section('content')
  <section class="content-header">
     <h1>
-        Excavator
+        Site
         <small>List</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Excavator List</li>
+        <li class="active">Site List</li>
     </ol>
 </section>
 <!-- Main content -->
