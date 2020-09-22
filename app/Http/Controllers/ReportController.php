@@ -220,6 +220,7 @@ class ReportController extends Controller
         $purchaseAmount           = 0;
         $saleAmount               = 0;
         $expenseAmount            = 0;
+        $truck                    = [];
 
         if(!empty($request->get('from_date')) && !empty($request->get('to_date')) && !empty($request->get('truck_id'))) {
             //date format conversion
