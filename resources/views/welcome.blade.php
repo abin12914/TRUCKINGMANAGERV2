@@ -48,5 +48,16 @@
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Sweet Alert 8.19.0 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8.19.0/dist/sweetalert2.all.min.js" integrity="sha256-H7W99VLbKVqW6ktckGeRWdtiQX+2n+C1d5Llfa95z9k=" crossorigin="anonymous"></script>
+<!-- AdminLTE App -->
+<script src="/js/adminlte.min.js"></script>
+{{-- Custom JS --}}
+<script src="/js/main.min.js"></script>
+{{-- message type and message for sweet alert --}}
+<script type="text/javascript">
+    alertType    = "{{ Session::get('alert-class') }}";
+    alertMessage = "{{ Session::get('message') }}";
+</script>
 </body>
 </html>

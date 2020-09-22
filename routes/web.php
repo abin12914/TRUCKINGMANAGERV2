@@ -21,7 +21,7 @@ Route::group(['prefix' => 'admin'], function () {
 Auth::routes(['register' => false]);
 
 //auth check == true
-Route::group(['middleware' => ['auth.check', 'landlord.tenancy']], function () {
+Route::group(['middleware' => ['auth.check', 'landlord.tenancy', 'trail.check']], function () {
     Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 	Route::get('/profile/edit', 'UserController@profileEdit')->name('user.profile.edit');
     Route::post('/profile/update', 'UserController@profileUpdate')->name('user.profile.update');

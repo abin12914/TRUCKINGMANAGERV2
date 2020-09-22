@@ -67,6 +67,8 @@ class Kernel extends HttpKernel
         'is.ajax' => \App\Http\Middleware\IsAjax::class,
         //adding tenent id to request
         'landlord.tenancy' => \App\Http\Middleware\LandlordTenancy::class,
+        //trial check
+        'trail.check' => \App\Http\Middleware\TrialCheck::class,
     ];
 
     /**
