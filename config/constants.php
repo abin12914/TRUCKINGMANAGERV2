@@ -39,7 +39,8 @@ return [
         1 => 'Quarry',
         2 => 'Earth Movement Area',
         3 => 'Residential Area',
-        4 => 'Construction Area'
+        4 => 'Construction Area',
+        5 => 'Crusher Unit'
     ],
 
     'stateCodes' => [
