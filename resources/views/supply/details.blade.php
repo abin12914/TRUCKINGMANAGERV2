@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Supply Details')
 @section('content')
-@php
-    $employeeWage = $supplyTransportation->employeeWages->first();
-@endphp
 <section class="content-header">
     <h1>
         Supply
@@ -36,8 +33,7 @@
                                         <th style="width: 20%;">Destination</th>
                                         <th style="width: 10%;">No. Of Trip</th>
                                         <th style="width: 10%;">Material</th>
-                                        <th style="width: 15%;">Driver</th>
-                                        <th style="width: 15%;">Driver Wage</th>
+                                        <th style="width: 30%;">Driver</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,8 +43,11 @@
                                         <td>{{ $supplyTransportation->destination->name }}</td>
                                         <td>{{ $supplyTransportation->no_of_trip }}</td>
                                         <td>{{ $supplyTransportation->material->name }}</td>
-                                        <td>{{ $employeeWage->employee->account->account_name }}</td>
-                                        <td>{{ $employeeWage->wage_amount }} x {{ $employeeWage->no_of_trip }} = {{ $employeeWage->total_wage_amount }}/-</td>
+                                        <td>
+                                            @foreach ($supplyTransportation->employeeWages as $key => $employeeWage)
+                                                {{ $employeeWage->employee->account->account_name }}[{{ $employeeWage->wage_amount }} x {{ $employeeWage->no_of_trip }} = {{ $employeeWage->total_wage_amount }}/-]<br />
+                                            @endforeach
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
