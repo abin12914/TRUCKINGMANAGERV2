@@ -71,5 +71,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script src="/js/registrations/transportationRegistration.min.js"></script>
+    <script src="/js/registrations/transportationRegistration.js"></script>
 @endsection

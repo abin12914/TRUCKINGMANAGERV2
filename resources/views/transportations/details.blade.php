@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Transportation Details')
 @section('content')
-@php
-    $employeeWage = $transportation->employeeWages->first();
-@endphp
 <section class="content-header">
     <h1>
         Transportation
@@ -137,26 +134,28 @@
                                     <hr>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-user margin-r-5"></i> Driver
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $employeeWage->employee->account->account_name }}
-                                    </p>
-                                    <hr>
+                            @foreach ($transportation->employeeWages as $key => $employeeWage)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-user margin-r-5"></i> Driver[{{ $key + 1 }}]
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $employeeWage->employee->account->account_name }}
+                                        </p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>
+                                            <i class="fa fa-user margin-r-5"></i> Driver Wage x No of trip
+                                        </strong>
+                                        <p class="text-muted multi-line">
+                                            {{ $employeeWage->wage_amount }} x {{ $employeeWage->no_of_trip }} = {{ $employeeWage->total_wage_amount }}
+                                        </p>
+                                        <hr>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <strong>
-                                        <i class="fa fa-user margin-r-5"></i> Driver Wage x No of trip
-                                    </strong>
-                                    <p class="text-muted multi-line">
-                                        {{ $employeeWage->wage_amount }} x {{ $employeeWage->no_of_trip }} = {{ $employeeWage->total_wage_amount }}
-                                    </p>
-                                    <hr>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer">

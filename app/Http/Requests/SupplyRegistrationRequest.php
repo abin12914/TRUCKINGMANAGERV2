@@ -90,10 +90,14 @@ class SupplyRegistrationRequest extends FormRequest
         $tripRent           = $this->request->get("trip_rent");
         $noOfTrip           = $this->request->get("no_of_trip");
         $totalRent          = $this->request->get("total_rent");
-        $driverWage         = $this->request->get("driver_wage");
-        $driverTotalWage    = $this->request->get("driver_total_wage");
+        $driverWages        = $this->request->get("driver_wage");
+        $driverTotalWages   = $this->request->get("driver_total_wage");
 
-        return (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent && ($driverWage * $noOfTrip) == $driverTotalWage);
+        $status = (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent);
+        foreach ($driverWages as $key => $driverWage) {
+            $status = ($status && (($driverWage * $noOfTrip) == $driverTotalWages[$key]));
+        }
+        return $status;
     }
 
     public function checkPurchaseCalculations() {

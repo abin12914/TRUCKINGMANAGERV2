@@ -99,24 +99,34 @@ $(function () {
         calculateDriverWageTotal()
     });
 
-    //action on rent rate keyup
-    $('body').on("change", "#driver_id", function (evt) {
+    //action on primary driver keyup
+    $('body').on("change", "#driver_id_0", function (evt) {
         //calculate driver default wage
         calculateDriverWage();
+    });
 
+    //action on primary driver keyup
+    $('body').on("change", "#driver_id_1", function (evt) {
+        //calculate second driver default wage
+        calculateSecondDriverWage();
     });
 
     //action on rent rate keyup
-    $('body').on("keyup change", "#driver_wage", function (evt) {
+    $('body').on("keyup change", "#driver_wage_0", function (evt) {
         //calculate total rent
-        var tripWage  = ($('#driver_wage').val() > 0 ? $('#driver_wage').val() : 0);
+        var tripWage  = ($('#driver_wage_0').val() > 0 ? $('#driver_wage_0').val() : 0);
         var noOfTrip  = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
         var totalWage = tripWage * noOfTrip;
 
         if(totalWage != 'undefined' && totalWage > 0)
         {
-            $('#driver_total_wage').val(totalWage);
+            $('#driver_total_wage_0').val(totalWage);
         }
+    });
+
+    $('body').on("keyup change", "#driver_wage_1", function (evt) {
+        //calculate total driver wage 2 calc
+        calculateSecondDriverWageTotal();
     });
 
     //submit transportation form
@@ -205,18 +215,19 @@ function calculateTotalRent() {
     }
 }
 
-//method for total rent calculation
+//method for total first driver wage calculation
 function calculateDriverWageTotal() {
     var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
-    var tripWage    = ($('#driver_wage').val() > 0 ? $('#driver_wage').val() : 0 );
+    var tripWage    = ($('#driver_wage_0').val() > 0 ? $('#driver_wage_0').val() : 0 );
     var totalWage   = 0;
 
     totalWage = tripWage * noOfTrip;
     if(totalWage > 0) {
-        $('#driver_total_wage').val(totalWage);
+        $('#driver_total_wage_0').val(totalWage);
     } else {
-        $('#driver_total_wage').val(0);
+        $('#driver_total_wage_0').val(0);
     }
+    calculateSecondDriverWageTotal();
 }
 
 function calculateDriverWage() {
@@ -225,8 +236,8 @@ function calculateDriverWage() {
     var totalWage  = 0;
 
     //wage calculation
-    var wageType    = $('#driver_id').find(':selected').data('wage-type');
-    var wageAmount  = ($('#driver_id').find(':selected').data('wage-amount') > 0 ? $('#driver_id').find(':selected').data('wage-amount') : 0);
+    var wageType    = $('#driver_id_0').find(':selected').data('wage-type');
+    var wageAmount  = ($('#driver_id_0').find(':selected').data('wage-amount') > 0 ? $('#driver_id_0').find(':selected').data('wage-amount') : 0);
     var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
 
     if(wageAmount > 0) {
@@ -248,37 +259,51 @@ function calculateDriverWage() {
         }
         totalWage = tripWage * noOfTrip;
 
-        $('#driver_wage').val(tripWage);
-        $('#driver_total_wage').val(totalWage);
+        $('#driver_wage_0').val(tripWage);
+        $('#driver_total_wage_0').val(totalWage);
     } else {
-        $('#driver_wage').val('');
-        $('#driver_total_wage').val('');
+        $('#driver_wage_0').val('');
+        $('#driver_total_wage_0').val('');
+    }
+
+    calculateSecondDriverWage();
+}
+
+function calculateSecondDriverWage() {
+    var secondDriver = $('#driver_id_1').val();
+    if(secondDriver) {
+        var firstDriverWage = $('#driver_wage_0').val();
+        var secondDriverWageRatio = 0.5;
+        var secondDriverWage = firstDriverWage * secondDriverWageRatio;
+        var firstDriverUpdatedWage = firstDriverWage - secondDriverWage;
+        if(secondDriverWage > 0 && firstDriverUpdatedWage > 0) {
+            $('#driver_wage_0').val(firstDriverUpdatedWage);
+            $('#driver_wage_1').val(secondDriverWage);
+        } else {
+            $('#driver_wage_1').val(0);
+        }
+    } else {
+        $('#driver_wage_1').val(0);
+    }
+    calculateDriverWageTotal();
+    calculateSecondDriverWageTotal();
+}
+
+//method for total first driver wage calculation
+function calculateSecondDriverWageTotal() {
+    var noOfTrip    = ($('#no_of_trip').val() > 0 ? $('#no_of_trip').val() : 0);
+    var tripWage    = ($('#driver_wage_1').val() > 0 ? $('#driver_wage_1').val() : 0 );
+    var totalWage   = 0;
+
+    totalWage = tripWage * noOfTrip;
+    if(totalWage > 0) {
+        $('#driver_total_wage_1').val(totalWage);
+    } else {
+        $('#driver_total_wage_1').val(0);
     }
 }
 
-//function to show messages one by one in modal
-function changeMessage() {
-    var countFlag = 1;
-    setInterval(function() {
-        if(countFlag == 1) {
-            $("#wait_modal_message_1").hide();
-            $("#wait_modal_message_2").show();
-            $("#wait_modal_message_3").hide();
-            countFlag = 2;
-        } else if(countFlag == 2) {
-            $("#wait_modal_message_1").hide();
-            $("#wait_modal_message_2").hide();
-            $("#wait_modal_message_3").show();
-            countFlag = 3;
-        } else {
-            $("#wait_modal_message_1").show();
-            $("#wait_modal_message_2").hide();
-            $("#wait_modal_message_3").hide();
-            countFlag = 1;
-        }
-    }, 4000 );
-}
-
+//get driver details
 function driverByTruck() {
     var truckId = $('#truck_id').val();
 
@@ -292,16 +317,16 @@ function driverByTruck() {
             },
             success: function(result) {
                 if(result && result.flag) {
-                    $('#driver_id').val(result.employee_id);
-                    $('#driver_id').trigger('change');
+                    $('#driver_id_0').val(result.employee_id);
+                    $('#driver_id_0').trigger('change');
                 } else {
-                    $('#driver_id').val('');
-                    $('#driver_id').trigger('change');
+                    $('#driver_id_0').val('');
+                    $('#driver_id_0').trigger('change');
                 }
             },
             error: function () {
-                $('#driver_id').val('');
-                $('#driver_id').trigger('change');
+                $('#driver_id_0').val('');
+                $('#driver_id_0').trigger('change');
             }
         });
     }

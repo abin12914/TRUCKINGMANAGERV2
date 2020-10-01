@@ -20,7 +20,7 @@ class Controller extends BaseController
     {
         $this->errorHead = config('settings.controller_code.Controller');
         try {
-            $this->companySettings = (new CompanySettingsRepository)->getCompanySettings([]);
+            $this->companySettings = (new CompanySettingsRepository)->getCompanySettings([])->first();
         } catch (\Exception $e) {
             throw new TMException("CustomError", $this->errorHead);
         }
