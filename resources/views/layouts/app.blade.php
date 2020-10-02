@@ -64,7 +64,7 @@
         <script type="text/javascript">
             alertType    = "{{ Session::get('alert-class') }}";
             alertMessage = "{{ Session::get('message') }}";
-            defaultDate  = "{{ !empty($settings) && !empty($settings->default_date) ? $settings->default_date->format('d-m-Y') : '' }}";
+            defaultDate  = "{{ !empty($settings) && !empty($settings->first()) && !empty($settings->first()->default_date) ? $settings->first()->default_date->format('d-m-Y') : '' }}";
         </script>
 
     </body>
