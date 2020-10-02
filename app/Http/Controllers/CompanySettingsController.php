@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\CompanySettingsRepository;
 use Carbon\Carbon;
+use App\Models\Settings;
+use Illuminate\Support\Facades\Storage;
 
 class CompanySettingsController extends Controller
 {
@@ -28,7 +30,20 @@ class CompanySettingsController extends Controller
      */
     public function edit()
     {
-        return view('company-settings.edit-add');
+        $generalSettings = null;
+        $expired         = true;
+        $fileExist       = false;
+
+        try {
+            $generalSettings = Settings::first();
+            if(!empty($generalSettings)) {
+                $expired   = (Carbon::now()->subDays(1) > $generalSettings->last_db_backup_created_at);
+                $fileExist = (!empty($generalSettings->last_db_backup_file_name) && Storage::disk('backup')->exists($generalSettings->last_db_backup_file_name));
+            }
+        } catch (\Exception $e) {
+        }
+
+        return view('company-settings.edit-add', compact('generalSettings', 'expired', 'fileExist'));
     }
 
     /**

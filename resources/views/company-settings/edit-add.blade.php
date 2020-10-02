@@ -98,7 +98,7 @@
                     </div>
                     <div class="clearfix"> </div><br>
                     <div class="row">
-                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-0"></div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-0"></div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                             <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="8">Clear</button>
                         </div>
@@ -107,16 +107,72 @@
                                 Update
                             </button>
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                            <a href="{{ route('backup.db') }}">
-                                <button type="button" class="btn btn-danger btn-block btn-flat" tabindex="9">
-                                    Generate Backup
-                                </button>
-                            </a>
-                        </div>
                         <!-- /.col -->
                     </div><br>
                 </form>
+            </div>
+            <!-- /.box primary -->
+        </div>
+    </div>
+    <!-- /.row (main row) -->
+</section>
+<!-- /.content -->
+<!-- Main content -->
+<section class="content">
+    <!-- Main row -->
+    <div class="row no-print">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" style="float: left;">General Settings</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-print">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-responsive table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%;">#</th>
+                                        <th style="width: 20%;">Description</th>
+                                        <th style="width: 20%;">Created At</th>
+                                        <th style="width: 25%;">Generate</th>
+                                        <th style="width: 25%;">Download</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Backup File </td>
+                                        <td>
+                                            {{ !empty($generalSettings) && !empty($generalSettings->last_db_backup_created_at) ? $generalSettings->last_db_backup_created_at->format('d-m-Y H:m:s') : '-' }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('backup.db') }}">
+                                                <button type="button" class="btn btn-info btn-block btn-flat">
+                                                    Generate Backup
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if(!$expired && $fileExist)
+                                                <a href="{{ route('backup.db.download') }}">
+                                                    <button type="button" class="btn btn-primary btn-block btn-flat">
+                                                        Download Backup
+                                                    </button>
+                                                </a>
+                                            @else
+                                                <b style="color : red;">
+                                                    Genrate Backup First
+                                                </b>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- /.box primary -->
         </div>
