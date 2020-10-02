@@ -7,6 +7,7 @@ use App\Repositories\CompanySettingsRepository;
 use Carbon\Carbon;
 use App\Models\Settings;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CompanySettingsController extends Controller
 {
@@ -59,6 +60,23 @@ class CompanySettingsController extends Controller
         $inputData = [];
         $response['flag'] = null;
 
+        $validator = Validator::make($request->all(), [
+            'default_date'                => 'nullable|date_format:d-m-Y',
+            'driver_auto_selection'       => 'nullable|boolean',
+            'contractor_auto_selection'   => 'nullable|boolean',
+            'measurements_auto_selection' => 'nullable|boolean',
+            'purchase_auto_selection'     => 'nullable|boolean',
+            'sale_auto_selection'         => 'nullable|boolean',
+            'second_driver_wage_ratio'    => 'required|min:0|max:2|numeric',
+        ]);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->with("message","Invalid data")
+                    ->with("alert-class", "error");
+        }
         try {
             $settings = $companySettingsRepo->getCompanySettings([]);
 
@@ -82,6 +100,9 @@ class CompanySettingsController extends Controller
                 }
                 if($request->has('sale_auto_selection')) {
                     $inputData['sale_auto_selection'] = $request->get('sale_auto_selection');
+                }
+                if($request->has('second_driver_wage_ratio')) {
+                    $inputData['second_driver_wage_ratio'] = $request->get('second_driver_wage_ratio');
                 }
                 $inputData['status'] = 1;
 

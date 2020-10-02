@@ -273,7 +273,7 @@ function calculateSecondDriverWage() {
     var secondDriver = $('#driver_id_1').val();
     if(secondDriver) {
         var firstDriverWage = $('#driver_wage_0').val();
-        var secondDriverWageRatio = 0.5;
+        var secondDriverWageRatio = ((secondDriverWageRatioGlobal && secondDriverWageRatioGlobal != 'undefined') ? secondDriverWageRatioGlobal : 0);
         var secondDriverWage = firstDriverWage * secondDriverWageRatio;
         var firstDriverUpdatedWage = firstDriverWage - secondDriverWage;
         if(secondDriverWage > 0 && firstDriverUpdatedWage > 0) {

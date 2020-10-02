@@ -91,6 +91,15 @@
                                                 <input type="checkbox" value="1" name="sale_auto_selection" {{ !empty($settings->sale_auto_selection) ? "checked" : "" }} tabindex="6">
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td>7.</td>
+                                            <td>Second Driver Wage Ratio</td>
+                                            <td>Auto calculation wage ratio for second driver, when more second driver selected in transportation/supply</td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <input type="hidden" value="0" name="sale_auto_selection">
+                                                <input type="text" value="{{ $settings->second_driver_wage_ratio }}" name="second_driver_wage_ratio" tabindex="7">
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -100,10 +109,10 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-0"></div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                            <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="8">Clear</button>
+                            <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="9">Clear</button>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                            <button type="button" class="btn btn-warning update_button btn-block btn-flat" tabindex="7">
+                            <button type="button" class="btn btn-warning update_button btn-block btn-flat" tabindex="8">
                                 Update
                             </button>
                         </div>
