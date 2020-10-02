@@ -2,7 +2,11 @@
 <html>
     <head>
         <!-- sections/head.main.blade -->
-        @include('sections.head')
+        @if(env('RESOURCE_LEVEL') == 'local')
+            @include('sections.head-local')
+        @else
+            @include('sections.head')
+        @endif
 
         {{-- additional stylesheet includes --}}
         @section('stylesheets')
@@ -46,7 +50,11 @@
         <!-- ./wrapper -->
 
         <!-- REQUIRED JS SCRIPTS -->
-        @include('sections.scripts')
+        @if(env('RESOURCE_LEVEL') == 'local')
+            @include('sections.scripts-local')
+        @else
+            @include('sections.scripts')
+        @endif
 
         {{-- additional js scripts includes --}}
         @section('scripts')
