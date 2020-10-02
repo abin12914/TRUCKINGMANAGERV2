@@ -148,6 +148,6 @@
     <script type="text/javascript">
         var secondDriverWageRatioGlobal = "{{ !empty($settings) ? ($settings->second_driver_wage_ratio ?? 0) : 0 }}";
     </script>
-    <script src="/js/registrations/transportationRegistration.js"></script>
-    <script src="/js/registrations/supplyRegistration.min.js"></script>
+    <script src="/js/registrations/min/transportationRegistration.min.js"></script>
+    <script src="/js/registrations/min/supplyRegistration.min.js"></script>
 @endsection

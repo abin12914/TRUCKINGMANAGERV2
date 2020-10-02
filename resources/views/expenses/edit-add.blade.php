@@ -119,5 +119,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script src="/js/registrations/expenseRegistration.js"></script>
+    <script src="/js/registrations/min/expenseRegistration.min.js"></script>
 @endsection
