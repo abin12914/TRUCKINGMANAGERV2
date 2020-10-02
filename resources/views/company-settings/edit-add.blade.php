@@ -98,7 +98,7 @@
                     </div>
                     <div class="clearfix"> </div><br>
                     <div class="row">
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-0"></div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-0"></div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                             <button type="reset" class="btn btn-default btn-block btn-flat" tabindex="8">Clear</button>
                         </div>
@@ -106,6 +106,13 @@
                             <button type="button" class="btn btn-warning update_button btn-block btn-flat" tabindex="7">
                                 Update
                             </button>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                            <a href="{{ route('backup.db') }}">
+                                <button type="button" class="btn btn-danger btn-block btn-flat" tabindex="9">
+                                    Generate Backup
+                                </button>
+                            </a>
                         </div>
                         <!-- /.col -->
                     </div><br>

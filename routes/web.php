@@ -64,8 +64,9 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy', 'trail.check']]
         //last fuel refill via ajax
         Route::get('/last/fuel-refill', 'TruckController@getLastFuelRefill')->name('fuel-refill.last');
     });
+    //database backup
+    Route::get('/backup/db', 'AdminController@takeDbBackup')->name('backup.db');
 });
-Route::get('/backup/db', 'AdminController@takeDbBackup');
 Route::fallback(function () {
     return view('errors.404');
 });
