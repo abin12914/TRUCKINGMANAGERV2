@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth.check', 'landlord.tenancy', 'trail.check']]
     Route::get('/fuel/refill', 'ExpenseController@fuelRefillEdit')->name('expense.fuel.refill');
     Route::post('/fuel/refill', 'ExpenseController@fuelRefillUpdate')->name('expense.fuel.refill.action');
 
+    Route::get('supply/customer-copy', 'SupplyTransportationController@index')->name('supply.customer.copy');
+
 	Route::resources([
 	    'accounts' 			=> 'AccountController',
 	    'employees'			=> 'EmployeeController',

@@ -37,6 +37,9 @@ class SupplyTransportationController extends Controller
      */
     public function index(TransportationFilterRequest $request, SupplyTransportationRepository $transportationRepo)
     {
+        //determine the route and display view accordingly
+        $viewFileName = $request->routeIs('supply.customer.copy') ? 'supply.customer-copy' : 'supply.list';
+
         $errorCode          = 0;
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
@@ -95,7 +98,7 @@ class SupplyTransportationController extends Controller
 
         try {
             $transportations = $transportationRepo->getSupplyTransportations(
-                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material'], true
+                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'sale'], true
             );
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
@@ -109,7 +112,7 @@ class SupplyTransportationController extends Controller
         $relationalParams['to_date']['paramValue']   = $request->get('to_date');
         $params = array_merge($whereParams, $relationalParams);
 
-        return view('supply.list', [
+        return view($viewFileName, [
             'transportations'   => $transportations,
             'params'            => $params,
             'noOfRecords'       => $noOfRecordsPerPage,
