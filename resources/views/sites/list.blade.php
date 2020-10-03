@@ -86,7 +86,7 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <h6 class="text-center">Excavators List</h6>
+                            <h6 class="text-center">Site List</h6>
                             <table class="table table-responsive table-bordered table-hover">
                                 <thead>
                                     <tr>

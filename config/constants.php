@@ -40,7 +40,8 @@ return [
         2 => 'Earth Movement Area',
         3 => 'Residential Area',
         4 => 'Construction Area',
-        5 => 'Crusher Unit'
+        5 => 'Crusher Unit',
+        6 => 'Stockyard'
     ],
 
     'stateCodes' => [
