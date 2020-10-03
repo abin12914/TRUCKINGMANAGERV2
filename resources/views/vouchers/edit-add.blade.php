@@ -121,5 +121,5 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script src="/js/registrations/voucherRegistration.min.js"></script>
+    <script src="/js/registrations/min/voucherRegistration.min.js"></script>
 @endsection

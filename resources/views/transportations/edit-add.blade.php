@@ -71,5 +71,8 @@
 <!-- /.content -->
 @endsection
 @section('scripts')
-    <script src="/js/registrations/transportationRegistration.min.js"></script>
+    <script type="text/javascript">
+        var secondDriverWageRatioGlobal = "{{ !empty($settings) ? ($settings->second_driver_wage_ratio ?? 0) : 0 }}";
+    </script>
+    <script src="/js/registrations/min/transportationRegistration.min.js"></script>
 @endsection

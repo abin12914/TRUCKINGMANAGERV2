@@ -94,6 +94,11 @@
                             <i class="fa fa-circle-o text-aqua"></i> List
                         </a>
                     </li>
+                    <li class="{{ Request::is('supply/customer-copy')? 'active' : '' }}">
+                        <a href="{{ route('supply.customer.copy') }}">
+                            <i class="fa fa-circle-o text-orange"></i> Customer Copy
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="treeview {{ Request::is('expenses/*') || Request::is('expenses') || Request::is('fuel/refill') || Request::is('certificates') ? 'active' : '' }}">

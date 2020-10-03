@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\CompanySettingsRepository;
 use Carbon\Carbon;
+use App\Models\Settings;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CompanySettingsController extends Controller
 {
@@ -28,7 +31,20 @@ class CompanySettingsController extends Controller
      */
     public function edit()
     {
-        return view('company-settings.edit-add');
+        $generalSettings = null;
+        $expired         = true;
+        $fileExist       = false;
+
+        try {
+            $generalSettings = Settings::first();
+            if(!empty($generalSettings)) {
+                $expired   = (Carbon::now()->subDays(1) > $generalSettings->last_db_backup_created_at);
+                $fileExist = (!empty($generalSettings->last_db_backup_file_name) && Storage::disk('backup')->exists($generalSettings->last_db_backup_file_name));
+            }
+        } catch (\Exception $e) {
+        }
+
+        return view('company-settings.edit-add', compact('generalSettings', 'expired', 'fileExist'));
     }
 
     /**
@@ -44,6 +60,23 @@ class CompanySettingsController extends Controller
         $inputData = [];
         $response['flag'] = null;
 
+        $validator = Validator::make($request->all(), [
+            'default_date'                => 'nullable|date_format:d-m-Y',
+            'driver_auto_selection'       => 'nullable|boolean',
+            'contractor_auto_selection'   => 'nullable|boolean',
+            'measurements_auto_selection' => 'nullable|boolean',
+            'purchase_auto_selection'     => 'nullable|boolean',
+            'sale_auto_selection'         => 'nullable|boolean',
+            'second_driver_wage_ratio'    => 'required|min:0|max:2|numeric',
+        ]);
+
+        if($validator->fails()) {
+            return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->with("message","Invalid data")
+                    ->with("alert-class", "error");
+        }
         try {
             $settings = $companySettingsRepo->getCompanySettings([]);
 
@@ -67,6 +100,9 @@ class CompanySettingsController extends Controller
                 }
                 if($request->has('sale_auto_selection')) {
                     $inputData['sale_auto_selection'] = $request->get('sale_auto_selection');
+                }
+                if($request->has('second_driver_wage_ratio')) {
+                    $inputData['second_driver_wage_ratio'] = $request->get('second_driver_wage_ratio');
                 }
                 $inputData['status'] = 1;
 

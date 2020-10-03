@@ -108,31 +108,10 @@
         @endcomponent
     </div>
 </div>
-<div class="form-group">
-    <div class="col-md-6">
-        <label for="driver_id" class="control-label"><b style="color: red;">* </b> Driver : </label>
-        {{-- adding employee select component --}}
-        @component('components.selects.employees', ['selectedEmployeeId' => old('driver_id', (!empty($transportation) ? $transportation->employeeWages->first()->employee_id : '')), 'selectName' => 'driver_id', 'activeFlag' => false, 'tabindex' => 11])
-        @endcomponent
-        {{-- adding error_message p tag component --}}
-        @component('components.paragraph.error_message', ['fieldName' => 'driver_id'])
-        @endcomponent
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-6">
-        <label for="driver_wage" class="control-label"><b style="color: red;">* </b> Trip Wage : </label>
-        <input type="text" class="form-control decimal_number_only" name="driver_wage" id="driver_wage" placeholder="Driver trip wage" value="{{ old('driver_wage', (!empty($transportation) ? $transportation->employeeWages->first()->wage_amount : '')) }}" tabindex="12">
-        {{-- adding error_message p tag component --}}
-        @component('components.paragraph.error_message', ['fieldName' => 'driver_wage'])
-        @endcomponent
-    </div>
-    <div class="col-md-3 col-sm-6 col-xs-6">
-        <label for="driver_total_wage" class="control-label"><b style="color: red;">* </b> Total Wage : </label>
-        <input type="text" class="form-control decimal_number_only" name="driver_total_wage" id="driver_total_wage" placeholder="Driver trip wage" value="{{ old('driver_total_wage', (!empty($transportation) ? $transportation->employeeWages->first()->total_wage_amount : '')) }}" tabindex="-1" readonly>
-        {{-- adding error_message p tag component --}}
-        @component('components.paragraph.error_message', ['fieldName' => 'driver_total_wage'])
-        @endcomponent
-    </div>
-</div>
+@for($i=0; $i<2; $i++)
+    @component('components.element-groups.driver-wage', ['transportation' => $transportation ?? null, 'driverIndex' => $i])
+    @endcomponent
+@endfor
 <input type="hidden" name="truck_reg_number" id="truck_reg_number" value="" />
 <input type="hidden" name="source_name" id="source_name" value="" />
 <input type="hidden" name="destination_name" id="destination_name" value="" />

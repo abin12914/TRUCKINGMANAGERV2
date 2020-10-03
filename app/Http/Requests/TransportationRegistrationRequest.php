@@ -96,17 +96,35 @@ class TransportationRegistrationRequest extends FormRequest
                                         ],
             'driver_id'             =>  [
                                             'required',
+                                            'array',
+                                            'min:1',
+                                            'max:2'
+                                        ],
+            'driver_id.*'           =>  [
+                                            'required',
                                             Rule::exists('employees', 'id')->where(function ($query) {
                                                 $query->where('company_id', Auth::User()->company_id);
                                             })
                                         ],
             'driver_wage'           =>  [
                                             'required',
+                                            'array',
+                                            'min:1',
+                                            'max:2'
+                                        ],
+            'driver_wage.*'         =>  [
+                                            'required',
                                             'numeric',
                                             'max:5000',
                                             'min:10',
                                         ],
             'driver_total_wage'     =>  [
+                                            'required',
+                                            'array',
+                                            'min:1',
+                                            'max:2'
+                                        ],
+            'driver_total_wage.*'   =>  [
                                             'required',
                                             'numeric',
                                             'min:10',
@@ -160,10 +178,14 @@ class TransportationRegistrationRequest extends FormRequest
         $tripRent           = $this->request->get("trip_rent");
         $noOfTrip           = $this->request->get("no_of_trip");
         $totalRent          = $this->request->get("total_rent");
-        $driverWage         = $this->request->get("driver_wage");
-        $driverTotalWage    = $this->request->get("driver_total_wage");
+        $driverWages        = $this->request->get("driver_wage");
+        $driverTotalWages   = $this->request->get("driver_total_wage");
 
-        return (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent && ($driverWage * $noOfTrip) == $driverTotalWage);
+        $status = (($quanty * $rate) == $tripRent && ($tripRent * $noOfTrip) == $totalRent);
+        foreach ($driverWages as $key => $driverWage) {
+            $status = ($status && (($driverWage * $noOfTrip) == $driverTotalWages[$key]));
+        }
+        return $status;
     }
 
     public function hasNameValues() {

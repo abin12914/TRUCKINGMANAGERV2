@@ -37,6 +37,9 @@ class SupplyTransportationController extends Controller
      */
     public function index(TransportationFilterRequest $request, SupplyTransportationRepository $transportationRepo)
     {
+        //determine the route and display view accordingly
+        $viewFileName = $request->routeIs('supply.customer.copy') ? 'supply.customer-copy' : 'supply.list';
+
         $errorCode          = 0;
         $noOfRecordsPerPage = $request->get('no_of_records') ?? config('settings.no_of_record_per_page');
         //date format conversion
@@ -95,7 +98,7 @@ class SupplyTransportationController extends Controller
 
         try {
             $transportations = $transportationRepo->getSupplyTransportations(
-                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material'], true
+                $whereParams, [], $relationalParams, ['by' => 'transportation_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['truck', 'transaction.debitAccount', 'source', 'destination', 'material', 'sale'], true
             );
         } catch (\Exception $e) {
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 1);
@@ -109,7 +112,7 @@ class SupplyTransportationController extends Controller
         $relationalParams['to_date']['paramValue']   = $request->get('to_date');
         $params = array_merge($whereParams, $relationalParams);
 
-        return view('supply.list', [
+        return view($viewFileName, [
             'transportations'   => $transportations,
             'params'            => $params,
             'noOfRecords'       => $noOfRecordsPerPage,
@@ -145,8 +148,8 @@ class SupplyTransportationController extends Controller
     ) {
         $errorCode          = 0;
         $transportation     = null;
-        $driver             = null;
-        $driverWage         = null;
+        $drivers            = null;
+        $driverWages        = null;
         $purchase           = null;
         $sale               = null;
 
@@ -163,7 +166,7 @@ class SupplyTransportationController extends Controller
         $transportationDate = Carbon::createFromFormat('d-m-Y', $request->get('transportation_date'))->format('Y-m-d');
         $purchaseDate       = Carbon::createFromFormat('d-m-Y', $request->get('purchase_date'))->format('Y-m-d');
         $saleDate           = Carbon::createFromFormat('d-m-Y', $request->get('sale_date'))->format('Y-m-d');
-        $driverId           = $request->get('driver_id');
+        $driverIds          = $request->get('driver_id');
 
         $orWhereParams = [
             'transportation_rent' => [
@@ -188,13 +191,13 @@ class SupplyTransportationController extends Controller
             ],
         ];
 
-        $whereParams = [
-            'driver_id' => [
+        foreach ($driverIds as $key => $driverId) {
+            $driverOrWhereParams['driver_id_'. $key] = [
                 'paramName'     => 'id',
                 'paramOperator' => '=',
                 'paramValue'    => $driverId,
-            ]
-        ];
+            ];
+        }
 
         //wrappin db transactions
         DB::beginTransaction();
@@ -210,12 +213,16 @@ class SupplyTransportationController extends Controller
             $purchaseAccountId           = $baseAccounts->firstWhere('account_name', 'Purchases')->id;
             $saleAccountId               = $baseAccounts->firstWhere('account_name', 'Sales')->id;
 
-            $driver = $employeeRepo->getEmployees($whereParams, [], [], ['by' => 'id', 'order' => 'asc', 'num' => 1], [], [], true);
+            $drivers = $employeeRepo->getEmployees([], $driverOrWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);
+
+            if(count($driverIds) != $drivers->count()) {
+                throw new TMException("CustomError", 500);
+            }
 
             //if editing
             if(!empty($id)) {
                 $transportation = $transportationRepo->getTransportation($id, ['employeeWages', 'purchase', 'sale'], false);
-                $driverWage     = $transportation->employeeWages->firstWhere('wage_type', $this->driverWageType);
+                $driverWages    = $transportation->employeeWages->where('wage_type', $this->driverWageType);
                 $purchase       = $transportation->purchase;
                 $sale           = $transportation->sale;
             }
@@ -259,37 +266,38 @@ class SupplyTransportationController extends Controller
             }
 
             //driver wage
+            foreach ($driverIds as $key => $driverId) {
+                //save driver wage transaction to table
+                $wageTransactionResponse = $transactionRepo->saveTransaction([
+                    'transaction_date'  => $transportationDate,
+                    'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
+                    'credit_account_id' => $drivers->firstWhere('id', $driverId)->account_id, // credit the driver account
+                    'amount'            => $request->get('driver_total_wage')[$key],
+                    'particulars'       => "Wage generated for ". $tripDetails,
+                    'status'            => 1,
+                    'created_by'        => Auth::id(),
+                ], (!empty($driverWages) ? $driverWages->firstWhere('employee_id', $driverId)->transaction_id : null));
 
-            //save driver wage transaction to table
-            $wageTransactionResponse = $transactionRepo->saveTransaction([
-                'transaction_date'  => $transportationDate,
-                'debit_account_id'  => $employeeWageAccountId, // debit the employee wage account
-                'credit_account_id' => $driver->account_id, // credit the driver account
-                'amount'            => $request->get('driver_total_wage'),
-                'particulars'       => "Wage generated for ". $tripDetails,
-                'status'            => 1,
-                'created_by'        => Auth::id(),
-            ], (!empty($driverWage) ? $driverWage->transaction_id : null));
+                if(!$wageTransactionResponse['flag']) {
+                    throw new TMException("CustomError", $wageTransactionResponse['errorCode']);
+                }
 
-            if(!$wageTransactionResponse['flag']) {
-                throw new TMException("CustomError", $wageTransactionResponse['errorCode']);
-            }
+                //save to driver wage table
+                $driverWageResponse = $employeeWageRepo->saveEmployeeWage([
+                    'transaction_id'    => $wageTransactionResponse['transaction']->id,
+                    'employee_id'       => $driverId,
+                    'wage_type'         => $this->driverWageType,
+                    'to_date'           => $transportationDate,
+                    'transportation_id' => $transportationResponse['transportation']->id,
+                    'wage_amount'       => $request->get('driver_wage')[$key],
+                    'no_of_trip'        => $noOfTrip,
+                    'total_wage_amount' => $request->get('driver_total_wage')[$key],
+                    'status'            => 1,
+                ], (!empty($driverWages) ? $driverWages->firstWhere('employee_id', $driverId)->id : null));
 
-            //save to driver wage table
-            $driverWageResponse = $employeeWageRepo->saveEmployeeWage([
-                'transaction_id'    => $wageTransactionResponse['transaction']->id,
-                'employee_id'       => $driverId,
-                'wage_type'         => $this->driverWageType,
-                'to_date'           => $transportationDate,
-                'transportation_id' => $transportationResponse['transportation']->id,
-                'wage_amount'       => $request->get('driver_wage'),
-                'no_of_trip'        => $noOfTrip,
-                'total_wage_amount' => $request->get('driver_total_wage'),
-                'status'            => 1,
-            ], (!empty($driverWage) ? $driverWage->id : null));
-
-            if(!$driverWageResponse['flag']) {
-                throw new TMException("CustomError", $driverWageResponse['errorCode']);
+                if(!$driverWageResponse['flag']) {
+                    throw new TMException("CustomError", $driverWageResponse['errorCode']);
+                }
             }
 
             //purchase
