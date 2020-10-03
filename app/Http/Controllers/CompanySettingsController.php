@@ -67,7 +67,7 @@ class CompanySettingsController extends Controller
             'measurements_auto_selection' => 'nullable|boolean',
             'purchase_auto_selection'     => 'nullable|boolean',
             'sale_auto_selection'         => 'nullable|boolean',
-            'second_driver_wage_ratio'    => 'required|min:0|max:2|numeric',
+            'second_driver_wage_ratio'    => 'required|min:0|max:0.9|numeric',
         ]);
 
         if($validator->fails()) {

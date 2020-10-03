@@ -96,7 +96,6 @@
                                             <td>Second Driver Wage Ratio</td>
                                             <td>Auto calculation wage ratio for second driver, when more second driver selected in transportation/supply</td>
                                             <td style="text-align: center; vertical-align: middle;">
-                                                <input type="hidden" value="0" name="sale_auto_selection">
                                                 <input type="text" value="{{ $settings->second_driver_wage_ratio }}" name="second_driver_wage_ratio" tabindex="7">
                                             </td>
                                         </tr>
