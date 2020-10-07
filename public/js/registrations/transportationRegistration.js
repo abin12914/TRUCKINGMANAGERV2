@@ -99,6 +99,31 @@ $(function () {
         calculateDriverWageTotal()
     });
 
+    //add second driver
+    $('body').on("click", "#add_second_driver_button", function (e) {
+        e.preventDefault();
+        $('#driver_id_1').prop('disabled', false);
+        $('#driver_wage_1').prop('disabled', false);
+        $('#driver_total_wage_1').prop('disabled', false);
+        $('#add_second_driver_section').hide();
+        $('#remove_second_driver_section').show();
+    });
+
+    //remove second driver
+    $('body').on("click", "#remove_second_driver_button", function(e) {
+        e.preventDefault();
+        $('#driver_id_1').prop('disabled', true);
+        $('#driver_wage_1').prop('disabled', true);
+        $('#driver_total_wage_1').prop('disabled', true);
+        $('#add_second_driver_section').show();
+        $('#remove_second_driver_section').hide();
+        $('#driver_id_1').val('');
+        $('#driver_id_1').trigger('change');
+        $('#driver_wage_1').val(0);
+        $('#driver_total_wage_1').val(0);
+        calculateSecondDriverWage();
+    });
+
     //action on primary driver keyup
     $('body').on("change", "#driver_id_0", function (evt) {
         //calculate driver default wage

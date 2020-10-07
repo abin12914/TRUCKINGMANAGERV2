@@ -225,6 +225,12 @@ class SupplyTransportationController extends Controller
                 $driverWages    = $transportation->employeeWages->where('wage_type', $this->driverWageType);
                 $purchase       = $transportation->purchase;
                 $sale           = $transportation->sale;
+                foreach ($driverWages as $key => $driverWage) {
+                    //delete wage details of employee who removed from driver's list
+                    if(!in_array($driverWage->employee_id, $driverIds)) {
+                        $employeeWageRepo->deleteEmployeeWage($driverWage->id);
+                    }
+                }
             }
 
             //transportation
@@ -276,7 +282,7 @@ class SupplyTransportationController extends Controller
                     'particulars'       => "Wage generated for ". $tripDetails,
                     'status'            => 1,
                     'created_by'        => Auth::id(),
-                ], (!empty($driverWages) ? $driverWages->firstWhere('employee_id', $driverId)->transaction_id : null));
+                ], ((!empty($driverWages) && !empty($driverWages->firstWhere('employee_id', $driverId))) ? $driverWages->firstWhere('employee_id', $driverId)->transaction_id : null));
 
                 if(!$wageTransactionResponse['flag']) {
                     throw new TMException("CustomError", $wageTransactionResponse['errorCode']);
@@ -293,7 +299,7 @@ class SupplyTransportationController extends Controller
                     'no_of_trip'        => $noOfTrip,
                     'total_wage_amount' => $request->get('driver_total_wage')[$key],
                     'status'            => 1,
-                ], (!empty($driverWages) ? $driverWages->firstWhere('employee_id', $driverId)->id : null));
+                ], ((!empty($driverWages) && !empty($driverWages->firstWhere('employee_id', $driverId))) ? $driverWages->firstWhere('employee_id', $driverId)->id : null));
 
                 if(!$driverWageResponse['flag']) {
                     throw new TMException("CustomError", $driverWageResponse['errorCode']);
@@ -385,7 +391,7 @@ class SupplyTransportationController extends Controller
         } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-
+dd($e);
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {

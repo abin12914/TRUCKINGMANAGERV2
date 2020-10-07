@@ -108,10 +108,11 @@
         @endcomponent
     </div>
 </div>
-@for($i=0; $i<2; $i++)
-    @component('components.element-groups.driver-wage', ['transportation' => $transportation ?? null, 'driverIndex' => $i])
-    @endcomponent
-@endfor
+@component('components.element-groups.driver-wage', ['transportation' => $transportation ?? null, 'driverIndex' => 0, 'isDisabled' => false])
+@endcomponent
+@component('components.element-groups.driver-wage', ['transportation' => $transportation ?? null, 'driverIndex' => 1, 'isDisabled' => ((empty($transportation) || $transportation->employeeWages->count() < 2) ? true : false) ])
+@endcomponent
+
 <input type="hidden" name="truck_reg_number" id="truck_reg_number" value="" />
 <input type="hidden" name="source_name" id="source_name" value="" />
 <input type="hidden" name="destination_name" id="destination_name" value="" />

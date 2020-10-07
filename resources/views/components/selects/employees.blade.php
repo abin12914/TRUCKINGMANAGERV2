@@ -1,4 +1,7 @@
-<select class="form-control select2" name="{{ $selectName }}" id="{{ $selectId ?? $selectName }}" style="width: 100%" tabindex="{{ $tabindex }}">
+<select class="form-control select2" name="{{ $selectName }}"
+    id="{{ $selectId ?? $selectName }}" style="width: 100%"
+    tabindex="{{ $tabindex }}"
+    {{ (!empty($isDisabled) && $isDisabled) ? 'disabled' : '' }}>
     <option value="" {{ empty($selectedEmployeeId) ? 'selected' : '' }}>Select employee</option>
     @if(!empty($employeesCombo) && (count($employeesCombo) > 0))
         @foreach($employeesCombo as $employee)
