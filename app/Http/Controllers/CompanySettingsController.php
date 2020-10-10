@@ -67,10 +67,16 @@ class CompanySettingsController extends Controller
             'measurements_auto_selection' => 'nullable|boolean',
             'purchase_auto_selection'     => 'nullable|boolean',
             'sale_auto_selection'         => 'nullable|boolean',
-            'second_driver_wage_ratio'    => 'required|min:0|max:0.9|numeric',
+            'second_driver_wage_ratio'    => 'nullable|min:0|max:0.9|numeric',
         ]);
 
         if($validator->fails()) {
+            if($request->ajax()){
+              return [
+                      "flag"    => false,
+                      "message" => "Invalid data.",
+                  ];
+            }
             return redirect()
                     ->back()
                     ->withErrors($validator)
@@ -102,7 +108,7 @@ class CompanySettingsController extends Controller
                     $inputData['sale_auto_selection'] = $request->get('sale_auto_selection');
                 }
                 if($request->has('second_driver_wage_ratio')) {
-                    $inputData['second_driver_wage_ratio'] = $request->get('second_driver_wage_ratio');
+                    $inputData['second_driver_wage_ratio'] = $request->get('second_driver_wage_ratio') ?? 0.5;
                 }
                 $inputData['status'] = 1;
 
