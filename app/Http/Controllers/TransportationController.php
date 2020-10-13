@@ -381,13 +381,20 @@ class TransportationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(EmployeeWageRepository $employeeWageRepo, $id)
     {
         $errorCode  = 0;
 
         //wrapping db transactions
         DB::beginTransaction();
         try {
+            $employeeWages  = $this->transportationRepo->getTransportation($id, ['employeeWages', 'purchase', 'sale'], false)->employeeWages;
+            foreach ($employeeWages as $key => $employeeWage) {
+                $deleteEmployeeWage = $employeeWageRepo->deleteEmployeeWage($employeeWage->id, false);
+                if(!$deleteEmployeeWage['flag']) {
+                    throw new TMException("CustomError", $deleteEmployeeWage['errorCode']);
+                }
+            }
             $deleteResponse = $this->transportationRepo->deleteTransportation($id, false);
 
             if(!$deleteResponse['flag']) {
@@ -396,7 +403,7 @@ class TransportationController extends Controller
 
             DB::commit();
             return redirect(route('transportations.index'))->with("message","Transportation details deleted successfully.")->with("alert-class", "success");
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {dd($e);
             //roll back in case of exceptions
             DB::rollback();
 

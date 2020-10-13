@@ -391,7 +391,7 @@ class SupplyTransportationController extends Controller
         } catch (\Exception $e) {
             //roll back in case of exceptions
             DB::rollback();
-dd($e);
+
             $errorCode = (($e->getMessage() == "CustomError") ? $e->getCode() : 2);
         }
         if(!empty($id)) {
@@ -499,14 +499,15 @@ dd($e);
         DB::beginTransaction();
         try {
             $transportation = $transportationRepo->getTransportation($id, ['employeeWages', 'purchase', 'sale'], false);
-            $employeeWage   = $transportation->employeeWages()->first();
+            $employeeWages  = $transportation->employeeWages;
             $purchase       = $transportation->purchase;
             $sale           = $transportation->sale;
 
-            $deleteEmployeeWage = $employeeWageRepo->deleteEmployeeWage($employeeWage->id, false);
-
-            if(!$deleteEmployeeWage['flag']) {
-                throw new TMException("CustomError", $deleteEmployeeWage['errorCode']);
+            foreach ($employeeWages as $key => $employeeWage) {
+                $deleteEmployeeWage = $employeeWageRepo->deleteEmployeeWage($employeeWage->id, false);
+                if(!$deleteEmployeeWage['flag']) {
+                    throw new TMException("CustomError", $deleteEmployeeWage['errorCode']);
+                }
             }
 
             $deleteSale = $saleRepo->deleteSale($sale->id, false);
