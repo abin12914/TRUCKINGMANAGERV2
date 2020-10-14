@@ -105,7 +105,7 @@ class VoucherController extends Controller
         ];
 
         try {
-            $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'voucher_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], [], true);
+            $vouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'voucher_date', 'order' => 'asc', 'num' => $noOfRecordsPerPage], [], ['transaction'], true);
 
             if($vouchers->lastPage() == $vouchers->currentPage()) {
                 $allVouchers = $this->voucherRepo->getVouchers($whereParams, [], $relationalParams, $relationalOrParams, ['by' => 'id', 'order' => 'asc', 'num' => null], [], [], true);

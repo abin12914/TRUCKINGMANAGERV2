@@ -130,13 +130,13 @@
                                                 @if($voucher->transaction_type == 1)
                                                     <td>{{ $voucher->transaction->creditAccount->account_name }}</td>
                                                     <td>Receipt</td>
-                                                    <td>{{ $voucher->description }}</td>
+                                                    <td>{{ $voucher->transaction->particulars }}</td>
                                                     <td>{{ $voucher->amount }}</td>
                                                     <td></td>
                                                 @else
                                                     <td>{{ $voucher->transaction->debitAccount->account_name }}</td>
                                                     <td>Payment</td>
-                                                    <td>{{ $voucher->description }}</td>
+                                                    <td>{{ $voucher->transaction->particulars }}</td>
                                                     <td></td>
                                                     <td>{{ $voucher->amount }}</td>
                                                 @endif
