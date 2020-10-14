@@ -31,7 +31,7 @@ function lastFuelReFillByTruck() {
                 if(result.flag) {
                     $('#last_odometer_reading').val(result.lastFuelRefillReading);
                 } else {
-                    $('#last_odometer_reading').val('');
+                    $('#last_odometer_reading').val(0);
                 }
             },
             error: function () {
