@@ -105,8 +105,8 @@
                                         <th style="width: 10%;">Date</th>
                                         <th style="width: 10%;">Ref.No.</th>
                                         <th style="width: 45%;">Particulars</th>
-                                        <th style="width: 15%;">Expense</th>
-                                        <th style="width: 15%;">Income</th>
+                                        <th style="width: 15%;">Debit</th>
+                                        <th style="width: 15%;">Credit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
