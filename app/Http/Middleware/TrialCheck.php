@@ -20,7 +20,7 @@ class TrialCheck
         if($request->getMethod() == "POST"&&
             Auth::check() &&
             Auth::user()->company->subscription_plan != 0 &&
-            Carbon::now() > (Auth::user()->company->created_at->addDays(7))
+            Carbon::now() > (Auth::user()->company->created_at->addDays(15))
         ) {
             return redirect(route('home'))
                 ->with("message","Trial ended. Contact admin.")
