@@ -44,19 +44,11 @@ class VoucherController extends Controller
         $fromDate    = !empty($request->get('from_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('from_date'))->format('Y-m-d') : null;
         $toDate      = !empty($request->get('to_date')) ? Carbon::createFromFormat('d-m-Y', $request->get('to_date'))->format('Y-m-d') : null;
 
-        $debitVoucherTypeWhere = [
+        $whereParams = [
             'transaction_type_debit' =>  [
                 'paramName'     => 'transaction_type',
                 'paramOperator' => '=',
-                'paramValue'    => 1,
-            ]
-        ];
-
-        $creditVoucherTypeWhere = [
-            'transaction_type_credit' =>  [
-                'paramName'     => 'transaction_type',
-                'paramOperator' => '=',
-                'paramValue'    => 2,
+                'paramValue'    => $request->get('transaction_type'),
             ]
         ];
 
@@ -77,10 +69,6 @@ class VoucherController extends Controller
                 'paramValue'    => $request->get('account_id'),
             ],
         ];
-
-        if(!empty($request->get('transaction_type') )){
-            $whereParams = $request->get('transaction_type') == 1 ? $debitVoucherTypeWhere : $creditVoucherTypeWhere;
-        }
 
         $relationalParams = [
             'from_date' => [
@@ -162,56 +150,85 @@ class VoucherController extends Controller
 
         $transactionDate = Carbon::createFromFormat('d-m-Y', $request->get('transaction_date'))->format('Y-m-d');
         $transactionType = $request->get('transaction_type');
-        $accountId       = $request->get('account_id');
+        $debitAccountId  = $request->get('debit_account_id');
+        $creditAccountId = $request->get('credit_account_id');
         $description     = $request->get('description');
 
         //wrappin db transactions
         DB::beginTransaction();
         try {
-            $orWhereParams = [
-                'account_name' => [
-                    'paramName'     => 'account_name',
-                    'paramOperator' => '=',
-                    'paramValue'    => "Cash",
-                ],
-                'id' => [
-                    'paramName'     => 'id',
-                    'paramOperator' => '=',
-                    'paramValue'    => $accountId,
-                ]
-            ];
+            if($transactionType == 1) {//cash voucher - reciept
+                $orWhereParams = [
+                    'account_name' => [
+                        'paramName'     => 'account_name',
+                        'paramOperator' => '=',
+                        'paramValue'    => "Cash",
+                    ],
+                    'id' => [
+                        'paramName'     => 'id',
+                        'paramOperator' => '=',
+                        'paramValue'    => $creditAccountId,
+                    ]
+                ];
+            } elseif($transactionType == 2) { //cash voucher - payment
+                $orWhereParams = [
+                    'account_name' => [
+                        'paramName'     => 'account_name',
+                        'paramOperator' => '=',
+                        'paramValue'    => "Cash",
+                    ],
+                    'id' => [
+                        'paramName'     => 'id',
+                        'paramOperator' => '=',
+                        'paramValue'    => $debitAccountId,
+                    ]
+                ];
+            } else {//secondary voucher
+                $orWhereParams = [
+                    'debit_account_id' => [
+                        'paramName'     => 'id',
+                        'paramOperator' => '=',
+                        'paramValue'    => $debitAccountId,
+                    ],
+                    'credit_account_id' => [
+                        'paramName'     => 'id',
+                        'paramOperator' => '=',
+                        'paramValue'    => $creditAccountId,
+                    ]
+                ];
+            }
 
             //confirming account exist-ency.
             $baseAccounts   = $accountRepo->getAccounts([], $orWhereParams, [], ['by' => 'id', 'order' => 'asc', 'num' => null], [], [],true);
-            $cashAccount    = $baseAccounts->firstWhere('account_name', '=', 'Cash');
-            $clientAccount  = $baseAccounts->firstWhere('id', '=', $accountId);
-
-            if($baseAccounts->count() < 2 || empty($cashAccount) || empty($clientAccount))
-            {
+            if($baseAccounts->count() != 2) {
                 throw new TMException("CustomError", 500);
+            }
+            if($transactionType == 1) {
+                //Receipt : Debit cash account - Credit giver account
+                $debitAccount   = $baseAccounts->firstWhere('account_name', '=', 'Cash');
+                $creditAccount  = $baseAccounts->firstWhere('id', '=', $creditAccountId);
+                $particulars    = $description. "[Cash received from ". $creditAccount->account_name. "]";
+            } elseif($transactionType == 2) {
+                //Payment : Debit receiver account - Credit cash account
+                $creditAccount  = $baseAccounts->firstWhere('account_name', '=', 'Cash');
+                $debitAccount   = $baseAccounts->firstWhere('id', '=', $debitAccountId);
+                $particulars    = $description. "[Cash paid to ". $debitAccount->account_name. "]";
+            } else {
+                //Credit Voucher : Debit receiver account - Credit payer account
+                $debitAccount  = $baseAccounts->firstWhere('id', '=', $debitAccountId);
+                $creditAccount = $baseAccounts->firstWhere('id', '=', $creditAccountId);
+                $particulars   = $description. "[From : ". $debitAccount->account_name. " To : ". $creditAccount->account_name. "]";
             }
 
             if(!empty($id)) {
                 $voucher = $this->voucherRepo->getVoucher($id, [], false);
             }
 
-            if($transactionType == 1) {
-                //Receipt : Debit cash account - Credit giver account
-                $debitAccountId     = $cashAccount->id;
-                $creditAccountId    = $clientAccount->id;
-                $particulars        = $description. "[Cash received from ". $clientAccount->account_name. "]";
-            } else {
-                //Payment : Debit receiver account - Credit cash account
-                $debitAccountId     = $clientAccount->id;
-                $creditAccountId    = $cashAccount->id;
-                $particulars        = $description. "[Cash paid to ". $clientAccount->account_name. "]";
-            }
-
             //save voucher transaction to table
             $transactionResponse   = $transactionRepo->saveTransaction([
                 'transaction_date'  => $transactionDate,
-                'debit_account_id'  => $debitAccountId,
-                'credit_account_id' => $creditAccountId,
+                'debit_account_id'  => $debitAccount->id,
+                'credit_account_id' => $creditAccount->id,
                 'amount'            => $request->get('amount'),
                 'particulars'       => $particulars,
                 'status'            => 1,

@@ -28,10 +28,19 @@ class VoucherRegistrationRequest extends FormRequest
         return [
             'transaction_type'  =>  [
                                         'required',
-                                        Rule::in([1, 2]),
+                                        Rule::in([1, 2, 3]),
                                     ],
-            'account_id'        =>  [
-                                        'required',
+            'debit_account_id'  =>  [
+                                        'required_if:transaction_type,2,3',
+                                        'nullable',
+                                        Rule::exists('accounts', 'id')->where(function ($query) {
+                                            $query->where('company_id', Auth::User()->company_id);
+                                        })
+                                    ],
+            'credit_account_id' =>  [
+                                        'required_if:transaction_type,1,3',
+                                        'nullable',
+                                        'different:debit_account_id',
                                         Rule::exists('accounts', 'id')->where(function ($query) {
                                             $query->where('company_id', Auth::User()->company_id);
                                         })
@@ -63,8 +72,10 @@ class VoucherRegistrationRequest extends FormRequest
     public function messages()
     {
         return [
-            'account_id.required' => 'The relation field is required.',
-            'account_id.exists'   => 'Invalid data.'
+            'debit_account_id.required_if'  => 'The reciever account field is required.',
+            'credit_account_id.required_if' => 'The giver account field is required.',
+            'debit_account_id.exists'       => 'Invalid data.',
+            'credit_account_id.exists'      => 'Invalid data.'
         ];
     }
 }

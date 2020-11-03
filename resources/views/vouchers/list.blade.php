@@ -48,6 +48,7 @@
                                             <option value="" {{ empty(old('transaction_type')) ? 'selected' : '' }}>Select voucher type</option>
                                             <option value="1" {{ (old('transaction_type', $params['transaction_type']['paramValue']) == 1) ? 'selected' : '' }}>Reciept</option>
                                             <option value="2" {{ (old('transaction_type', $params['transaction_type']['paramValue']) == 2) ? 'selected' : '' }}>Payment</option>
+                                            <option value="3" {{ (old('transaction_type', $params['transaction_type']['paramValue']) == 3) ? 'selected' : '' }}>Seconday Transfer</option>
                                         </select>
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
@@ -111,35 +112,29 @@
                             <table class="table table-responsive table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th style="width: 5%;">#</th>
-                                        <th style="width: 8%;">Date</th>
-                                        <th style="width: 15%;">Account</th>
-                                        <th style="width: 10%;">Voucher Type</th>
-                                        <th style="width: 26%;">Description</th>
-                                        <th style="width: 12%;">Cash Recieved</th>
-                                        <th style="width: 12%;">Cash Paid</th>
-                                        <th style="width: 12%;" class="no-print">Actions</th>
+                                        <th style="width: 4%;">#</th>
+                                        <th style="width: 10%;">Date</th>
+                                        <th style="width: 18%;">Payer</th>
+                                        <th style="width: 18%;">Reciever</th>
+                                        <th style="width: 30%;">Description</th>
+                                        <th style="width: 10%;">Amount</th>
+                                        <th style="width: 10%;" class="no-print">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if(!empty($vouchers))
                                         @foreach($vouchers as $index => $voucher)
-                                            <tr>
+                                            <tr class="{{ $voucher->transaction_type == 3 ? 'warning' : 'info' }}">
                                                 <td>{{ $index + $vouchers->firstItem() }}</td>
                                                 <td>{{ $voucher->transaction->transaction_date->format('d-m-Y') }}</td>
-                                                @if($voucher->transaction_type == 1)
-                                                    <td>{{ $voucher->transaction->creditAccount->account_name }}</td>
-                                                    <td>Receipt</td>
-                                                    <td>{{ $voucher->transaction->particulars }}</td>
-                                                    <td>{{ $voucher->amount }}</td>
-                                                    <td></td>
-                                                @else
-                                                    <td>{{ $voucher->transaction->debitAccount->account_name }}</td>
-                                                    <td>Payment</td>
-                                                    <td>{{ $voucher->transaction->particulars }}</td>
-                                                    <td></td>
-                                                    <td>{{ $voucher->amount }}</td>
-                                                @endif
+                                                <td class="{{ $voucher->transaction->credit_account_id == $params['account_id']['paramValue'] ? 'danger' : '' }}">
+                                                    {{ $voucher->transaction->creditAccount->account_name }}
+                                                </td>
+                                                <td class="{{ $voucher->transaction->debit_account_id == $params['account_id']['paramValue'] ? 'danger' : '' }}">
+                                                    {{ $voucher->transaction->debitAccount->account_name }}
+                                                </td>
+                                                <td>{{ $voucher->transaction->particulars }}</td>
+                                                <td>{{ $voucher->amount }}</td>
                                                 <td class="no-print">
                                                     <a href="{{ route('vouchers.edit', $voucher->id) }}" style="float: left; margin-right:2px;">
                                                         <button type="button" class="btn btn-warning" title="edit">

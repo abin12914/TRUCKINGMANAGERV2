@@ -34,38 +34,56 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <div class="col-md-6">
-                                        <label for="transaction_type_debit" class="control-label"><b style="color: red;">* </b> Receipt : </label>
-                                        <div class="input-group" title="Debit">
-                                            <span class="input-group-addon">
-                                                <input type="radio" name="transaction_type" class="transaction_type" id="transaction_type_debit" value="1" {{ old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == '1' ? 'checked' : '' }} tabindex="1">
-                                            </span>
-                                            <label for="transaction_type_debit" class="form-control">Receipt [Cash Received]</label>
-                                        </div>
+                                        {{-- <label for="transaction_type_debit" class="control-label"><b style="color: red;">* </b> Receipt : </label> --}}
+                                        <label class="control-label"><b style="color: red;">* </b> Voucher Type : </label>
+                                        <select class="form-control select2" name="transaction_type" id="transaction_type" tabindex="1" style="width: 100%;">
+                                            <option value="" {{ empty(old('transaction_type')) ? 'selected' : '' }}>Select voucher type</option>
+                                            <option value="1" {{ (old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == 1) ? 'selected' : '' }}>
+                                                Reciept [Cash From Giver To Company]
+                                            </option>
+                                            <option value="2" {{ (old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == 2) ? 'selected' : '' }}>
+                                                Payment [Cash From Company To Reciever]
+                                            </option>
+                                            <option value="3" {{ (old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == 3) ? 'selected' : '' }}>
+                                                Seconday Transfer [Between 2 Accounts Behalf Of Company]
+                                            </option>
+                                        </select>
                                         {{-- adding error_message p tag component --}}
                                         @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
                                         @endcomponent
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="transaction_type_credit" class="control-label"><b style="color: red;">* </b> Payment : </label>
-                                        <div class="input-group" title="Credit">
-                                            <span class="input-group-addon">
-                                                <input type="radio" name="transaction_type" class="transaction_type" id="transaction_type_credit" value="2" {{ old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == '2' ? 'checked' : '' }} tabindex="2">
-                                            </span>
-                                            <label for="transaction_type_credit" class="form-control">Payment [Cash Paid]</label>
-                                        </div>
+                                        <label for="credit_account_id" class="control-label"><b style="color: red;">* </b> Giver Account : </label>
+                                        {{-- adding account select component --}}
+                                        @component('components.selects.accounts', [
+                                            'selectedAccountId' => old('credit_account_id', !empty($voucher) ? $voucher->transaction->credit_account_id : null),
+                                            'cashAccountFlag' => false,
+                                            'selectName' => 'credit_account_id',
+                                            'activeFlag' => false,
+                                            'tabindex' => 2,
+                                            'isDisabled' => (!in_array(old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null), [1, 3]))
+                                        ])
+                                        @endcomponent
                                         {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'transaction_type'])
+                                        @component('components.paragraph.error_message', ['fieldName' => 'credit_account_id'])
                                         @endcomponent
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-6">
-                                        <label for="account_id" class="control-label"><b style="color: red;">* </b> <b id="account_label">{{ (old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null) == 1) ? "Giver " : "Reciever " }}</b> Account : </label>
+                                        <label for="debit_account_id" class="control-label"><b style="color: red;">* </b> Reciever Account : </label>
                                         {{-- adding account select component --}}
-                                        @component('components.selects.accounts', ['selectedAccountId' => old('account_id', !empty($voucher) ? ($voucher->transaction_type == 2 ? $voucher->transaction->debit_account_id : $voucher->transaction->credit_account_id) : null), 'cashAccountFlag' => false, 'selectName' => 'account_id', 'activeFlag' => false, 'tabindex' => 3])
+                                        @component('components.selects.accounts', [
+                                            'selectedAccountId' => old('debit_account_id', !empty($voucher) ? $voucher->transaction->debit_account_id : null),
+                                            'cashAccountFlag' => false,
+                                            'selectName' => 'debit_account_id',
+                                            'activeFlag' => false,
+                                            'tabindex' => 3,
+                                            'isDisabled' => (!in_array(old('transaction_type', !empty($voucher) ? $voucher->transaction_type : null), [2, 3]))
+                                        ])
                                         @endcomponent
                                         {{-- adding error_message p tag component --}}
-                                        @component('components.paragraph.error_message', ['fieldName' => 'account_id'])
+                                        @component('components.paragraph.error_message', ['fieldName' => 'debit_account_id'])
                                         @endcomponent
                                     </div>
                                     <div class="col-md-6">
