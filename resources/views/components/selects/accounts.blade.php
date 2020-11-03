@@ -2,7 +2,7 @@
     name="{{ $selectName }}"
     id="{{ $selectName }}"
     style="width: 100%"
-    {{ $isDisabled ? 'disabled' : '' }}
+    {{ (!empty($isDisabled) && $isDisabled) ? 'disabled' : '' }}
     tabindex="{{ $tabindex }}">
     <option value="" {{ empty($selectedAccountId) ? 'selected' : '' }}>Select account</option>
     @if(!empty($accountsCombo) && (count($accountsCombo) > 0))
