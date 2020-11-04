@@ -33,6 +33,7 @@ class VoucherRegistrationRequest extends FormRequest
             'debit_account_id'  =>  [
                                         'required_if:transaction_type,2,3',
                                         'nullable',
+                                        // 'different:credit_account_id',
                                         Rule::exists('accounts', 'id')->where(function ($query) {
                                             $query->where('company_id', Auth::User()->company_id);
                                         })
@@ -40,7 +41,7 @@ class VoucherRegistrationRequest extends FormRequest
             'credit_account_id' =>  [
                                         'required_if:transaction_type,1,3',
                                         'nullable',
-                                        'different:debit_account_id',
+                                        // 'different:debit_account_id',
                                         Rule::exists('accounts', 'id')->where(function ($query) {
                                             $query->where('company_id', Auth::User()->company_id);
                                         })
