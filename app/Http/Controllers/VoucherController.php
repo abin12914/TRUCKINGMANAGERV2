@@ -217,7 +217,7 @@ class VoucherController extends Controller
                 //Credit Voucher : Debit receiver account - Credit payer account
                 $debitAccount  = $baseAccounts->firstWhere('id', '=', $debitAccountId);
                 $creditAccount = $baseAccounts->firstWhere('id', '=', $creditAccountId);
-                $particulars   = $description. "[From : ". $debitAccount->account_name. " To : ". $creditAccount->account_name. "]";
+                $particulars   = $description. "[From : ". $creditAccount->account_name. " To : ". $debitAccount->account_name. "]";
             }
 
             if(!empty($id)) {
