@@ -1,6 +1,11 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
+use Database\Seeds\MaterialsTableSeeder;
+use Database\Seeds\ServicesTableSeeder;
+use Database\Seeds\TruckTypesTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
