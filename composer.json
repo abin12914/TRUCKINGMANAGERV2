@@ -10,12 +10,12 @@
     "require": {
         "php": "^8.0.2",
         "fideloper/proxy": "^4.0",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "9.0.0",
         "laravel/tinker": "^2.0",
         "orangehill/iseed": "^3.0",
         "spatie/laravel-backup": "^6.11",
         "tcg/voyager": "1.4.*",
-        "torzer/awesome-landlord": "^3.0"
+        "torzer/awesome-landlord": "3.0.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
