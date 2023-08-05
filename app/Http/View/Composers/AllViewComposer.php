@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\ViewComposers;
+namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
 use Auth;

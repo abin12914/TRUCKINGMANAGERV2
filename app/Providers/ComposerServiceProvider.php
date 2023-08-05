@@ -25,7 +25,7 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         //current user to all views
-        View::composer('*', "App\Http\ViewComposers\AllViewComposer");
+        View::composer('*', "App\Http\View\Composers\AllViewComposer");
         //accounts to views
         View::composer('components.selects.accounts', "App\Http\View\Composers\AccountComponentComposer");
         //trucks to views
