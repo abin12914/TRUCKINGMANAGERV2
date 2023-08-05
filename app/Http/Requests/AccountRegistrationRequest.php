@@ -47,7 +47,7 @@ class AccountRegistrationRequest extends FormRequest
                                             'required',
                                             'numeric',
                                             'min:0',
-                                            'max:999999',
+                                            'max:9999999',
                                         ],
             'name'                  =>  [
                                             'required',

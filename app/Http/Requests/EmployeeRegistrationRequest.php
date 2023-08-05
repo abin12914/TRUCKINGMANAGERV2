@@ -72,7 +72,7 @@ class EmployeeRegistrationRequest extends FormRequest
                                         'required',
                                         'numeric',
                                         'min:0',
-                                        'max:99999',
+                                        'max:999999',
                                     ],
             'account_name'      =>  [
                                         'required',
@@ -90,7 +90,7 @@ class EmployeeRegistrationRequest extends FormRequest
                                         'required',
                                         'numeric',
                                         'min:0',
-                                        'max:999999'
+                                        'max:9999999'
                                     ]
         ];
     }

@@ -59,7 +59,7 @@ class VoucherRegistrationRequest extends FormRequest
             'amount'            =>  [
                                         'required',
                                         'numeric',
-                                        'min:10',
+                                        'min:1',
                                         'max:999999',
                                     ],
         ];

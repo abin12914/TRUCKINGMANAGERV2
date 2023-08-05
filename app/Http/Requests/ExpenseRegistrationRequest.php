@@ -56,7 +56,7 @@ class ExpenseRegistrationRequest extends FormRequest
                                         'required',
                                         'numeric',
                                         'min:1',
-                                        'max:999999',
+                                        'max:9999999',
                                     ],
         ];
     }

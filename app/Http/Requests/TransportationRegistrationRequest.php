@@ -68,25 +68,25 @@ class TransportationRegistrationRequest extends FormRequest
                                             'required',
                                             'numeric',
                                             'min:1',
-                                            'max:500',
+                                            'max:9999',
                                         ],
             'rent_rate'             =>  [
                                             'required',
                                             'numeric',
-                                            'min:0.1',
-                                            'max:99999',
+                                            'min:0.01',
+                                            'max:999999',
                                         ],
             'trip_rent'             =>  [
                                             'required',
                                             'numeric',
-                                            'max:99999',
+                                            'max:999999',
                                             'min:1',
                                         ],
             'no_of_trip'            =>  [
                                             'required',
                                             'integer',
                                             'min:1',
-                                            'max:25',
+                                            'max:10',
                                         ],
             'total_rent'            =>  [
                                             'required',
@@ -115,8 +115,8 @@ class TransportationRegistrationRequest extends FormRequest
             'driver_wage.*'         =>  [
                                             'required',
                                             'numeric',
-                                            'max:5000',
-                                            'min:10',
+                                            'max:99999',
+                                            'min:1',
                                         ],
             'driver_total_wage'     =>  [
                                             'required',
@@ -127,8 +127,8 @@ class TransportationRegistrationRequest extends FormRequest
             'driver_total_wage.*'   =>  [
                                             'required',
                                             'numeric',
-                                            'min:10',
-                                            'max:9999'
+                                            'min:1',
+                                            'max:99999'
                                         ]
         ];
     }
@@ -152,8 +152,8 @@ class TransportationRegistrationRequest extends FormRequest
             'contractor_account_id.exists'  => 'Invalid data.',
             'material_id.required'          => 'The material field is required.',
             'material_id.exists'            => 'Invalid data.',
-            'driver_id.required'            => 'The driver field is required.',
-            'driver_id.exists'              => 'Invalid data.',
+            'driver_id.*.required'            => 'The driver field is required.',
+            'driver_id.*.exists'              => 'Invalid data.',
         ];
     }
 
