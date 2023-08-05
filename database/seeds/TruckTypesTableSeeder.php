@@ -18,53 +18,97 @@ class TruckTypesTableSeeder extends Seeder
 
         \DB::table('truck_types')->delete();
 
-        \DB::table('truck_types')->insert(array (
-            0 =>
-            array (
+        \DB::table('truck_types')->insert([
+            [
                 'id' => 1,
-                'name' => 'Toress 10 Wheel',
-                'description' => 'Toress 10 Wheel 500 ft class',
-                'generic_quantity' => 500,
+                'name' => 'Nissan',
+                'description' => 'Nissan 6 Wheel 100ft class',
+                'generic_quantity' => 100,
                 'status' => 1,
-                'created_at' => '2019-11-09 03:39:34',
-                'updated_at' => '2019-11-09 03:39:34',
+                'created_at' => NULL,
+                'updated_at' => NULL,
                 'deleted_at' => NULL,
-            ),
-            1 =>
-            array (
+            ],
+            [
                 'id' => 2,
                 'name' => 'Lorry 6 Wheel',
                 'description' => 'Lorry 6 Wheel 250ft class',
                 'generic_quantity' => 250,
                 'status' => 1,
-                'created_at' => '2019-11-09 03:40:07',
-                'updated_at' => '2019-11-09 03:40:07',
+                'created_at' => NULL,
+                'updated_at' => NULL,
                 'deleted_at' => NULL,
-            ),
-            2 =>
-            array (
+            ],
+            [
                 'id' => 3,
-                'name' => 'Nissan',
-                'description' => 'Nissan 6 Wheel 100ft class',
-                'generic_quantity' => 100,
+                'name' => 'Toress 10 Wheel',
+                'description' => 'Toress 10 Wheel 500ft class',
+                'generic_quantity' => 500,
                 'status' => 1,
-                'created_at' => '2020-02-07 22:07:39',
-                'updated_at' => '2020-02-07 22:07:39',
+                'created_at' => NULL,
+                'updated_at' => NULL,
                 'deleted_at' => NULL,
-            ),
-            3 =>
-            array (
+            ],
+            [
                 'id' => 4,
                 'name' => 'Toress 12 Wheel',
                 'description' => 'Toress 12 Wheel 700ft Class',
                 'generic_quantity' => 700,
                 'status' => 1,
-                'created_at' => '2020-02-07 22:08:34',
-                'updated_at' => '2020-02-07 22:08:34',
+                'created_at' => NULL,
+                'updated_at' => NULL,
                 'deleted_at' => NULL,
-            ),
-        ));
-
-
+            ],
+            [
+                'id' => 5,
+                'name' => 'Toress 14 Wheel',
+                'description' => 'Toress 14 Wheel 800ft Class',
+                'generic_quantity' => 800,
+                'status' => 1,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ],
+            [
+                'id' => 6,
+                'name' => 'Toress 16 Wheel',
+                'description' => 'Toress 16 Wheel 900ft Class',
+                'generic_quantity' => 900,
+                'status' => 1,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ],
+            [
+                'id' => 7,
+                'name' => 'Toress 18 Wheel',
+                'description' => 'Toress 18 Wheel 1000ft Class',
+                'generic_quantity' => 1000,
+                'status' => 1,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ],
+            [
+                'id' => 8,
+                'name' => 'Toress 20 Wheel',
+                'description' => 'Toress 20 Wheel 1100ft Class',
+                'generic_quantity' => 1100,
+                'status' => 1,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ],
+            [
+                'id' => 9,
+                'name' => 'Toress 22 Wheel',
+                'description' => 'Toress 22 Wheel 1200ft Class',
+                'generic_quantity' => 1200,
+                'status' => 1,
+                'created_at' => NULL,
+                'updated_at' => NULL,
+                'deleted_at' => NULL,
+            ],
+        ]);
     }
 }
