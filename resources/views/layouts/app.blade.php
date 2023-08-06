@@ -12,7 +12,7 @@
         @section('stylesheets')
         @show
     </head>
-    <body class="hold-transition skin-green fixed sidebar-mini">
+    <body class="hold-transition skin-black-light fixed sidebar-mini">
         <!-- Site wrapper -->
         <div class="wrapper">
 

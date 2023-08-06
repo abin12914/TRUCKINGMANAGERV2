@@ -26,6 +26,6 @@
 <!-- Theme style -->
 <link rel="stylesheet" href="/css/AdminLTE.min.css">
 <!-- AdminLTE Skins. -->
-<link rel="stylesheet" href="/css/skins/skin-green.min.css">
+<link rel="stylesheet" href="/css/skins/skin-black-light.min.css">
 {{-- custom css --}}
 <link rel="stylesheet" href="/css/main.min.css">
